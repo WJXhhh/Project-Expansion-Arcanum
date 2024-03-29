@@ -1,6 +1,5 @@
 package cool.furry.mc.forge.projectexpansion.block.entity;
 
-import cool.furry.mc.forge.projectexpansion.Main;
 import cool.furry.mc.forge.projectexpansion.block.BlockEMCLink;
 import cool.furry.mc.forge.projectexpansion.config.Config;
 import cool.furry.mc.forge.projectexpansion.registries.BlockEntityTypes;
@@ -38,18 +37,14 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHasMatter {
@@ -138,9 +133,8 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         resetLimits();
     }
 
-    @Nonnull
     @Override
-    public Matter getMatter() {
+    public @NotNull Matter getMatter() {
         if (level != null) {
             BlockEMCLink block = (BlockEMCLink) getBlockState().getBlock();
             if (block.getMatter() != matter) setMatter(block.getMatter());

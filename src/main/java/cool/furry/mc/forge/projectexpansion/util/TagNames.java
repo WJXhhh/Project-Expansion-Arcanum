@@ -20,4 +20,7 @@ public class TagNames {
     public static String NAME = "Name";
     public static String DIMENSION = "Dimension";
     public static String INDEX = "Index";
+    public static String UNPROCESSED_EMC = "UnprocessedEMC";
+    public static String INPUT = "Input";
+    public static String AUX_SLOTS = "AuxSlots";
 }

@@ -137,9 +137,25 @@ public class Util {
         }
     }
 
+    public static long spreadEMC(long emc, List<IEmcStorage> storageList) {
+        return spreadEMC(emc, storageList, null);
+    }
+
+    public static long spreadEMC(long emc, List<IEmcStorage> storageList, @Nullable Long maxPer) {
+        return Util.safeLongValue(spreadEMC(BigInteger.valueOf(emc), storageList, maxPer));
+    }
+
     public static BigInteger spreadEMC(BigInteger emc, List<IEmcStorage> storageList) {
         return spreadEMC(emc, storageList, null);
     }
+
+    /**
+     * Spreads EMC evenly across multiple targets
+     * @param emc EMC to spread
+     * @param storageList List of targets
+     * @param maxPer Maximum amount to insert per target
+     * @return The remaining EMC
+     */
     public static BigInteger spreadEMC(BigInteger emc, List<IEmcStorage> storageList, @Nullable Long maxPer) {
         if(emc.equals(BigInteger.ZERO) || storageList.isEmpty()) return emc;
         List<IEmcStorage> notAccepting = new ArrayList<>();

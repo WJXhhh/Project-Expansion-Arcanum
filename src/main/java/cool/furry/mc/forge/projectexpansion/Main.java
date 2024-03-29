@@ -49,6 +49,7 @@ public class Main {
         Enchantments.Registry.register(bus);
         Items.Registry.register(bus);
         SoundEvents.Registry.register(bus);
+        MenuTypes.Registry.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::serverTick);
         bus.addListener(this::registerCapabilities);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.Spec, "project-expansion.toml");

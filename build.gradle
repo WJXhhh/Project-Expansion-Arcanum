@@ -91,6 +91,10 @@ repositories {
             includeGroup 'top.theillusivec4.curios'
         }
     }
+    maven {
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
 }
 
 dependencies {
@@ -101,7 +105,9 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}")
     runtimeOnly fg.deobf("curse.maven:no-chat-reports-634062:${getProperty("ncrVersion")}")
-    runtimeOnly fg.deobf("curse.maven:jei-238222:${getProperty("jeiVersion")}")
+    compileOnly fg.deobf("mezz.jei:jei-${getProperty("mcVersion")}-common-api:${getProperty("jeiVersion")}")
+    compileOnly fg.deobf("mezz.jei:jei-${getProperty("mcVersion")}-forge-api:${getProperty("jeiVersion")}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${getProperty("mcVersion")}-forge:${getProperty("jeiVersion")}")
     runtimeOnly fg.deobf("curse.maven:pipez-443900:${getProperty("pipezVersion")}")
     runtimeOnly fg.deobf("curse.maven:ae2-223794:${getProperty("ae2Version")}")
     runtimeOnly fg.deobf("curse.maven:itank-256991:${getProperty("itankVersion")}")

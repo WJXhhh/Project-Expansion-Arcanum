@@ -77,9 +77,11 @@ public enum Lang implements ILangEntry {
         ADVANCED_ALCHEMICAL_CHEST_TOOLTIP("advanced_alchemical_chest", "tooltip"),
 
         // Collector
+        COLLECTOR("collector"),
         COLLECTOR_TOOLTIP("collector", "tooltip"),
         COLLECTOR_EMC("collector", "emc"),
         COLLECTOR_STACK_EMC("collector", "stack_emc"),
+        COLLECTOR_MAX_STORAGE("collector", "max_storage"),
 
         // EMC Link
         EMC_LINK_TOOLTIP("emc_link", "tooltip"),

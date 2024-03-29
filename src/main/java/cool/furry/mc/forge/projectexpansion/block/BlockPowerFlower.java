@@ -32,7 +32,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.util.List;
@@ -55,9 +54,8 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock {
         this.matter = matter;
     }
 
-    @Nonnull
     @Override
-    public Matter getMatter() {
+    public @NotNull Matter getMatter() {
         return matter;
     }
 

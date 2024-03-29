@@ -4,9 +4,14 @@ import cool.furry.mc.forge.projectexpansion.block.entity.BlockEntityCollector;
 import cool.furry.mc.forge.projectexpansion.config.Config;
 import cool.furry.mc.forge.projectexpansion.registries.BlockEntityTypes;
 import cool.furry.mc.forge.projectexpansion.util.*;
+import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -20,10 +25,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.util.List;
@@ -43,9 +50,8 @@ public class BlockCollector extends Block implements IHasMatter, EntityBlock {
         return new BlockEntityCollector(pos, state);
     }
 
-    @Nonnull
     @Override
-    public Matter getMatter() {
+    public @NotNull Matter getMatter() {
         return matter;
     }
 
@@ -58,6 +64,7 @@ public class BlockCollector extends Block implements IHasMatter, EntityBlock {
         if(stack.getCount() > 1) {
             list.add(Lang.Blocks.COLLECTOR_STACK_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getCollectorOutputForTicks(Config.tickDelay.get()).multiply(BigInteger.valueOf(stack.getCount()))).setStyle(ColorStyle.GREEN)));
         }
+        list.add(Lang.Blocks.COLLECTOR_MAX_STORAGE.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(Fuel.getCollectorEMCLimit(getMatter())).setStyle(ColorStyle.GREEN)));
         list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
     }
 
@@ -77,5 +84,18 @@ public class BlockCollector extends Block implements IHasMatter, EntityBlock {
     public MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor) {
         MaterialColor color = matter.materialColor == null ? null : matter.materialColor.get();
         return color != null ? color : super.getMapColor(state, level, pos, defaultColor);
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
+        BlockEntityCollector collector = WorldHelper.getBlockEntity(BlockEntityCollector.class, level, pos);
+        if (collector != null) {
+            NetworkHooks.openScreen((ServerPlayer) player, collector, pos);
+        }
+        return InteractionResult.CONSUME;
     }
 }

@@ -31,8 +31,8 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -78,9 +78,8 @@ public class BlockEMCLink extends Block implements IHasMatter, EntityBlock {
         if (blockEntity instanceof BlockEntityEMCLink be) be.handlePlace(livingEntity, stack);
     }
 
-    @Nonnull
     @Override
-    public Matter getMatter() {
+    public @NotNull Matter getMatter() {
         return matter;
     }
 

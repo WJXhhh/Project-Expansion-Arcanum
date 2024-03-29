@@ -15,27 +15,30 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 
 @SuppressWarnings("unused")
 public enum Fuel {
-    ALCHEMICAL("alchemical", false, 1, PEItems.ALCHEMICAL_COAL::asItem),
-    MOBIUS("mobius", false, 2, PEItems.MOBIUS_FUEL::asItem),
-    AETERNALIS("aeternalis", false, 3, PEItems.AETERNALIS_FUEL::asItem),
-    MAGENTA("magenta", true, 4, null),
-    PINK("pink", true, 5, null),
-    PURPLE("purple", true, 6, null),
-    VIOLET("violet", true, 7, null),
-    BLUE("blue", true, 8, null),
-    CYAN("cyan", true, 9, null),
-    GREEN("green", true, 10, null),
-    LIME("lime", true, 11, null),
-    YELLOW("yellow", true, 12, null),
-    ORANGE("orange", true, 13, null),
-    WHITE("white", true, 14, null);
+    ALCHEMICAL(PEItems.ALCHEMICAL_COAL::asItem),
+    MOBIUS(PEItems.MOBIUS_FUEL::asItem),
+    AETERNALIS(PEItems.AETERNALIS_FUEL::asItem),
+    MAGENTA(null),
+    PINK(null),
+    PURPLE(null),
+    VIOLET(null),
+    BLUE(null),
+    CYAN(null),
+    GREEN(null),
+    LIME(null),
+    YELLOW(null),
+    ORANGE(null),
+    WHITE(null);
 
 
     public static final List<Fuel> COMMON_ITEMS = List.of(ALCHEMICAL, MOBIUS, AETERNALIS);
@@ -46,8 +49,6 @@ public enum Fuel {
     public static final Fuel[] VALUES = values();
 
     public final String name;
-    public final boolean hasItem;
-    public final int level;
     @Nullable
     public final Supplier<Item> existingItem;
     @Nullable
@@ -56,10 +57,8 @@ public enum Fuel {
     private RegistryObject<Block> block = null;
     @Nullable
     private RegistryObject<BlockItem> blockItem = null;
-    Fuel(String name, boolean hasItem, int level, @Nullable Supplier<Item> existingItem) {
-        this.name = name;
-        this.hasItem = hasItem;
-        this.level = level;
+    Fuel(@Nullable Supplier<Item> existingItem) {
+        this.name = name().toLowerCase(Locale.US);
         this.existingItem = existingItem;
     }
 
@@ -76,8 +75,15 @@ public enum Fuel {
         return item == null ? -1 : PEItems.AETERNALIS_FUEL.get().getBurnTime(new ItemStack(item.get()), type);
     }
 
+    public long getCollectorEMCLimit() {
+        return getCollectorEMCLimit(Objects.requireNonNull(fuelToMatter(this)));
+    }
+
     public @Nullable Item getItem() {
         return item == null ? null : item.get();
+    }
+    public @Nullable Item getItemOrExisting() {
+        return item == null ? existingItem == null ? null : existingItem.get() : item.get();
     }
 
     public @Nullable Block getBlock() {
@@ -89,7 +95,7 @@ public enum Fuel {
     }
 
     private void register(RegistrationType reg) {
-        if (!hasItem) return;
+        if (this.existingItem != null) return;
         switch (reg) {
             case ITEM -> item = Items.Registry.register(String.format("%s_fuel", name), () -> new ItemFuel(this));
             case BLOCK -> {
@@ -106,5 +112,54 @@ public enum Fuel {
     private enum RegistrationType {
         ITEM,
         BLOCK
+    }
+
+    public static @Nullable Fuel matterToFuel(Matter matter) {
+        return switch (matter) {
+            case BASIC -> ALCHEMICAL;
+            case DARK -> MOBIUS;
+            case RED -> AETERNALIS;
+            default -> {
+                for (Fuel fuel : VALUES) {
+                    if (fuel.name.equals(matter.name().toLowerCase(Locale.US))) yield fuel;
+                }
+                yield null;
+            }
+        };
+    }
+
+    public static @Nullable Matter fuelToMatter(Fuel fuel) {
+        return switch (fuel) {
+            case ALCHEMICAL -> Matter.BASIC;
+            case MOBIUS -> Matter.DARK;
+            case AETERNALIS -> Matter.RED;
+            default -> {
+                for (Matter matter : Matter.VALUES) {
+                    if (matter.name().toLowerCase(Locale.US).equals(fuel.name)) yield matter;
+                }
+                yield null;
+            }
+        };
+    }
+
+    public static long getCollectorEMCLimit(Matter matter) {
+        // the minimum storage needed for a minute straight of maximum output
+        BigInteger minute = matter.getCollectorOutput().multiply(BigInteger.valueOf(60));
+        // round to nearest multiple of 250, with respect to the order of magnitude
+        return Util.safeLongValue(roundToNearest(minute));
+    }
+
+    public static BigInteger roundToNearest(BigInteger number) {
+        BigInteger orderOfMagnitude = BigInteger.TEN.pow(number.toString().length() - 1);
+
+        // Determine the nearest multiple of 250 based on the order of magnitude
+        BigInteger nearest250 = orderOfMagnitude.divide(BigInteger.valueOf(4));
+
+        // Calculate the rounded value (using divideAndRemainder() to determine rounding direction)
+        BigInteger[] divRem = number.divideAndRemainder(nearest250);
+        BigInteger roundedValue = divRem[1].compareTo(BigInteger.ZERO) > 0 ? divRem[0].add(BigInteger.ONE) : divRem[0];
+
+        // Multiply the rounded value by the nearest multiple of 250
+        return roundedValue.multiply(nearest250);
     }
 }

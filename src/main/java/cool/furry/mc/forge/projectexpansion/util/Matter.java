@@ -6,7 +6,6 @@ import cool.furry.mc.forge.projectexpansion.config.Config;
 import cool.furry.mc.forge.projectexpansion.item.ItemCompressedEnergyCollector;
 import cool.furry.mc.forge.projectexpansion.registries.Blocks;
 import cool.furry.mc.forge.projectexpansion.registries.Items;
-import moze_intel.projecte.gameObjs.blocks.MatterBlock;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.network.chat.Component;
@@ -15,9 +14,8 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
-import net.minecraftforge.registries.RegistryObject;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -162,18 +160,20 @@ public enum Matter {
         return div20.multiply(BigInteger.valueOf(ticks));
     }
 
-    /*
-    unless we figure out a way to skip ticks or hard code numbers, dynamically changing the
-    tick rate of these 3 will grossly duplicate emc
-    */
-
     public BigInteger getCollectorOutput() {
         return collectorOutputBase.multiply(BigDecimal.valueOf(Config.collectorMultiplier.get())).toBigInteger();
     }
 
     public BigInteger getCollectorOutputForTicks(int ticks) {
-        return getCollectorOutput();
+        if (ticks == 20) return getCollectorOutput();
+        BigInteger div20 = getCollectorOutput().divide(BigInteger.valueOf(20));
+        return div20.multiply(BigInteger.valueOf(ticks));
     }
+
+    /*
+    unless we figure out a way to skip ticks or hard code numbers, dynamically changing the
+    tick rate of these 2 will grossly duplicate emc
+    */
 
     public BigInteger getRelayBonus() {
         return relayBonusBase.multiply(BigDecimal.valueOf(Config.relayBonusMultiplier.get())).toBigInteger();
@@ -249,6 +249,10 @@ public enum Matter {
 
     public @Nullable Item getMatter() {
         return itemMatter == null ? null : itemMatter.get();
+    }
+
+    public @Nullable Item getMatterOrExisting() {
+        return itemMatter == null ? existingItem == null ? null : existingItem.get() : itemMatter.get();
     }
 
     public @Nullable BlockPowerFlower getPowerFlower() {

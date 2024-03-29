@@ -2,8 +2,7 @@ package cool.furry.mc.forge.projectexpansion.net;
 
 import cool.furry.mc.forge.projectexpansion.Main;
 import cool.furry.mc.forge.projectexpansion.net.packets.IPacket;
-import cool.furry.mc.forge.projectexpansion.net.packets.to_client.PacketOpenAlchemicalBookGUI;
-import cool.furry.mc.forge.projectexpansion.net.packets.to_client.PacketSyncAlchemicalBookLocations;
+import cool.furry.mc.forge.projectexpansion.net.packets.to_client.*;
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketCreateTeleportDestination;
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketDeleteTeleportDestination;
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketTeleportBack;
@@ -11,7 +10,6 @@ import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketTeleport
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -40,6 +38,9 @@ public class PacketHandler {
         registerClientToServer(PacketTeleportToDestination.class, PacketTeleportToDestination::decode);
         registerServerToClient(PacketOpenAlchemicalBookGUI.class, PacketOpenAlchemicalBookGUI::decode);
         registerServerToClient(PacketSyncAlchemicalBookLocations.class, PacketSyncAlchemicalBookLocations::decode);
+        registerServerToClient(PacketUpdateWindowLong.class, PacketUpdateWindowLong::decode);
+        registerServerToClient(PacketUpdateWindowInt.class, PacketUpdateWindowInt::decode);
+        registerServerToClient(PacketUpdateWindowBigInteger.class, PacketUpdateWindowBigInteger::decode);
     }
 
     private static <MSG extends IPacket> void registerClientToServer(Class<MSG> type, Function<FriendlyByteBuf, MSG> decoder) {
