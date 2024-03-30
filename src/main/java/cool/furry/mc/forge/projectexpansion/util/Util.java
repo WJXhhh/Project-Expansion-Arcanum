@@ -6,6 +6,7 @@ import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
 import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
 import moze_intel.projecte.emc.nbt.NBTManager;
+import moze_intel.projecte.gameObjs.items.IFireProtector;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
@@ -15,6 +16,9 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +31,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -220,5 +225,51 @@ public class Util {
         return style
             .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command))
             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command).withStyle(ChatFormatting.RED)));
+    }
+
+    public static BigDecimal divide(BigInteger dividend, BigInteger divisor) {
+        return new BigDecimal(dividend).divide(new BigDecimal(divisor), 2, RoundingMode.HALF_EVEN);
+    }
+
+    public static int scaleToRedstone(long currentAmount, long max) {
+        return scaleToRedstone(BigInteger.valueOf(currentAmount), BigInteger.valueOf(max));
+    }
+
+    /**
+     * Scales this proportion into redstone, where 0 means none, 15 means full, and the rest are an appropriate scaling.
+     */
+    public static int scaleToRedstone(BigInteger currentAmount, BigInteger max) {
+        double proportion = divide(currentAmount, max).doubleValue();
+        if (currentAmount.compareTo(BigInteger.ZERO) <= 0) {
+            return 0;
+        }
+        if (currentAmount.compareTo(max) >= 0) {
+            return 15;
+        }
+        return (int) Math.round(proportion * 13 + 1);
+    }
+
+    public static boolean isImmuneToFire(ServerPlayer player) {
+        return isImmuneToFire(player, 0);
+    }
+
+    /**
+     * Checks if the player is immune to fire damage
+     * @param player The player to check
+     * @param timeTolerance If the player is immune to fire for this amount of time or less, they will be considered not immune
+     * @return If the player is immune to fire
+     */
+    public static boolean isImmuneToFire(ServerPlayer player, int timeTolerance) {
+        ItemStack chestplate = player.getInventory().getArmor(EquipmentSlot.CHEST.getIndex());
+        if (chestplate.getItem() instanceof IFireProtector protector && protector.canProtectAgainstFire(chestplate, player)) {
+            return true;
+        }
+
+        @Nullable MobEffectInstance fireResistance = player.getEffect(MobEffects.FIRE_RESISTANCE);
+        if (fireResistance != null && fireResistance.getDuration() > timeTolerance) {
+            return true;
+        }
+
+        return player.fireImmune();
     }
 }

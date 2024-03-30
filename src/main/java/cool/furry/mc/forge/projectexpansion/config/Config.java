@@ -32,6 +32,7 @@ public final class Config {
     private static final ForgeConfigSpec.ConfigValue<String> editOthersAlchemicalBooks = Builder.comment("If players should be allowed to edit books bound to other players. A player is considered to be \"OP\" when they have an op level of 2 or greater. Allowed values: DISABLED, OP_ONLY, ENABLED").define("editOthersAlchemicalBooks", AlchemicalBookEditLevel.DISABLED.name());
     public static final ForgeConfigSpec.ConfigValue<Boolean> zeroEmcFluidsAreFree = Builder.comment("If fluids which end their calculations at zero emc should be returned as free.").define("zeroEmcFluidsAreFree", true);
     public static final ForgeConfigSpec.ConfigValue<Boolean> enableCollectorOptimizations = Builder.comment("If optimizations (ticking only once per second) should be enabled for collectors. This will make them process at most one item each second.").define("enableCollectorOptimizations", false);
+    public static final ForgeConfigSpec.ConfigValue<Integer> compactSunBonus = Builder.comment("The bonus (multiplicative) the compact sun block should give. Set to 0 to disable.").define("compactSunBonus", 10);
     static { Spec = Builder.build(); }
     public static AlchemicalBookEditLevel editOthersAlchemicalBooks() {
         try {

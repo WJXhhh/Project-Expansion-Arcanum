@@ -1,6 +1,7 @@
 package cool.furry.mc.forge.projectexpansion.block.entity;
 
 import cool.furry.mc.forge.projectexpansion.block.BlockCollector;
+import cool.furry.mc.forge.projectexpansion.block.BlockCompactSun;
 import cool.furry.mc.forge.projectexpansion.config.Config;
 import cool.furry.mc.forge.projectexpansion.gui.container.ContainerCollector;
 import cool.furry.mc.forge.projectexpansion.registries.BlockEntityTypes;
@@ -45,7 +46,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, MenuProvider {
+public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, IHasSunBonus, MenuProvider {
     // this probably doesn't work
     private final ItemStackHandler input = new StackHandler(getInvSize()) {
         @Override
@@ -143,7 +144,11 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     }
 
     private void updateEmc() {
-        BigInteger generated = getMatter().getCollectorOutputForTicks(Config.enableCollectorOptimizations.get() ? 20 : 1);
+        BigInteger gen = getMatter().getCollectorOutputForTicks(Config.enableCollectorOptimizations.get() ? 20 : 1);
+        if(hasSunBonus() && getSunBonus() != null) {
+            gen = gen.multiply(BigInteger.valueOf(getSunBonus()));
+        }
+        final BigInteger generated = gen; // Thanks Java
         if (!this.hasMaxedEmc()) {
             unprocessedEMC = unprocessedEMC.add(new BigDecimal(generated).multiply(BigDecimal.valueOf(getSunLevel() / 16.0f)));
             if (unprocessedEMC.compareTo(BigDecimal.ONE) >= 0) {
@@ -329,6 +334,11 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
             this.matter = block.getMatter();
         }
         return matter;
+    }
+
+    @Override
+    public boolean hasSunBonus() {
+        return BlockCompactSun.adjacent(level, worldPosition, Direction.UP);
     }
 
     @Override

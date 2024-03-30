@@ -1,5 +1,6 @@
 package cool.furry.mc.forge.projectexpansion.mixin;
 
+import cool.furry.mc.forge.projectexpansion.block.BlockCompactSun;
 import cool.furry.mc.forge.projectexpansion.block.BlockMatter;
 import moze_intel.projecte.gameObjs.EnumMatterType;
 import moze_intel.projecte.utils.ToolHelper;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ToolHelperMixin {
     @Inject(at = @At("HEAD"), method = "canMatterMine(Lmoze_intel/projecte/gameObjs/EnumMatterType;Lnet/minecraft/world/level/block/Block;)Z", cancellable = true, remap = false)
     private static void canMatterMine(EnumMatterType matterType, Block block, CallbackInfoReturnable<Boolean> cir) {
-        if (block instanceof BlockMatter && matterType.equals(EnumMatterType.RED_MATTER)) {
+        if ((block instanceof BlockMatter || block instanceof BlockCompactSun) && matterType.equals(EnumMatterType.RED_MATTER)) {
             cir.setReturnValue(true);
         }
     }

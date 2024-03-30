@@ -51,17 +51,12 @@ public class Main {
         SoundEvents.Registry.register(bus);
         MenuTypes.Registry.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::serverTick);
-        bus.addListener(this::registerCapabilities);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.Spec, "project-expansion.toml");
 
         Fuel.registerAll();
         Matter.registerAll();
         Star.registerAll();
         AdvancedAlchemicalChest.register();
-    }
-
-    private void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(IAlchemicalBookLocationsProvider.class);
     }
 
     private void serverTick(TickEvent.ServerTickEvent event) {

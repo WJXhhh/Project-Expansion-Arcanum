@@ -1,6 +1,7 @@
 package cool.furry.mc.forge.projectexpansion.registries;
 
 import cool.furry.mc.forge.projectexpansion.Main;
+import cool.furry.mc.forge.projectexpansion.block.BlockCompactSun;
 import cool.furry.mc.forge.projectexpansion.block.BlockTransmutationInterface;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
@@ -12,4 +13,5 @@ public class Blocks {
     public static final DeferredRegister<Block> Registry = DeferredRegister.create(ForgeRegistries.BLOCKS, Main.MOD_ID);
 
     public static final RegistryObject<BlockTransmutationInterface> TRANSMUTATION_INTERFACE = Registry.register("transmutation_interface", BlockTransmutationInterface::new);
+    public static final RegistryObject<BlockCompactSun> COMPACT_SUN = Registry.register("compact_sun", BlockCompactSun::new);
 }
