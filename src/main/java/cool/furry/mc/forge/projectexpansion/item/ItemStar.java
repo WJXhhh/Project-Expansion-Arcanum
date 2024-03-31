@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-public class ItemMagnumStar extends ItemPE implements IItemEmcHolder, IBarHelper {
-    public static final long[] STAR_EMC = new long[12];
+public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper {
+    public static final long[] STAR_EMC = new long[18];
 
     static {
         long emc = 204_800_000L;
@@ -27,14 +27,17 @@ public class ItemMagnumStar extends ItemPE implements IItemEmcHolder, IBarHelper
     }
 
     public final Star tier;
-    public final int type;
+    public final Star.StarType type;
 
-    public ItemMagnumStar(Star tier) { this(tier, 1); }
-    public ItemMagnumStar(Star tier, int type) {
-        super(new Properties().stacksTo(1).tab(Main.tab).rarity(tier == Star.OMEGA ? Rarity.EPIC : type == 1 ? Rarity.UNCOMMON : Rarity.RARE));
+    public ItemStar(Star.StarType type, Star tier) {
+        super(new Properties().stacksTo(1).tab(Main.tab).rarity(
+                tier == Star.OMEGA ? Rarity.EPIC :
+                        type == Star.StarType.COLOSSAL ? Rarity.UNCOMMON :
+                                type == Star.StarType.GARGANTUAN ? Rarity.RARE : Rarity.COMMON
+        ));
 
-        this.tier = tier;
         this.type = type;
+        this.tier = tier;
         addItemCapability(EmcHolderItemCapabilityWrapper::new);
         addItemCapability("curios", IntegrationHelper.CURIO_CAP_SUPPLIER);
     }
@@ -90,7 +93,7 @@ public class ItemMagnumStar extends ItemPE implements IItemEmcHolder, IBarHelper
 
     @Override
     public long getMaximumEmc(@Nonnull ItemStack stack) {
-        return STAR_EMC[tier.ordinal()];
+        return STAR_EMC[tier.ordinal() + type.getOffset()];
     }
 }
 

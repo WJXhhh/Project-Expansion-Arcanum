@@ -1,7 +1,6 @@
 package cool.furry.mc.forge.projectexpansion.util;
 
-import cool.furry.mc.forge.projectexpansion.item.ItemColossalStar;
-import cool.furry.mc.forge.projectexpansion.item.ItemMagnumStar;
+import cool.furry.mc.forge.projectexpansion.item.ItemStar;
 import cool.furry.mc.forge.projectexpansion.registries.Items;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -29,9 +28,10 @@ public enum Star {
 
     public final String name;
     @Nullable
-    private RegistryObject<ItemMagnumStar> itemMagnum = null;
+    private RegistryObject<ItemStar> itemMagnum = null;
     @Nullable
-    private RegistryObject<ItemColossalStar> itemColossal = null;
+    private RegistryObject<ItemStar> itemColossal = null;
+    private RegistryObject<ItemStar> itemGargantuan = null;
     Star(String name) {
         this.name = name;
     }
@@ -42,24 +42,29 @@ public enum Star {
     }
 
 
-    public @Nullable ItemMagnumStar asMagnumItem() { return itemMagnum == null ? null : itemMagnum.get(); }
-    public @Nullable ItemColossalStar asColossalItem() { return itemColossal == null ? null : itemColossal.get(); }
+    public @Nullable ItemStar asMagnumItem() { return itemMagnum == null ? null : itemMagnum.get(); }
+    public @Nullable ItemStar asColossalItem() { return itemColossal == null ? null : itemColossal.get(); }
+    public @Nullable ItemStar asGargantuanItem() { return itemGargantuan == null ? null : itemGargantuan.get(); }
 
-    private void registerMagnum() {
-    }
-    private void register(RegistrationType reg) {
+    private void register(StarType reg) {
         switch (reg) {
-            case MAGNUM -> itemMagnum = Items.Registry.register(String.format("magnum_star_%s", name), () -> new ItemMagnumStar(this));
-            case COLOSSAL -> itemColossal = Items.Registry.register(String.format("colossal_star_%s", name), () -> new ItemColossalStar(this));
+            case MAGNUM -> itemMagnum = Items.Registry.register(String.format("magnum_star_%s", name), () -> new ItemStar(reg, this));
+            case COLOSSAL -> itemColossal = Items.Registry.register(String.format("colossal_star_%s", name), () -> new ItemStar(reg, this));
+            case GARGANTUAN -> itemGargantuan = Items.Registry.register(String.format("gargantuan_star_%s", name), () -> new ItemStar(reg, this));
         }
     }
 
     public static void registerAll() {
-        Arrays.stream(RegistrationType.values()).forEach(type -> Arrays.stream(VALUES).forEach(val -> val.register(type)));
+        Arrays.stream(StarType.values()).forEach(type -> Arrays.stream(VALUES).forEach(val -> val.register(type)));
     }
 
-    private enum RegistrationType {
+    public enum StarType {
         MAGNUM,
-        COLOSSAL
+        COLOSSAL,
+        GARGANTUAN;
+
+        public int getOffset() {
+            return ordinal() * 6;
+        }
     }
 }
