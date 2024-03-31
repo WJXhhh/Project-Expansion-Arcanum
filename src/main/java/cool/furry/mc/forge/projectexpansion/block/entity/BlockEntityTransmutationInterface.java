@@ -35,16 +35,6 @@ public class BlockEntityTransmutationInterface extends BlockEntityNBTFilterable 
         super(BlockEntityTypes.TRANSMUTATION_INTERFACE.get(), pos, state);
     }
 
-    @Override
-    public void load(@Nonnull CompoundTag tag) {
-        super.load(tag);
-    }
-
-    @Override
-    public void saveAdditional(@Nonnull CompoundTag tag) {
-        super.saveAdditional(tag);
-    }
-
     private ItemInfo[] fetchKnowledge() {
         if (info != null) return info;
         @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(owner);

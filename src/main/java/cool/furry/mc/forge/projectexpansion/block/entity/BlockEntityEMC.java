@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -173,6 +174,10 @@ public abstract class BlockEntityEMC extends BlockEntity implements IEmcStorageB
     }
 
     protected void sendToAllAcceptors(BigInteger emc) {
+        sendToAllAcceptors(emc, Long.MAX_VALUE);
+    }
+
+    protected void sendToAllAcceptors(BigInteger emc, long transferLimit) {
         if(level == null || !canProvideEmc()) {
             return;
         }
@@ -194,7 +199,7 @@ public abstract class BlockEntityEMC extends BlockEntity implements IEmcStorageB
             }
         }
 
-        BigInteger remaining = Util.spreadEMC(emc, targets);
+        BigInteger remaining = Util.spreadEMC(emc, targets, transferLimit);
         forceExtractEmcBigInteger(emc.subtract(remaining), EmcAction.EXECUTE);
     }
 
@@ -233,11 +238,10 @@ public abstract class BlockEntityEMC extends BlockEntity implements IEmcStorageB
     }
 
     public void markDirty(boolean recheckComparators) {
-        //Copy of the base impl of markDirty in BlockEntity, except only updates comparator state when something changed
-        // and if our block supports having a comparator signal, instead of always doing it
         if (level != null) {
             if (level.hasChunkAt(worldPosition)) {
                 level.getChunkAt(worldPosition).setUnsaved(true);
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             }
             if (recheckComparators && !level.isClientSide) {
                 updateComparators = true;

@@ -20,6 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -164,10 +165,10 @@ public enum Matter {
         return collectorOutputBase.multiply(BigDecimal.valueOf(Config.collectorMultiplier.get())).toBigInteger();
     }
 
-    public BigInteger getCollectorOutputForTicks(int ticks) {
-        if (ticks == 20) return getCollectorOutput();
-        BigInteger div20 = getCollectorOutput().divide(BigInteger.valueOf(20));
-        return div20.multiply(BigInteger.valueOf(ticks));
+    public BigDecimal getCollectorOutputForTicks(int ticks) {
+        if (ticks == 20) return new BigDecimal(getCollectorOutput());
+        BigDecimal div20 = new BigDecimal(getCollectorOutput()).divide(BigDecimal.valueOf(20), 3, RoundingMode.UP);
+        return div20.multiply(BigDecimal.valueOf(ticks));
     }
 
     /*

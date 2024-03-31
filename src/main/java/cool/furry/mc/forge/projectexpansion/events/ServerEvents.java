@@ -77,7 +77,6 @@ public class ServerEvents {
             if (block instanceof BlockCompactSun) {
                 SunExposureTimer timer = SunExposureTimer.addOrIncrement(player, block);
                 if (timer.over()) {
-                    System.out.println("Player " + player.getName().getString() + " is exposed to the sun!");
                     if(!SunExposureHelper.wearingAllProtectiveArmor(player)) {
                         player.addEffect(EffectHelper.create(MobEffects.DARKNESS, 50, 0, false, false));
                         // we don't want them taking fire damage while looking

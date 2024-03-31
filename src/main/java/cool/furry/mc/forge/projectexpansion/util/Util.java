@@ -20,9 +20,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -124,6 +126,7 @@ public class Util {
 
     public static void markDirty(Level level, BlockPos pos) {
         level.getChunkAt(pos).setUnsaved(true);
+        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_CLIENTS);
     }
 
     public static @Nullable IKnowledgeProvider getKnowledgeProvider(UUID uuid) {
@@ -271,5 +274,20 @@ public class Util {
         }
 
         return player.fireImmune();
+    }
+
+    public static String ucwords(String str) {
+        StringBuilder sb = new StringBuilder();
+        boolean capitalize = true;
+        for (char c : str.toCharArray()) {
+            if (Character.isWhitespace(c)) {
+                capitalize = true;
+            } else if (capitalize) {
+                c = Character.toTitleCase(c);
+                capitalize = false;
+            }
+            sb.append(c);
+        }
+        return sb.toString();
     }
 }

@@ -2,10 +2,7 @@ package cool.furry.mc.forge.projectexpansion.block.entity;
 
 import cool.furry.mc.forge.projectexpansion.block.BlockAdvancedAlchemicalChest;
 import cool.furry.mc.forge.projectexpansion.gui.container.ContainerAdvancedAlchemicalChest;
-import cool.furry.mc.forge.projectexpansion.util.AdvancedAlchemicalChest;
-import cool.furry.mc.forge.projectexpansion.util.IChestLike;
-import cool.furry.mc.forge.projectexpansion.util.Lang;
-import cool.furry.mc.forge.projectexpansion.util.Util;
+import cool.furry.mc.forge.projectexpansion.util.*;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.gameObjs.items.AlchemicalBag;
 import net.minecraft.core.BlockPos;
@@ -35,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable implements IChestLike, IItemHandler {
+public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable implements IChestLike, IHasColor, IItemHandler {
 	private final ChestLidController lidController = new ChestLidController();
 
 	private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -67,6 +64,12 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 	public BlockEntityAdvancedAlchemicalChest(BlockPos pos, BlockState state, BlockEntityType<BlockEntityAdvancedAlchemicalChest> blockEntityType, DyeColor color) {
 		super(blockEntityType, pos, state);
 		this.color = color;
+	}
+
+	@NotNull
+	@Override
+	public DyeColor getColor() {
+		return color;
 	}
 
 	public @Nullable IItemHandler getBag() {

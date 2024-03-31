@@ -46,7 +46,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, IHasSunBonus, MenuProvider {
+public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, IHasSunBonus, IGeneratesEMC, MenuProvider {
     // this probably doesn't work
     private final ItemStackHandler input = new StackHandler(getInvSize()) {
         @Override
@@ -78,7 +78,6 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     public BlockEntityCollector(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.COLLECTOR.get(), pos, state);
         this.itemHandlerResolver = new CollectorItemHandlerProvider();
-        setMaximumEMC(BigInteger.valueOf(Fuel.getCollectorEMCLimit(Objects.requireNonNull(getMatter()))));
         resetStackHandlers();
     }
 
@@ -144,13 +143,13 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     }
 
     private void updateEmc() {
-        BigInteger gen = getMatter().getCollectorOutputForTicks(Config.enableCollectorOptimizations.get() ? 20 : 1);
+        BigDecimal gen = getMatter().getCollectorOutputForTicks(Config.enableCollectorOptimizations.get() ? 20 : 1);
         if(hasSunBonus() && getSunBonus() != null) {
-            gen = gen.multiply(BigInteger.valueOf(getSunBonus()));
+            gen = gen.multiply(BigDecimal.valueOf(getSunBonus()));
         }
-        final BigInteger generated = gen; // Thanks Java
+        final BigDecimal generated = gen; // Thanks Java
         if (!this.hasMaxedEmc()) {
-            unprocessedEMC = unprocessedEMC.add(new BigDecimal(generated).multiply(BigDecimal.valueOf(getSunLevel() / 16.0f)));
+            unprocessedEMC = unprocessedEMC.add(generated.multiply(BigDecimal.valueOf(getSunLevel() / 16.0f)));
             if (unprocessedEMC.compareTo(BigDecimal.ONE) >= 0) {
                 //Force add the EMC regardless of if we can receive EMC from external sources
                 unprocessedEMC = unprocessedEMC.subtract(new BigDecimal(forceInsertEmcBigInteger(unprocessedEMC.toBigInteger(), EmcAction.EXECUTE)));
@@ -163,7 +162,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
             ItemStack upgrading = getUpgrading();
             if (hasChargeableItem) {
                 upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY).ifPresent(emcHolder -> {
-                    BigInteger remaining = Util.stepBigInteger((getStoredEmcBigInteger().min(generated)), (val) -> emcHolder.insertEmc(upgrading, val, EmcAction.EXECUTE));
+                    BigInteger remaining = Util.stepBigInteger((getStoredEmcBigInteger().min(generated.toBigInteger())), (val) -> emcHolder.insertEmc(upgrading, val, EmcAction.EXECUTE));
                     BigInteger v = getStoredEmcBigInteger().subtract(remaining);
                     forceExtractEmcBigInteger(v, EmcAction.EXECUTE);
                 });
@@ -192,11 +191,21 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
                 }
             } else {
                 // Only send EMC when we are not upgrading fuel or charging an item
-                BigInteger toSend = this.getStoredEmcBigInteger().compareTo(generated) < 0 ? this.getStoredEmcBigInteger() : generated;
-                this.sendToAllAcceptors(toSend);
-                this.sendRelayBonus();
+                BigInteger toSend = getStoredEmcBigInteger().compareTo(generated.toBigInteger()) < 0 ? getStoredEmcBigInteger() : generated.toBigInteger();
+                sendToAllAcceptors(toSend);
+                sendRelayBonus();
             }
         }
+    }
+
+    @Override
+    public BigInteger getMaximumEmcBigInteger() {
+        boolean sunBonus = hasSunBonus();
+        BigInteger max = BigInteger.valueOf(Fuel.getCollectorEMCLimit(Objects.requireNonNull(getMatter())));
+        if (sunBonus) {
+            max = max.multiply(BigInteger.valueOf(Objects.requireNonNull(getSunBonus())));
+        }
+        return max;
     }
 
     public long getEmcToNextGoal() {
@@ -291,7 +300,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
                 for (int i = 0; i < 20; i++) b.addBonus();
                 Util.markDirty(b);
             } else if (be instanceof BlockEntityRelay b) {
-                b.getEMCHandlerCapability().addBonus();
+                b.addBonus();
                 Util.markDirty(b);
             }
         }
@@ -339,6 +348,14 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     @Override
     public boolean hasSunBonus() {
         return BlockCompactSun.adjacent(level, worldPosition, Direction.UP);
+    }
+
+    @Override
+    public BigInteger getGeneratedEMC() {
+        return new BigDecimal(getMatter().getCollectorOutput())
+                .multiply(BigDecimal.valueOf(getSunBonus() == null ? 1 : getSunBonus()))
+                .multiply(BigDecimal.valueOf(getSunLevel() / 16.0f))
+                .toBigInteger();
     }
 
     @Override

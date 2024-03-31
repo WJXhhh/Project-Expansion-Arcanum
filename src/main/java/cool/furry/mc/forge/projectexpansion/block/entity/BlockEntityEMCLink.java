@@ -147,9 +147,6 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         this.matter = matter;
     }
 
-    private void markDirty() {
-        Util.markDirty(this);
-    }
     public InteractionResult handleActivation(Player player, InteractionHand hand) {
         ItemStack inHand = player.getItemInHand(hand);
         ItemHandler itemHandler = getItemHandlerCapability();

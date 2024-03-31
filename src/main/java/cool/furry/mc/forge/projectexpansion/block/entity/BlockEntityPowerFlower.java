@@ -17,9 +17,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.math.BigInteger;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class BlockEntityPowerFlower extends BlockEntityOwnable implements IHasMatter, IHasSunBonus {
+public class BlockEntityPowerFlower extends BlockEntityOwnable implements IHasMatter, IHasSunBonus, IEmcStorageBigInteger, IGeneratesEMC {
     public BigInteger emc = BigInteger.ZERO;
     public BlockEntityPowerFlower(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.POWER_FLOWER.get(), pos, state);
@@ -53,10 +54,10 @@ public class BlockEntityPowerFlower extends BlockEntityOwnable implements IHasMa
         if (player != null) {
             PowerFlowerCollector.add(player, emc.add(res));
             emc = BigInteger.ZERO;
-            Util.markDirty(this);
+            markDirty();
         } else {
             emc = emc.add(res);
-            Util.markDirty(this);
+            markDirty();
         }
     }
 
@@ -68,5 +69,44 @@ public class BlockEntityPowerFlower extends BlockEntityOwnable implements IHasMa
     @Override
     public boolean hasSunBonus() {
         return BlockCompactSun.adjacent(level, worldPosition, Direction.DOWN);
+    }
+
+    @Override
+    public BigInteger getStoredEmcBigInteger() {
+        return emc;
+    }
+
+    @Override
+    public BigInteger getMaximumEmcBigInteger() {
+        BigInteger max = BigInteger.valueOf(Long.MAX_VALUE);
+        if(hasSunBonus()) {
+            max = max.multiply(BigInteger.valueOf(Objects.requireNonNull(getSunBonus())));
+        }
+        return max;
+    }
+
+    @Override
+    public BigInteger extractEmcBigInteger(BigInteger toExtract, EmcAction action) {
+        if (toExtract.compareTo(BigInteger.ZERO) < 0) {
+            return insertEmcBigInteger(toExtract.negate(), action);
+        }
+        return BigInteger.ZERO;
+    }
+
+    @Override
+    public BigInteger insertEmcBigInteger(BigInteger toAccept, EmcAction action) {
+        if (toAccept.compareTo(BigInteger.ZERO) < 0) {
+            return extractEmcBigInteger(toAccept.negate(), action);
+        }
+        return BigInteger.ZERO;
+    }
+
+    @Override
+    public BigInteger getGeneratedEMC() {
+        BigInteger generated = getMatter().getPowerFlowerOutput();
+        if(hasSunBonus() && getSunBonus() != null) {
+            generated = generated.multiply(BigInteger.valueOf(getSunBonus()));
+        }
+        return generated;
     }
 }
