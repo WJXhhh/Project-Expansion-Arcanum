@@ -7,6 +7,7 @@ import mcp.mobius.waila.api.TooltipPosition;
 import mcp.mobius.waila.api.WailaPlugin;
 import net.minecraft.world.level.block.Block;
 
+@SuppressWarnings("unused")
 public class WTHITPlugin implements IWailaPlugin {
     @Override
     public void register(IRegistrar registrar) {

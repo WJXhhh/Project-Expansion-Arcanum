@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// This mixin dips into ProjectE's extra function capability to toggle the Alchemical Collection enchantment
 @Mixin(KeyPressPKT.class)
 public class AlchemicalCollectionToggleMixin {
     @Inject(at = @At("HEAD"), method = "tryPerformCapability(Lnet/minecraft/world/item/ItemStack;Lnet/minecraftforge/common/capabilities/Capability;Lnet/minecraftforge/common/util/NonNullPredicate;)Z", cancellable = true, remap = false)

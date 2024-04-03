@@ -15,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// This mixin enables the Philosophers Stone to toggle NBT filters
 @Mixin(PhilosophersStone.class)
 public class PhilosophersStoneMixin {
-
     @Inject(at = @At("HEAD"), method = "useOn(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;", cancellable = true)
     public void useOn(UseOnContext ctx, CallbackInfoReturnable<InteractionResult> cir) {
         BlockPos pos = ctx.getClickedPos();

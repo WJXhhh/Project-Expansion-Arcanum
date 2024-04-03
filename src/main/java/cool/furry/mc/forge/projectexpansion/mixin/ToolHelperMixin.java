@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// This mixin enables red matter tools to mine our matter blocks & the compact sun
 @Mixin(ToolHelper.class)
 public class ToolHelperMixin {
     @Inject(at = @At("HEAD"), method = "canMatterMine(Lmoze_intel/projecte/gameObjs/EnumMatterType;Lnet/minecraft/world/level/block/Block;)Z", cancellable = true, remap = false)

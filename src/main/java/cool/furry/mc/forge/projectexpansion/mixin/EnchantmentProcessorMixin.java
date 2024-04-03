@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// This mixin makes it so only enchanted books keep their enchantments
 @Mixin(EnchantmentProcessor.class)
 public class EnchantmentProcessorMixin {
     @Inject(at = @At("HEAD"), method = "getPersistentNBT(Lmoze_intel/projecte/api/ItemInfo;)Lnet/minecraft/nbt/CompoundTag;", cancellable = true, remap = false)
