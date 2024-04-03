@@ -47,7 +47,6 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, IHasSunBonus, IGeneratesEMC, MenuProvider {
-    // this probably doesn't work
     private final ItemStackHandler input = new StackHandler(getInvSize()) {
         @Override
         protected void onContentsChanged(int slot) {
