@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -31,7 +32,7 @@ public class Common {
 
         if(blockEntity instanceof IHasSunBonus gen && gen.hasSunBonus()) {
             int bonus = Objects.requireNonNull(gen.getSunBonus());
-            addTooltip.accept(Lang.SUN_BONUS.translateColored(ChatFormatting.GRAY, Component.literal(String.valueOf(bonus)).withStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.YELLOW))));
+            addTooltip.accept(Lang.SUN_BONUS.translateColored(ChatFormatting.GRAY, new TextComponent(String.valueOf(bonus)).withStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.YELLOW))));
         }
 
         if (blockEntity instanceof BlockEntityEMCLink link) {
@@ -44,7 +45,7 @@ public class Common {
             addTooltip.accept(Lang.ITEM_EXPORT_LIMIT.translateColored(ChatFormatting.GRAY, formatEMC(BigInteger.valueOf(link.remainingExport)), formatEMC(BigInteger.valueOf(importExportLimit))));
             addTooltip.accept(Lang.ITEM_IMPORT_LIMIT.translateColored(ChatFormatting.GRAY, formatEMC(BigInteger.valueOf(link.remainingImport)), formatEMC(BigInteger.valueOf(importExportLimit))));
             addTooltip.accept(Lang.FLUID_EXPORT_LIMIT.translateColored(ChatFormatting.GRAY, formatEMC(BigInteger.valueOf(link.remainingFluid)), formatEMC(BigInteger.valueOf(fluidLimit))));
-            addTooltip.accept(Lang.FLUID_EXPORT_EFFICIENCY.translateColored(ChatFormatting.GRAY, Component.literal(String.valueOf(matter.getFluidEfficiencyPercentage())).withStyle(ChatFormatting.GREEN)));
+            addTooltip.accept(Lang.FLUID_EXPORT_EFFICIENCY.translateColored(ChatFormatting.GRAY, new TextComponent(String.valueOf(matter.getFluidEfficiencyPercentage())).withStyle(ChatFormatting.GREEN)));
         }
 
         if (blockEntity instanceof BlockEntityNBTFilterable filter) {
@@ -52,7 +53,7 @@ public class Common {
         }
 
         if (blockEntity instanceof IHasColor color) {
-            addTooltip.accept(Lang.COLOR.translateColored(ChatFormatting.GRAY, Component.literal(Util.ucwords(color.getColor().toString())).withStyle(Style.EMPTY.withColor(color.getColor().getTextColor()))));
+            addTooltip.accept(Lang.COLOR.translateColored(ChatFormatting.GRAY, new TextComponent(Util.ucwords(color.getColor().toString())).withStyle(Style.EMPTY.withColor(color.getColor().getTextColor()))));
         }
 
         if (blockEntity instanceof BlockEntityRelay relay) {
@@ -68,7 +69,7 @@ public class Common {
             if (ownerName.isEmpty()) {
                 ownerName = ownable.owner.toString();
             }
-            addTooltip.accept(Lang.OWNER.translateColored(ChatFormatting.GRAY, Component.literal(ownerName).withStyle(isOwner ? ChatFormatting.DARK_GREEN : ChatFormatting.DARK_RED)));
+            addTooltip.accept(Lang.OWNER.translateColored(ChatFormatting.GRAY, new TextComponent(ownerName).withStyle(isOwner ? ChatFormatting.DARK_GREEN : ChatFormatting.DARK_RED)));
         }
     }
 

@@ -10,6 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -129,7 +130,7 @@ public class ItemMatterUpgrader extends Item {
         }
 
         if (!provider.hasKnowledge(new ItemStack(upgrade)) && !player.isCreative()) {
-            player.displayClientMessage(Lang.Items.MATTER_UPGRADER_NOT_LEARNED.translateColored(ChatFormatting.RED, Component.translatable(Objects.requireNonNull(upgrade).toString())), true);
+            player.displayClientMessage(Lang.Items.MATTER_UPGRADER_NOT_LEARNED.translateColored(ChatFormatting.RED, new TranslatableComponent(Objects.requireNonNull(upgrade).toString())), true);
             return InteractionResult.FAIL;
         }
 

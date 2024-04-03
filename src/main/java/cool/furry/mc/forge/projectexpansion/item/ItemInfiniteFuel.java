@@ -44,12 +44,12 @@ public class ItemInfiniteFuel extends Item {
     }
 
     @Override
-    public boolean hasCraftingRemainingItem(ItemStack stack) {
+    public boolean hasContainerItem(ItemStack stack) {
         return true;
     }
 
     @Override
-    public ItemStack getCraftingRemainingItem(ItemStack stack) {
+    public ItemStack getContainerItem(ItemStack stack) {
         @Nullable UUID owner = stack.getTag() == null ? null : stack.getTag().getUUID(TagNames.OWNER);
         if (owner == null)
             return stack;

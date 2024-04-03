@@ -7,7 +7,6 @@ import cool.furry.mc.forge.projectexpansion.util.*;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.gameObjs.blocks.BlockDirection;
-import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -33,7 +32,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -103,7 +102,7 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 
         BlockEntityCollector collector = WorldHelper.getBlockEntity(BlockEntityCollector.class, level, pos);
         if (collector != null) {
-            NetworkHooks.openScreen((ServerPlayer) player, collector, pos);
+            NetworkHooks.openGui((ServerPlayer) player, collector, pos);
         }
         return InteractionResult.CONSUME;
     }
@@ -122,7 +121,7 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
             //If something went wrong fallback to default implementation
             return super.getAnalogOutputSignal(state, level, pos);
         }
-        Optional<IItemHandler> cap = collector.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP).resolve();
+        Optional<IItemHandler> cap = collector.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP).resolve();
         if (cap.isEmpty()) {
             //If something went wrong fallback to default implementation
             return super.getAnalogOutputSignal(state, level, pos);

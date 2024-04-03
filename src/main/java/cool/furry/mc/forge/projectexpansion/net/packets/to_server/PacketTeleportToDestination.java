@@ -6,6 +6,7 @@ import cool.furry.mc.forge.projectexpansion.capability.IAlchemicalBookLocationsP
 import cool.furry.mc.forge.projectexpansion.item.ItemAlchemicalBook;
 import cool.furry.mc.forge.projectexpansion.net.packets.IPacket;
 import cool.furry.mc.forge.projectexpansion.util.Lang;
+import cool.furry.mc.forge.projectexpansion.util.Util;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import net.minecraft.ChatFormatting;
@@ -54,9 +55,9 @@ public class PacketTeleportToDestination implements IPacket {
                     provider.saveBackLocation(player, pos);
                 }
             } catch (CapabilityAlchemicalBookLocations.BookError error) {
-                player.sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_TELEPORT_FAILED.translateColored(ChatFormatting.RED, error.getComponent()));
+                Util.sendSystemMessage(player, Lang.Items.ALCHEMICAL_BOOK_TELEPORT_FAILED.translateColored(ChatFormatting.RED, error.getComponent()));
             } catch (IllegalStateException error) {
-                player.sendSystemMessage(Lang.PROVIDER_ERROR.translateColored(ChatFormatting.RED));
+                Util.sendSystemMessage(player, Lang.PROVIDER_ERROR.translateColored(ChatFormatting.RED));
             }
         }
     }

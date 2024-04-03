@@ -7,6 +7,7 @@ import cool.furry.mc.forge.projectexpansion.util.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -58,7 +59,7 @@ public class BlockTransmutationInterface extends Block implements EntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide)return InteractionResult.SUCCESS;
         BlockEntity block = level.getBlockEntity(pos);
-        if (block instanceof BlockEntityTransmutationInterface be) player.displayClientMessage(Component.literal(be.ownerName), true);
+        if (block instanceof BlockEntityTransmutationInterface be) player.displayClientMessage(new TextComponent(be.ownerName), true);
         return super.use(state, level, pos, player, hand, hit);
     }
 

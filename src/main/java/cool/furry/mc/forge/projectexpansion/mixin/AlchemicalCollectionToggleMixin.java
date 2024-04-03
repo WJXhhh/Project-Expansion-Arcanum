@@ -19,7 +19,7 @@ public class AlchemicalCollectionToggleMixin {
     @Inject(at = @At("HEAD"), method = "tryPerformCapability(Lnet/minecraft/world/item/ItemStack;Lnet/minecraftforge/common/capabilities/Capability;Lnet/minecraftforge/common/util/NonNullPredicate;)Z", cancellable = true, remap = false)
     private static <CAPABILITY> void tryPerformCapability(ItemStack stack, Capability<CAPABILITY> capability, NonNullPredicate<CAPABILITY> perform, CallbackInfoReturnable<Boolean> cir) {
         if(capability == PECapabilities.EXTRA_FUNCTION_ITEM_CAPABILITY) {
-            boolean hasEnch = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
+            boolean hasEnch = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
             if(hasEnch) {
                 boolean currentValue = stack.getOrCreateTag().getBoolean(TagNames.ALCHEMICAL_COLLECTION_ENABLED);
                 stack.getOrCreateTag().putBoolean(TagNames.ALCHEMICAL_COLLECTION_ENABLED, !currentValue);

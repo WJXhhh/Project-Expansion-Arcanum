@@ -4,6 +4,7 @@ import cool.furry.mc.forge.projectexpansion.capability.CapabilityAlchemicalBookL
 import cool.furry.mc.forge.projectexpansion.net.packets.IPacket;
 import cool.furry.mc.forge.projectexpansion.util.ClientSideHandler;
 import cool.furry.mc.forge.projectexpansion.util.Lang;
+import cool.furry.mc.forge.projectexpansion.util.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -49,7 +50,7 @@ public record PacketSyncAlchemicalBookLocations(List<CapabilityAlchemicalBookLoc
             locations.sort(Comparator.comparingInt(CapabilityAlchemicalBookLocations.TeleportLocation::index));
         } catch (Exception e) {
             LogManager.getLogger(PacketSyncAlchemicalBookLocations.class).error("Failed to read locations from buffer", e);
-            Objects.requireNonNull(Minecraft.getInstance().player).sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_CORRUPTED.translateColored(ChatFormatting.RED));
+            Util.sendSystemMessage(Objects.requireNonNull(Minecraft.getInstance().player), Lang.Items.ALCHEMICAL_BOOK_CORRUPTED.translateColored(ChatFormatting.RED));
         }
         return locations;
     }

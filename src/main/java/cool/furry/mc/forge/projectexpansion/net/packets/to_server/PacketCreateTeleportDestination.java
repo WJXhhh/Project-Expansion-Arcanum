@@ -6,6 +6,7 @@ import cool.furry.mc.forge.projectexpansion.capability.IAlchemicalBookLocationsP
 import cool.furry.mc.forge.projectexpansion.item.ItemAlchemicalBook;
 import cool.furry.mc.forge.projectexpansion.net.packets.IPacket;
 import cool.furry.mc.forge.projectexpansion.util.Lang;
+import cool.furry.mc.forge.projectexpansion.util.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,7 +38,7 @@ public class PacketCreateTeleportDestination implements IPacket {
                 provider.sync((ServerPlayer) player);
                 provider.syncToOtherPlayers();
             } catch (CapabilityAlchemicalBookLocations.BookError error) {
-                player.sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_CREATE_FAILED.translateColored(ChatFormatting.RED, error.getComponent()));
+                Util.sendSystemMessage(player, Lang.Items.ALCHEMICAL_BOOK_CREATE_FAILED.translateColored(ChatFormatting.RED, error.getComponent()));
             }
         }
     }

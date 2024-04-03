@@ -17,6 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,7 +33,7 @@ public class ItemTooltipEvent {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void itemTooltipEvent(net.minecraftforge.event.entity.player.ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if (stack.isEmpty()|| event.getEntity() == null || event.getEntity().isDeadOrDying()) {
+        if (stack.isEmpty()|| event.getPlayer() == null || event.getPlayer().isDeadOrDying()) {
             return;
         }
 
@@ -42,7 +43,7 @@ public class ItemTooltipEvent {
                 break learnedTooltip;
             }
 
-            IKnowledgeProvider provider = Util.getKnowledgeProvider(event.getEntity());
+            IKnowledgeProvider provider = Util.getKnowledgeProvider(event.getPlayer());
             if (provider == null) {
                 break learnedTooltip;
             }
@@ -64,9 +65,9 @@ public class ItemTooltipEvent {
 
             // attempt to add a minimal notice
             if (index.get() != -1) {
-                event.getToolTip().set(index.get(), event.getToolTip().get(index.get()).copy().append(Component.literal(" (").setStyle(ColorStyle.WHITE)).append(hasKnowledge ?
-                        Component.literal("✓").setStyle(ColorStyle.GREEN) : Component.literal("✗").setStyle(ColorStyle.RED)
-                ).append(Component.literal(")").setStyle(ColorStyle.WHITE)));
+                event.getToolTip().set(index.get(), event.getToolTip().get(index.get()).copy().append(new TextComponent(" (").setStyle(ColorStyle.WHITE)).append(hasKnowledge ?
+                        new TextComponent("✓").setStyle(ColorStyle.GREEN) : new TextComponent("✗").setStyle(ColorStyle.RED)
+                ).append(new TextComponent(")").setStyle(ColorStyle.WHITE)));
             } else {
                 // if we can't find an existing EMC element, add a new more detailed element
                 event.getToolTip().add(hasKnowledge ?
@@ -80,7 +81,7 @@ public class ItemTooltipEvent {
             }
         }
 
-        boolean hasEnch = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
+        boolean hasEnch = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
         if(hasEnch) {
             boolean enabled = stack.getOrCreateTag().getBoolean(TagNames.ALCHEMICAL_COLLECTION_ENABLED);
             event.getToolTip().add(Lang.ALCHEMICAL_COLLECTION.translate(enabled ? Lang.ENABLED.translateColored(ChatFormatting.GREEN) : Lang.DISABLED.translateColored(ChatFormatting.RED)));

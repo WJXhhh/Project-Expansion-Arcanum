@@ -9,6 +9,7 @@ import cool.furry.mc.forge.projectexpansion.util.Util;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -73,7 +74,7 @@ public class ItemInfiniteSteak extends Item {
         }
         BigInteger emc = provider.getEmc().subtract(BigInteger.valueOf(Config.infiniteSteakCost.get()));
         if (emc.compareTo(BigInteger.ZERO) < 0) {
-            player.displayClientMessage(Lang.Items.INFINITE_STEAK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(Config.infiniteSteakCost.get().toString())), true);
+            player.displayClientMessage(Lang.Items.INFINITE_STEAK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, new TextComponent(Config.infiniteSteakCost.get().toString())), true);
             return stack;
         }
         provider.setEmc(emc);

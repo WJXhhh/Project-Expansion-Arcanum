@@ -42,7 +42,7 @@ public abstract class AlchemicalCollectionMixin {
         @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
         if(provider == null) return;
         IEMCProxy proxy = ProjectEAPI.getEMCProxy();
-        boolean hasEnch = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
+        boolean hasEnch = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
         if(!state.canHarvestBlock(level, pos, player) || !hasEnch) return;
         boolean enabled = stack.getOrCreateTag().getBoolean(TagNames.ALCHEMICAL_COLLECTION_ENABLED);
         if(!enabled) {

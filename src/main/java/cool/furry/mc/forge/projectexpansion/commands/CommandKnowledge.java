@@ -1,6 +1,5 @@
 package cool.furry.mc.forge.projectexpansion.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -14,12 +13,12 @@ import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.emc.nbt.NBTManager;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,8 +32,8 @@ public class CommandKnowledge {
         CLEAR,
         TEST
     }
-    public static LiteralArgumentBuilder<CommandSourceStack> getArguments(CommandBuildContext buildContext) {
-         return Commands.literal("knowledge")
+    public static LiteralArgumentBuilder<CommandSourceStack> getArguments() {
+        return Commands.literal("knowledge")
              .requires(Permissions.KNOWLEDGE)
             .then(Commands.literal("clear")
                 .requires(Permissions.KNOWLEDGE_CLEAR)
@@ -45,7 +44,7 @@ public class CommandKnowledge {
             .then(Commands.literal("learn")
                 .requires(Permissions.KNOWLEDGE_LEARN)
                 .then(Commands.argument("player", EntityArgument.player())
-                    .then(Commands.argument("item", ItemArgument.item(buildContext))
+                    .then(Commands.argument("item", ItemArgument.item())
                         .executes((ctx) -> CommandKnowledge.handle(ctx, ActionType.LEARN))
                     )
               )
@@ -53,7 +52,7 @@ public class CommandKnowledge {
             .then(Commands.literal("unlearn")
                 .requires(Permissions.KNOWLEDGE_UNLEARN)
                  .then(Commands.argument("player", EntityArgument.player())
-                     .then(Commands.argument("item", ItemArgument.item(buildContext))
+                     .then(Commands.argument("item", ItemArgument.item())
                          .executes((ctx) -> CommandKnowledge.handle(ctx, ActionType.UNLEARN))
                     )
                 )
@@ -61,7 +60,7 @@ public class CommandKnowledge {
             .then(Commands.literal("test")
                 .requires(Permissions.KNOWLEDGE_TEST)
                  .then(Commands.argument("player", EntityArgument.player())
-                     .then(Commands.argument("item", ItemArgument.item(buildContext))
+                     .then(Commands.argument("item", ItemArgument.item())
                          .executes((ctx) -> CommandKnowledge.handle(ctx, ActionType.TEST))
                     )
                 )
@@ -108,7 +107,7 @@ public class CommandKnowledge {
             } else {
                 ctx.getSource().sendSuccess(Lang.Commands.KNOWLEDGE_CLEAR_SUCCESS.translateColored(ChatFormatting.GREEN, player.getDisplayName()), true);
                 if(Config.notifyCommandChanges.get()) {
-                    player.sendSystemMessage(Lang.Commands.KNOWLEDGE_CLEAR_NOTIFICATION.translate(getSourceName(ctx.getSource())));;
+                    Util.sendSystemMessage(player, Lang.Commands.KNOWLEDGE_CLEAR_NOTIFICATION.translate(getSourceName(ctx.getSource())));
                 }
             }
             return 1;
@@ -141,7 +140,7 @@ public class CommandKnowledge {
                     } else {
                         ctx.getSource().sendSuccess(Lang.Commands.KNOWLEDGE_LEARN_SUCCESS.translateColored(ChatFormatting.GRAY, player.getDisplayName(), new ItemStack(item).getDisplayName()), true);
                         if (Config.notifyCommandChanges.get()) {
-                            player.sendSystemMessage(Lang.Commands.KNOWLEDGE_LEARN_NOTIFICATION.translateColored(ChatFormatting.GRAY, new ItemStack(item).getDisplayName(), getSourceName(ctx.getSource())));
+                            Util.sendSystemMessage(player, Lang.Commands.KNOWLEDGE_LEARN_NOTIFICATION.translateColored(ChatFormatting.GRAY, new ItemStack(item).getDisplayName(), getSourceName(ctx.getSource())));
                         }
                     }
                 }
@@ -160,7 +159,7 @@ public class CommandKnowledge {
                     } else {
                         ctx.getSource().sendSuccess(Lang.Commands.KNOWLEDGE_UNLEARN_SUCCESS.translateColored(ChatFormatting.GREEN, player.getDisplayName(), new ItemStack(item).getDisplayName()), true);
                         if (Config.notifyCommandChanges.get()) {
-                            player.sendSystemMessage(Lang.Commands.KNOWLEDGE_UNLEARN_NOTIFICATION.translateColored(ChatFormatting.GRAY, new ItemStack(item).getDisplayName(), getSourceName(ctx.getSource())));
+                            Util.sendSystemMessage(player, Lang.Commands.KNOWLEDGE_UNLEARN_NOTIFICATION.translateColored(ChatFormatting.GRAY, new ItemStack(item).getDisplayName(), getSourceName(ctx.getSource())));
                         }
                     }
                 }

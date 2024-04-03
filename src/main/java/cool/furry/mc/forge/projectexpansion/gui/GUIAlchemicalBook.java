@@ -19,6 +19,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -74,8 +76,8 @@ public class GUIAlchemicalBook extends Screen {
 
     private boolean canTeleport(CapabilityAlchemicalBookLocations.TeleportLocation location) {
         return getKnowledgeCapability()
-            .getEmc()
-            .compareTo(BigInteger.valueOf(location.getCost(getItemStack(), player))) >= 0;
+                .getEmc()
+                .compareTo(BigInteger.valueOf(location.getCost(getItemStack(), player))) >= 0;
     }
 
     private final int w = 90, h = 20;
@@ -95,7 +97,7 @@ public class GUIAlchemicalBook extends Screen {
                 buttonCreate.setName(str);
             });
         }
-        String biomeName = Objects.requireNonNull(player.getLevel().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(player.getLevel().getBiome(player.getOnPos()).get())).getPath();
+        String biomeName = Objects.requireNonNull(player.getLevel().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(player.getLevel().getBiome(player.getOnPos()).value())).getPath();
         createName.setValue(Arrays.stream(biomeName.split("_")).map(StringUtils::capitalize).reduce("", (a, b) -> a + " " + b).trim());
         addRenderableWidget(buttonBack = new ButtonBack(createName.x + createName.getWidth() + 8, buttonClose.y, w / 2, h));
         addRenderableWidget(createName);
@@ -133,6 +135,13 @@ public class GUIAlchemicalBook extends Screen {
         }
 
         if(!hasBack) buttonBack.updateLocation(null);
+    }
+
+    // no rebuildWidgets function in 1.18, this mimics the behavior
+    private void rebuildWidgets() {
+        this.clearWidgets();
+        this.setFocused(null);
+        this.init();
     }
 
     public void setLocations(List<CapabilityAlchemicalBookLocations.TeleportLocation> locations, boolean canEdit) {
@@ -178,7 +187,7 @@ public class GUIAlchemicalBook extends Screen {
 
     private class ButtonDelete extends Button {
         public ButtonDelete(int x, int y, int w, int h, String name) {
-            super(x, y, w, h, Component.literal("X"), (button) -> PacketHandler.sendToServer(new PacketDeleteTeleportDestination(name, player, hand)));
+            super(x, y, w, h, new TextComponent("X"), (button) -> PacketHandler.sendToServer(new PacketDeleteTeleportDestination(name, player, hand)));
         }
     }
 
@@ -187,7 +196,7 @@ public class GUIAlchemicalBook extends Screen {
         boolean canTeleport;
         boolean hasEnoughEMC;
         public ButtonTeleport(int x, int y, int w, int h, CapabilityAlchemicalBookLocations.TeleportLocation location) {
-            super(x, y, w, h, Component.literal(location.name()), (button) -> {
+            super(x, y, w, h, new TextComponent(location.name()), (button) -> {
                 PacketHandler.sendToServer(new PacketTeleportToDestination(location.name(), player, hand));
                 player.closeContainer();
             });
@@ -243,7 +252,7 @@ public class GUIAlchemicalBook extends Screen {
     public ArrayList<Component> getTeleportationTooltips(CapabilityAlchemicalBookLocations.TeleportLocation location, boolean canTeleport) {
         ArrayList<Component> tooltips = new ArrayList<>();
         if(canTeleport) {
-            tooltips.add(Component.literal(String.format("%d, %d, %d", location.x(), location.y(), location.z())));
+            tooltips.add(new TextComponent(String.format("%d, %d, %d", location.x(), location.y(), location.z())));
             int distance = (int) location.distanceFrom(player.getOnPos());
             if(distance > 0) {
                 tooltips.add(Lang.ALCHEMICAL_BOOK_DISTANCE.translate(distance));
@@ -253,7 +262,7 @@ public class GUIAlchemicalBook extends Screen {
                 tooltips.add(Lang.ALCHEMICAL_BOOK_COST.translate(EMCFormat.getComponent(cost).withStyle(ChatFormatting.YELLOW)));
             }
         } else {
-            tooltips.add(Lang.ALCHEMICAL_BOOK_DIMENSION.translate(Component.translatable(location.dimension().location().toString())));
+            tooltips.add(Lang.ALCHEMICAL_BOOK_DIMENSION.translate(new TranslatableComponent(location.dimension().location().toString())));
         }
 
         return tooltips;

@@ -51,12 +51,17 @@ public class Main {
         SoundEvents.Registry.register(bus);
         MenuTypes.Registry.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::serverTick);
+        bus.addListener(this::registerCapabilities);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.Spec, "project-expansion.toml");
 
         Fuel.registerAll();
         Matter.registerAll();
         Star.registerAll();
         AdvancedAlchemicalChest.register();
+    }
+
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(IAlchemicalBookLocationsProvider.class);
     }
 
     private void serverTick(TickEvent.ServerTickEvent event) {
@@ -68,7 +73,7 @@ public class Main {
                     stack.getOrCreateTag().putUUID(TagNames.OWNER, player.getUUID());
                     continue;
                 }
-                boolean hasEnch = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
+                boolean hasEnch = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
                 if(hasEnch && !stack.getOrCreateTag().contains(TagNames.ALCHEMICAL_COLLECTION_ENABLED)) {
                     stack.getOrCreateTag().putBoolean(TagNames.ALCHEMICAL_COLLECTION_ENABLED, true);
                 }

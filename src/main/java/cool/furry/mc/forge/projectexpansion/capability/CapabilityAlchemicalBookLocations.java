@@ -18,6 +18,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -215,10 +217,10 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
                 this.name = name;
             }
             public DimensionNotFoundError(ResourceKey<Level> level) {
-                this(Component.translatable(level.location().toLanguageKey()));
+                this(new TranslatableComponent(level.location().toString().replace(":", ".")));
             }
             public DimensionNotFoundError(String name) {
-                this(Component.literal(name));
+                this(new TextComponent(name));
             }
 
             @Override
@@ -238,7 +240,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
                 this.name = name;
             }
             public DuplicateNameError(String name) {
-                this(Component.literal(name));
+                this(new TextComponent(name));
             }
 
             @Override
@@ -253,7 +255,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
                 this.name = name;
             }
             public NameNotFoundError(String name) {
-                this(Component.literal(name));
+                this(new TextComponent(name));
             }
 
             @Override
@@ -268,7 +270,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
                 this.player = name;
             }
             public OwnerOfflineError(String name) {
-                this(Component.literal(name));
+                this(new TextComponent(name));
             }
 
             @Override

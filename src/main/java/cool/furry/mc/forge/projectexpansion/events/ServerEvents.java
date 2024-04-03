@@ -9,6 +9,7 @@ import cool.furry.mc.forge.projectexpansion.util.SunExposureHelper;
 import cool.furry.mc.forge.projectexpansion.util.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,6 +21,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,7 +36,7 @@ public class ServerEvents {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if(event.phase != TickEvent.Phase.START) return;
 
-        for (ServerPlayer player: event.getServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer player: ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             handleSunExposure(event, player);
             handleWeighedDown(event, player);
         }
@@ -78,14 +80,14 @@ public class ServerEvents {
                 SunExposureTimer timer = SunExposureTimer.addOrIncrement(player, block);
                 if (timer.over()) {
                     if(!SunExposureHelper.wearingAllProtectiveArmor(player)) {
-                        player.addEffect(EffectHelper.create(MobEffects.DARKNESS, 50, 0, false, false));
+                        player.addEffect(EffectHelper.create(MobEffects.BLINDNESS, 50, 0, false, false));
                         // we don't want them taking fire damage while looking
                         player.addEffect(EffectHelper.create(MobEffects.FIRE_RESISTANCE, 2, 0, false, false));
                         player.setRemainingFireTicks(2);
                         if(timer.time() % 15 == 0) {
                             player.hurt(DamageSources.STARE_AT_SUN, 8.0f);
                         }
-                        Advancement advancement = event.getServer().getAdvancements().getAdvancement(BLINDED_BY_THE_LIGHT);
+                        Advancement advancement = ServerLifecycleHooks.getCurrentServer().getAdvancements().getAdvancement(BLINDED_BY_THE_LIGHT);
                         if (advancement != null) {
                             player.getAdvancements().award(advancement, "blinded_by_the_light");
                         }

@@ -12,6 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -60,7 +61,7 @@ public class ItemAlchemicalBook extends Item {
         }
         if(getMode(stack) == Mode.PLAYER) {
             Player player = getPlayer(stack);
-            list.add(Lang.Items.ALCHEMICAL_BOOK_BOUND_TO.translateColored(ChatFormatting.RED, player == null ? Component.literal(stack.getOrCreateTag().getString(TagNames.OWNER_NAME)).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
+            list.add(Lang.Items.ALCHEMICAL_BOOK_BOUND_TO.translateColored(ChatFormatting.RED, player == null ? new TextComponent(stack.getOrCreateTag().getString(TagNames.OWNER_NAME)).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
         }
         list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
     }
@@ -145,23 +146,23 @@ public class ItemAlchemicalBook extends Item {
                 CompoundTag tag = stack.getOrCreateTag();
                 if(getMode(stack) == Mode.PLAYER) {
                     if(!tag.getUUID(TagNames.OWNER).equals(player.getUUID())) {
-                        player.sendSystemMessage(Lang.NOT_OWNER.translateColored(ChatFormatting.RED, Component.literal(tag.getString(TagNames.OWNER_NAME)).withStyle(ChatFormatting.DARK_AQUA)));
+                        Util.sendSystemMessage(player, Lang.NOT_OWNER.translateColored(ChatFormatting.RED, new TextComponent(tag.getString(TagNames.OWNER_NAME)).withStyle(ChatFormatting.DARK_AQUA)));
                         return InteractionResultHolder.fail(stack);
                     } else {
                         tag.remove(TagNames.OWNER);
                         tag.remove(TagNames.OWNER_NAME);
-                        player.sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_NO_LONGER_BOUND.translateColored(ChatFormatting.GREEN, tag.getString(TagNames.OWNER_NAME)));
+                        Util.sendSystemMessage(player, Lang.Items.ALCHEMICAL_BOOK_NO_LONGER_BOUND.translateColored(ChatFormatting.GREEN, tag.getString(TagNames.OWNER_NAME)));
                     }
                 } else {
                     tag.putUUID(TagNames.OWNER, player.getUUID());
                     tag.putString(TagNames.OWNER_NAME, player.getName().getString());
-                    player.sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_NOW_BOUND.translateColored(ChatFormatting.GREEN, tag.getString(TagNames.OWNER_NAME)));
+                    Util.sendSystemMessage(player, Lang.Items.ALCHEMICAL_BOOK_NOW_BOUND.translateColored(ChatFormatting.GREEN, tag.getString(TagNames.OWNER_NAME)));
                 }
             } else {
                 try {
                     PacketHandler.sendTo(new PacketOpenAlchemicalBookGUI(hand, CapabilityAlchemicalBookLocations.from(stack).getLocations(), getMode(stack), canEdit(stack, (ServerPlayer) player)), (ServerPlayer) player);
                 } catch (CapabilityAlchemicalBookLocations.BookError.OwnerOfflineError ignore) {
-                    player.sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_OWNER_NOT_ONLINE.translateColored(ChatFormatting.RED));
+                    Util.sendSystemMessage(player, Lang.Items.ALCHEMICAL_BOOK_OWNER_NOT_ONLINE.translateColored(ChatFormatting.RED));
                     return InteractionResultHolder.fail(stack);
                 }
             }

@@ -10,6 +10,7 @@ import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -227,7 +228,7 @@ public enum Matter {
 
     public MutableComponent getFormattedComponent(BigInteger value) {
         //  && !Screen.hasShiftDown()
-        return (equals(FINAL) ? Component.literal("INFINITY") : EMCFormat.getComponent(value)).setStyle(ColorStyle.GREEN);
+        return (equals(FINAL) ? new TextComponent("INFINITY") : EMCFormat.getComponent(value)).setStyle(ColorStyle.GREEN);
     }
 
     public MutableComponent getEMCLinkItemLimitComponent() {

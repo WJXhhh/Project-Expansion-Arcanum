@@ -7,6 +7,7 @@ import moze_intel.projecte.gameObjs.registration.impl.ContainerTypeDeferredRegis
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -19,7 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 @SuppressWarnings("unused")
 public class MenuTypes {
-    public static final DeferredRegister<MenuType<?>> Registry = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Main.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> Registry = DeferredRegister.create(net.minecraft.core.Registry.MENU_REGISTRY, Main.MOD_ID);
 
     public static final RegistryObject<MenuType<ContainerCollector>> COLLECTOR_TIER_1 = register("collector_tier_1", BlockEntityCollector.class, ContainerCollector.Tier1::new);
     public static final RegistryObject<MenuType<ContainerCollector>> COLLECTOR_TIER_2 = register("collector_tier_2", BlockEntityCollector.class, ContainerCollector.Tier2::new);

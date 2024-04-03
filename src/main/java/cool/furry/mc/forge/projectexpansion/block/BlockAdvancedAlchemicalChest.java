@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -47,7 +46,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.NetworkHooks;
@@ -57,6 +56,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 // Many methods lovingly borrowed (stolen) from ProjectE
 // https://github.com/sinkillerj/ProjectE/blob/mc1.18.x/src/main/java/moze_intel/projecte/gameObjs/blocks/AlchemicalChest.java
@@ -112,7 +112,7 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 				return be.handleActivation(player, hand);
 			} else {
 				if(be.handleActivation(player, BlockEntityOwnable.ActivationType.CHECK_OWNERSHIP)) {
-					NetworkHooks.openScreen((ServerPlayer) player, new ContainerProvider(be, hand), (buf) -> {
+					NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(be, hand), (buf) -> {
 						buf.writeEnum(hand);
 						buf.writeByte(player.getInventory().selected);
 						buf.writeBoolean(false);
@@ -149,7 +149,7 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 
 	@Override
 	@SuppressWarnings("deprecation")
-	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+	public void tick(BlockState state, ServerLevel level, BlockPos pos, Random random) {
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity instanceof BlockEntityAdvancedAlchemicalChest be) be.recheckOpen();
 	}
@@ -176,7 +176,7 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity instanceof BlockEntityAdvancedAlchemicalChest be) {
-			return be.getCapability(ForgeCapabilities.ITEM_HANDLER).map(ItemHandlerHelper::calcRedstoneFromInventory).orElse(0);
+			return be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(ItemHandlerHelper::calcRedstoneFromInventory).orElse(0);
 		}
 		return 0;
 	}

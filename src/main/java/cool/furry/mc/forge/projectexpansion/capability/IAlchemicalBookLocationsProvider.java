@@ -7,11 +7,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
-@AutoRegisterCapability
 @SuppressWarnings("unused")
 public interface IAlchemicalBookLocationsProvider extends INBTSerializable<CompoundTag> {
     void addLocation(Player player, String name) throws CapabilityAlchemicalBookLocations.BookError.DuplicateNameError;

@@ -8,11 +8,9 @@ import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
 import moze_intel.projecte.emc.nbt.NBTManager;
 import moze_intel.projecte.gameObjs.items.IFireProtector;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -227,7 +225,23 @@ public class Util {
     public static Style suggestCommand(Style style, String command) {
         return style
             .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command))
-            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command).withStyle(ChatFormatting.RED)));
+            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(command).withStyle(ChatFormatting.RED)));
+    }
+
+    public static void sendSystemMessage(Player player, Component content, UUID uuid) {
+        player.sendMessage(content, uuid);
+    }
+
+    public static void sendSystemMessage(Player player, Component content) {
+        sendSystemMessage(player, content, DUMMY_UUID);
+    }
+
+    public static void sendSystemMessage(CommandSourceStack ctx, Component content, boolean broadcast) {
+        ctx.sendSuccess(content, broadcast);
+    }
+
+    public static void sendSystemMessage(CommandSourceStack ctx, Component content) {
+        sendSystemMessage(ctx, content, false);
     }
 
     public static BigDecimal divide(BigInteger dividend, BigInteger divisor) {

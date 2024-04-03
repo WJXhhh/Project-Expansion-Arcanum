@@ -10,9 +10,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.LevelEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -54,19 +54,19 @@ public class EMCDisplay {
     }
 
     @SubscribeEvent
-    public static void clientDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void clientDisconnect(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         if (!Config.emcDisplay.get()) return;
         reset();
     }
 
     @SubscribeEvent
-    public static void onWorldUnload(LevelEvent.Unload event) {
+    public static void onWorldUnload(WorldEvent.Unload event) {
         if (!Config.emcDisplay.get()) return;
         reset();
     }
 
     @SubscribeEvent
-    public static void onRenderGUI(CustomizeGuiOverlayEvent.DebugText  event) {
+    public static void onRenderGUI(RenderGameOverlayEvent.Text event) {
         if (!Config.emcDisplay.get()) return;
         BigInteger avg = history[0].add(history[1]);
         String str = EMCFormat.format(emc);

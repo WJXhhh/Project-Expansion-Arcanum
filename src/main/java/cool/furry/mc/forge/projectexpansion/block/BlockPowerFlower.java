@@ -7,6 +7,7 @@ import cool.furry.mc.forge.projectexpansion.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -76,7 +77,7 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, level, list, flag);
-        list.add(Lang.Blocks.POWER_FLOWER_TOOLTIP.translateColored(ChatFormatting.GRAY, Component.literal(Config.tickDelay.get().toString()).setStyle(ColorStyle.GREEN), Component.literal(Config.tickDelay.get() == 1 ? "" : "s").setStyle(ColorStyle.GRAY)));
+        list.add(Lang.Blocks.POWER_FLOWER_TOOLTIP.translateColored(ChatFormatting.GRAY, new TextComponent(Config.tickDelay.get().toString()).setStyle(ColorStyle.GREEN), new TextComponent(Config.tickDelay.get() == 1 ? "" : "s").setStyle(ColorStyle.GRAY)));
         list.add(Lang.Blocks.POWER_FLOWER_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getPowerFlowerOutput()).setStyle(ColorStyle.GREEN)));
         if(stack.getCount() > 1) {
             list.add(Lang.Blocks.POWER_FLOWER_STACK_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getPowerFlowerOutput().multiply(BigInteger.valueOf(stack.getCount()))).setStyle(ColorStyle.GREEN)));
@@ -88,7 +89,7 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof BlockEntityPowerFlower be) player.displayClientMessage(Component.literal(be.ownerName), true);
+        if (blockEntity instanceof BlockEntityPowerFlower be) player.displayClientMessage(new TextComponent(be.ownerName), true);
         return super.use(state, level, pos, player, hand, hit);
     }
 

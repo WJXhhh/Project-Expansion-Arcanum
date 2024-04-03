@@ -15,7 +15,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -29,12 +30,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
@@ -172,11 +174,11 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
                 return InteractionResult.CONSUME;
             }
             if (!itemHandler.isItemValid(0, inHand)) {
-                player.displayClientMessage(Lang.Blocks.EMC_LINK_EMPTY_HAND.translateColored(ChatFormatting.RED, Component.translatable(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)), true);
+                player.displayClientMessage(Lang.Blocks.EMC_LINK_EMPTY_HAND.translateColored(ChatFormatting.RED, new TranslatableComponent(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)), true);
                 return InteractionResult.CONSUME;
             }
             setInternalItem(inHand);
-            player.displayClientMessage(Lang.Blocks.EMC_LINK_SET.translateColored(ChatFormatting.GREEN, Component.literal(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)), true);
+            player.displayClientMessage(Lang.Blocks.EMC_LINK_SET.translateColored(ChatFormatting.GREEN, new TextComponent(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)), true);
             return InteractionResult.SUCCESS;
         }
 
@@ -194,7 +196,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             }
             BigInteger emc = provider.getEmc();
             if(emc.compareTo(BigInteger.valueOf(cost)) < 0) {
-                player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(EMCFormat.format(BigInteger.valueOf(ProjectEAPI.getEMCProxy().getValue(itemStack)))).setStyle(ColorStyle.GREEN)), true);
+                player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, new TextComponent(EMCFormat.format(BigInteger.valueOf(ProjectEAPI.getEMCProxy().getValue(itemStack)))).setStyle(ColorStyle.GREEN)), true);
                 return InteractionResult.CONSUME;
             }
             FluidActionResult fillResult = FluidUtil.tryFillContainer(inHand, fluidHandler, 1000, player, true);
@@ -215,7 +217,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             }
             ItemStack extract = itemHandler.extractItemInternal(0, itemStack.getMaxStackSize(), false, Config.limitEmcLinkVendor.get());
             if (extract.isEmpty()) {
-                player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(EMCFormat.format(BigInteger.valueOf(ProjectEAPI.getEMCProxy().getValue(itemStack)))).setStyle(ColorStyle.GREEN)), true);
+                player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, new TextComponent(EMCFormat.format(BigInteger.valueOf(ProjectEAPI.getEMCProxy().getValue(itemStack)))).setStyle(ColorStyle.GREEN)), true);
                 return InteractionResult.CONSUME;
             }
             ItemHandlerHelper.giveItemToPlayer(player, extract);
@@ -368,7 +370,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
     }
 
     ItemHandler getItemHandlerCapability() {
-        return (ItemHandler) getCapability(ForgeCapabilities.ITEM_HANDLER).orElseThrow(NullPointerException::new);
+        return (ItemHandler) getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(NullPointerException::new);
     }
 
     private class FluidHandler implements IFluidHandler {
@@ -484,7 +486,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
     }
 
     FluidHandler getFluidHandlerCapability() {
-        return (FluidHandler) getCapability(ForgeCapabilities.FLUID_HANDLER).orElseThrow(NullPointerException::new);
+        return (FluidHandler) getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElseThrow(NullPointerException::new);
     }
 
     @Nonnull
@@ -492,8 +494,8 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         return
             (cap == PECapabilities.EMC_STORAGE_CAPABILITY) ? emcStorageCapability.cast() :
-                (cap == ForgeCapabilities.ITEM_HANDLER) ? itemHandlerCapability.cast() :
-                    (cap == ForgeCapabilities.FLUID_HANDLER) ? fluidHandlerCapability.cast() :
+                (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) ? itemHandlerCapability.cast() :
+                    (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) ? fluidHandlerCapability.cast() :
                         super.getCapability(cap, side);
     }
 

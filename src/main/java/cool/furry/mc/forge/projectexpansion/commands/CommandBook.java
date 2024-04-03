@@ -21,10 +21,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -67,13 +64,13 @@ public class CommandBook {
             .then(Commands.literal("clear")
                 .requires(Permissions.BOOK_CLEAR)
                 .then(Commands.literal("player")
-                        .requires(Permissions.BOOK_CLEAR_PLAYER)
+                    .requires(Permissions.BOOK_CLEAR_PLAYER)
                     .then(Commands.argument("player", EntityArgument.player())
                         .executes((ctx) -> handleClear(ctx, new BookTarget(ctx)))
                     )
                 )
                 .then(Commands.literal("hand")
-                        .requires(Permissions.BOOK_CLEAR_HAND)
+                    .requires(Permissions.BOOK_CLEAR_HAND)
                     .executes((ctx) -> handleClear(ctx, new BookTarget(ctx)))
                 )
             )
@@ -90,19 +87,19 @@ public class CommandBook {
                     .executes((ctx) -> handleDump(ctx, new BookTarget(ctx)))
                 )
             )
-                .then(Commands.literal("list")
-                    .requires(Permissions.BOOK_LIST)
-                    .then(Commands.literal("player")
-                        .requires(Permissions.BOOK_LIST_PLAYER)
-                        .then(Commands.argument("player", EntityArgument.player())
-                            .executes((ctx) -> handleList(ctx, new BookTarget(ctx)))
-                        )
-                    )
-                    .then(Commands.literal("hand")
-                        .requires(Permissions.BOOK_LIST_HAND)
+            .then(Commands.literal("list")
+                .requires(Permissions.BOOK_LIST)
+                .then(Commands.literal("player")
+                    .requires(Permissions.BOOK_LIST_PLAYER)
+                    .then(Commands.argument("player", EntityArgument.player())
                         .executes((ctx) -> handleList(ctx, new BookTarget(ctx)))
                     )
                 )
+                .then(Commands.literal("hand")
+                        .requires(Permissions.BOOK_LIST_HAND)
+                        .executes((ctx) -> handleList(ctx, new BookTarget(ctx)))
+                )
+            )
             .then(Commands.literal("remove")
                 .requires(Permissions.BOOK_REMOVE)
                 .then(Commands.literal("player")
@@ -197,18 +194,26 @@ public class CommandBook {
                 provider = CapabilityAlchemicalBookLocations.fromItemStack(stack);
                 if(stack.getItem() instanceof ItemAlchemicalBook book && book.getMode(stack) == ItemAlchemicalBook.Mode.PLAYER) {
                     Player player = book.getPlayer(target.itemStackOrException());
-                    Component playerDisplay = player == null ? Component.literal(target.itemStackOrException().getOrCreateTag().getString(TagNames.OWNER_NAME)).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA);
-                    Component command = Component.literal(String.format("/%s book %s player %s", CommandRegistry.COMMAND_BASE, commandSource, playerDisplay.getString())).withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s book %s player %s", CommandRegistry.COMMAND_BASE, commandSource, playerDisplay.getString()))).withColor(ChatFormatting.RED));
-                    ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_BOUND_TO_PLAYER.extendColored(commandSource, ChatFormatting.RED, playerDisplay, command));
+                    Component playerDisplay = player == null ? new TextComponent(target.itemStackOrException().getOrCreateTag().getString(TagNames.OWNER_NAME)).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA);
+                    Component command = new TextComponent(String.format("/%s book %s player %s", CommandRegistry.COMMAND_BASE, commandSource, playerDisplay.getString())).withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s book %s player %s", CommandRegistry.COMMAND_BASE, commandSource, playerDisplay.getString()))).withColor(ChatFormatting.RED));
+                    Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_BOUND_TO_PLAYER.extendColored(commandSource, ChatFormatting.RED, playerDisplay, command));
                 }
             }
         } catch (IllegalStateException e) {
-            ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_FAILED_TO_GET_CAPABILITY.translateColored(ChatFormatting.RED));
+            Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_FAILED_TO_GET_CAPABILITY.translateColored(ChatFormatting.RED));
             Main.Logger.error("Failed to get capability:");
             Main.Logger.error(e);
             return null;
         }
         return provider;
+    }
+
+    private static @Nullable ServerPlayer getPlayer(CommandContext<CommandSourceStack> ctx) {
+        try {
+            return ctx.getSource().getPlayerOrException();
+        } catch (CommandSyntaxException ignore) {
+            return null;
+        }
     }
 
     private static Component getSourceName(CommandSourceStack source) {
@@ -231,12 +236,12 @@ public class CommandBook {
         }
 
         String content = provider.serializeNBT().toString();
-        ctx.getSource().sendSuccess(Component.literal(content).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, content)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.Commands.BOOK_CLICK_TO_COPY.translateColored(ChatFormatting.AQUA)))).withStyle(ChatFormatting.GRAY), false);
+        ctx.getSource().sendSuccess(new TextComponent(content).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, content)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.Commands.BOOK_CLICK_TO_COPY.translateColored(ChatFormatting.AQUA)))).withStyle(ChatFormatting.GRAY), false);
         return 1;
     }
 
     private static Style suggestTeleportPos(CommandContext<CommandSourceStack> ctx, Style style, CapabilityAlchemicalBookLocations.TeleportLocation location) {
-        boolean isSameDimension = Objects.requireNonNull(ctx.getSource().getPlayer()).level.dimension().equals(location.dimension());
+        boolean isSameDimension = Objects.requireNonNull(getPlayer(ctx)).level.dimension().equals(location.dimension());
 
         if(isSameDimension) {
             return Util.suggestCommand(style, String.format("/tp %s %s %s", location.x(), location.y(), location.z())).withUnderlined(true);
@@ -246,7 +251,7 @@ public class CommandBook {
     }
 
     private static Style suggestTeleportDimension(CommandContext<CommandSourceStack> ctx, Style style, CapabilityAlchemicalBookLocations.TeleportLocation location) {
-        boolean isSameDimension = Objects.requireNonNull(ctx.getSource().getPlayer()).level.dimension().equals(location.dimension());
+        boolean isSameDimension = Objects.requireNonNull(getPlayer(ctx)).level.dimension().equals(location.dimension());
 
         if(!isSameDimension) {
             return Util.suggestCommand(style, String.format("/execute in %s run tp ~ ~ ~", location.dimension().location())).withUnderlined(true);
@@ -255,11 +260,11 @@ public class CommandBook {
     }
 
     private static Component formatLocation(CommandContext<CommandSourceStack> ctx, CapabilityAlchemicalBookLocations.TeleportLocation location) {
-        boolean shouldSuggestCommand = ctx.getSource().getPlayer() != null;
+        boolean shouldSuggestCommand = getPlayer(ctx) != null;
 
-        Component pos = Component.literal(String.format("%s %s %s", location.x(), location.y(), location.z())).withStyle(style -> shouldSuggestCommand ? suggestTeleportPos(ctx, style, location) : style).withStyle(ChatFormatting.DARK_AQUA);
-        Component dimension = Component.literal(location.dimension().location().toString()).withStyle(style -> shouldSuggestCommand ? suggestTeleportDimension(ctx, style, location) : style).withStyle(ChatFormatting.DARK_AQUA);
-        return Lang.Commands.BOOK_LIST_LOCATION.translateColored(ChatFormatting.AQUA, Component.literal(location.name()).withStyle(ChatFormatting.DARK_AQUA), pos, dimension);
+        Component pos = new TextComponent(String.format("%s %s %s", location.x(), location.y(), location.z())).withStyle(style -> shouldSuggestCommand ? suggestTeleportPos(ctx, style, location) : style).withStyle(ChatFormatting.DARK_AQUA);
+        Component dimension = new TextComponent(location.dimension().location().toString()).withStyle(style -> shouldSuggestCommand ? suggestTeleportDimension(ctx, style, location) : style).withStyle(ChatFormatting.DARK_AQUA);
+        return Lang.Commands.BOOK_LIST_LOCATION.translateColored(ChatFormatting.AQUA, new TextComponent(location.name()).withStyle(ChatFormatting.DARK_AQUA), pos, dimension);
     }
 
     private static int handleList(CommandContext<CommandSourceStack> ctx, BookTarget target) throws CommandSyntaxException {
@@ -273,10 +278,10 @@ public class CommandBook {
             return 0;
         }
 
-
         for(CapabilityAlchemicalBookLocations.TeleportLocation location : provider.getLocations()) {
-            ctx.getSource().sendSystemMessage(formatLocation(ctx, location));
+            Util.sendSystemMessage(ctx.getSource(), formatLocation(ctx, location));
         }
+
         return 1;
     }
 
@@ -296,22 +301,22 @@ public class CommandBook {
 
         if(provider.getMode() == ItemAlchemicalBook.Mode.PLAYER) {
             provider.syncToOtherPlayers();
-            @Nullable Player sourcePlayer = ctx.getSource().getPlayer();
+            @Nullable Player sourcePlayer = getPlayer(ctx);
             ServerPlayer targetPlayer = target.playerOrException();
-            if (sourcePlayer != null && sourcePlayer.getUUID().equals(targetPlayer.getUUID())) {
-                ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_CLEAR_PLAYER_SUCCESS_SELF.translateColored(ChatFormatting.GREEN));
+            if(sourcePlayer != null && sourcePlayer.getUUID().equals(targetPlayer.getUUID())) {
+                Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_CLEAR_PLAYER_SUCCESS_SELF.translateColored(ChatFormatting.GREEN));
                 return 1;
             }
 
             if(Config.notifyCommandChanges.get()) {
-                target.playerOrException().sendSystemMessage(Lang.Commands.BOOK_CLEAR_PLAYER_NOTIFICATION.translate(getSourceName(ctx.getSource())), false);
+                Util.sendSystemMessage(target.playerOrException(), Lang.Commands.BOOK_CLEAR_PLAYER_NOTIFICATION.translate(getSourceName(ctx.getSource())));
             }
 
-            ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_CLEAR_PLAYER_SUCCESS.translateColored(ChatFormatting.GREEN, targetPlayer.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
+            Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_CLEAR_PLAYER_SUCCESS.translateColored(ChatFormatting.GREEN, targetPlayer.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
             return 1;
         }
 
-        ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_CLEAR_ITEMSTACK_SUCCESS.translateColored(ChatFormatting.GREEN));
+        Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_CLEAR_ITEMSTACK_SUCCESS.translateColored(ChatFormatting.GREEN));
         return 1;
     }
 
@@ -336,26 +341,27 @@ public class CommandBook {
             return 0;
         }
 
-        ctx.getSource().sendSystemMessage(formatLocation(ctx, location));
+        String locationDump = location.serialize().toString();
+        ctx.getSource().sendSuccess(Lang.Commands.BOOK_REMOVE_BACKUP.translateColored(ChatFormatting.AQUA, new TextComponent(locationDump).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, locationDump)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.Commands.BOOK_REMOVE_BACKUP_INFO.translateColored(ChatFormatting.AQUA)))).withStyle(ChatFormatting.GRAY)), false);
 
         if(provider.getMode() == ItemAlchemicalBook.Mode.PLAYER) {
             provider.syncToOtherPlayers();
-            @Nullable Player sourcePlayer = ctx.getSource().getPlayer();
+            @Nullable Player sourcePlayer = getPlayer(ctx);
             ServerPlayer targetPlayer = target.playerOrException();
-            if (sourcePlayer != null && sourcePlayer.getUUID().equals(targetPlayer.getUUID())) {
-                ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_REMOVE_PLAYER_SUCCESS_SELF.translateColored(ChatFormatting.GREEN));
+            if(sourcePlayer != null && sourcePlayer.getUUID().equals(targetPlayer.getUUID())) {
+                Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_REMOVE_PLAYER_SUCCESS_SELF.translateColored(ChatFormatting.GREEN));
                 return 1;
             }
 
-            if(Config.notifyCommandChanges.get()) {
-                target.playerOrException().sendSystemMessage(Lang.Commands.BOOK_REMOVE_PLAYER_NOTIFICATION.translate(name, getSourceName(ctx.getSource())), false);
+            if (Config.notifyCommandChanges.get()) {
+                Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_REMOVE_PLAYER_NOTIFICATION.translate(name, getSourceName(ctx.getSource())), false);
             }
 
-            ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_REMOVE_PLAYER_SUCCESS.translateColored(ChatFormatting.GREEN, targetPlayer.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
+            Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_REMOVE_PLAYER_SUCCESS.translateColored(ChatFormatting.GREEN, targetPlayer.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
             return 1;
         }
 
-        ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_REMOVE_ITEMSTACK_SUCCESS.translateColored(ChatFormatting.GREEN));
+        Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_REMOVE_ITEMSTACK_SUCCESS.translateColored(ChatFormatting.GREEN));
         return 1;
     }
 
@@ -383,22 +389,22 @@ public class CommandBook {
 
         if(provider.getMode() == ItemAlchemicalBook.Mode.PLAYER) {
             provider.syncToOtherPlayers();
-            @Nullable Player sourcePlayer = ctx.getSource().getPlayer();
+            @Nullable Player sourcePlayer = getPlayer(ctx);
             ServerPlayer targetPlayer = target.playerOrException();
-            if (sourcePlayer != null && sourcePlayer.getUUID().equals(targetPlayer.getUUID())) {
-                ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_ADD_PLAYER_SUCCESS_SELF.translateColored(ChatFormatting.GREEN));
+            if(sourcePlayer != null && sourcePlayer.getUUID().equals(targetPlayer.getUUID())) {
+                Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_ADD_PLAYER_SUCCESS_SELF.translateColored(ChatFormatting.GREEN));
                 return 1;
             }
 
             if (Config.notifyCommandChanges.get()) {
-                target.playerOrException().sendSystemMessage(Lang.Commands.BOOK_ADD_PLAYER_NOTIFICATION.translateColored(ChatFormatting.GREEN, name, getSourceName(ctx.getSource())), false);
+                Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_ADD_PLAYER_NOTIFICATION.translate(name, getSourceName(ctx.getSource())), false);
             }
 
-            ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_ADD_PLAYER_SUCCESS.translateColored(ChatFormatting.GREEN, targetPlayer.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
+            Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_ADD_PLAYER_SUCCESS.translateColored(ChatFormatting.GREEN, targetPlayer.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
             return 1;
         }
 
-        ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_ADD_ITEMSTACK_SUCCESS.translateColored(ChatFormatting.GREEN));
+        Util.sendSystemMessage(ctx.getSource(), Lang.Commands.BOOK_ADD_ITEMSTACK_SUCCESS.translateColored(ChatFormatting.GREEN));
         return 1;
     }
 }

@@ -4,6 +4,7 @@ import cool.furry.mc.forge.projectexpansion.config.Config;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ public class EMCFormat extends DecimalFormat {
         return getComponent(new BigDecimal(value));
     }
     public static MutableComponent getComponent(BigDecimal value) {
-        return Component.literal(format(value));
+        return new TextComponent(format(value));
     }
 
     public static String formatForceShort(BigInteger value) {

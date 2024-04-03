@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -56,10 +57,10 @@ public class BlockEntityOwnable extends BlockEntity {
     // return true if ownership not checked, or if passed
     public boolean handleActivation(Player player, ActivationType activationType) {
         switch (activationType) {
-            case DISPLAY_NAME -> player.displayClientMessage(Component.literal(ownerName), true);
+            case DISPLAY_NAME -> player.displayClientMessage(new TextComponent(ownerName), true);
             case CHECK_OWNERSHIP -> {
                 if (!owner.equals(player.getUUID())) {
-                    player.displayClientMessage(Lang.NOT_OWNER.translateColored(ChatFormatting.RED, Component.literal(ownerName).setStyle(ColorStyle.RED)), true);
+                    player.displayClientMessage(Lang.NOT_OWNER.translateColored(ChatFormatting.RED, new TextComponent(ownerName).setStyle(ColorStyle.RED)), true);
                     return false;
                 }
             }

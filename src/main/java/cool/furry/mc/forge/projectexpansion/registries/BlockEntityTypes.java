@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 public class BlockEntityTypes {
-    public static final DeferredRegister<BlockEntityType<?>> Registry = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Main.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> Registry = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Main.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<BlockEntityEMCLink>> EMC_LINK = Registry.register("emc_link", () -> BlockEntityType.Builder.of(BlockEntityEMCLink::new, Arrays.stream(Matter.VALUES).map(Matter::getEMCLink).toArray(Block[]::new)).build(null));
     public static final RegistryObject<BlockEntityType<BlockEntityPowerFlower>> POWER_FLOWER = Registry.register("power_flower", () -> BlockEntityType.Builder.of(BlockEntityPowerFlower::new, Arrays.stream(Matter.VALUES).map(Matter::getPowerFlower).toArray(Block[]::new)).build(null));
