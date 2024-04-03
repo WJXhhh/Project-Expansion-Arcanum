@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class ItemMatterUpgrader extends Item {
     public ItemMatterUpgrader() {
-        super(new Properties().tab(Main.tab));
+        super(new Properties());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -72,7 +72,7 @@ public class ItemMatterUpgrader extends Item {
             player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, player.getDisplayName()), true);
             return InteractionResult.FAIL;
         }
-        IEMCProxy proxy = ProjectEAPI.getEMCProxy();
+        IEMCProxy proxy = IEMCProxy.INSTANCE;
 
         @Nullable BlockItem upgrade = null;
         @Nullable Block upgradeBlock = null;

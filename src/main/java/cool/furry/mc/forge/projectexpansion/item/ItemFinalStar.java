@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ItemFinalStar extends Item {
     public ItemFinalStar() {
-        super(new Properties().stacksTo(1).rarity(Rarity.EPIC).tab(Main.tab).fireResistant());
+        super(new Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant());
     }
 
     @OnlyIn(Dist.CLIENT)

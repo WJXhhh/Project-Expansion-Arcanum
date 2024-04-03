@@ -1,6 +1,5 @@
 package cool.furry.mc.forge.projectexpansion.block.entity;
 
-import cool.furry.mc.forge.projectexpansion.block.BlockCollector;
 import cool.furry.mc.forge.projectexpansion.block.BlockRelay;
 import cool.furry.mc.forge.projectexpansion.registries.BlockEntityTypes;
 import cool.furry.mc.forge.projectexpansion.util.IHasMatter;

@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -20,7 +21,7 @@ public class ClientRegistration {
 
     @SubscribeEvent
     public static void registerContainers(RegisterEvent event) {
-        event.register(Registry.MENU_REGISTRY, helper -> {
+        event.register(ForgeRegistries.MENU_TYPES.getRegistryKey(), helper -> {
             registerScreen(MenuTypes.COLLECTOR_TIER_1, GUICollector.Tier1::new);
             registerScreen(MenuTypes.COLLECTOR_TIER_2, GUICollector.Tier2::new);
             registerScreen(MenuTypes.COLLECTOR_TIER_3, GUICollector.Tier3::new);

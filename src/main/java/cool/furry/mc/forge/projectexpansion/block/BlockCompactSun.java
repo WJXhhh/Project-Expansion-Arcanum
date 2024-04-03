@@ -15,8 +15,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,10 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class BlockCompactSun extends Block {
     public BlockCompactSun() {
-        super(Block.Properties.of(Material.STONE).strength(2_000_000, 6_000_000).requiresCorrectToolForDrops().lightLevel((state) -> 15));
+        super(Block.Properties.of().strength(2_000_000, 6_000_000).requiresCorrectToolForDrops().lightLevel((state) -> 15));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -45,14 +43,15 @@ public class BlockCompactSun extends Block {
     }
 
     @Override
-    public MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor) {
-        return MaterialColor.COLOR_YELLOW;
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        return MapColor.COLOR_YELLOW;
     }
 
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState blockState, Entity entity) {
+        DamageSources damage = DamageSources.fromLevel(level);
         if (entity instanceof ServerPlayer player && !SunExposureHelper.wearingProtectiveBoots(player)) {
-            player.hurt(DamageSources.WALK_ON_SUN, 12.0F);
+            player.hurt(damage.walkOnSun(), 12.0F);
         }
         super.stepOn(level, pos, blockState, entity);
     }

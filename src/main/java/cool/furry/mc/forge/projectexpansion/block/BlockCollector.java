@@ -7,7 +7,6 @@ import cool.furry.mc.forge.projectexpansion.util.*;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.gameObjs.blocks.BlockDirection;
-import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -27,8 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -49,7 +47,7 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
     private final Matter matter;
 
     public BlockCollector(Matter matter) {
-        super(Block.Properties.of(Material.STONE).strength(0.3F, 0.9F).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15)));
+        super(Block.Properties.of().strength(0.3F, 0.9F).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15)));
         this.matter = matter;
     }
 
@@ -90,8 +88,8 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
     }
 
     @Override
-    public MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor) {
-        MaterialColor color = matter.materialColor == null ? null : matter.materialColor.get();
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        MapColor color = matter.mapColor == null ? null : matter.mapColor.get();
         return color != null ? color : super.getMapColor(state, level, pos, defaultColor);
     }
 

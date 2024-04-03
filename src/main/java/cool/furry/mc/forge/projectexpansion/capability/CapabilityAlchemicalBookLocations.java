@@ -15,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -130,7 +131,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
 
     public record TeleportLocation(String name, int x, int y, int z, ResourceKey<Level> dimension, int index) {
         public void teleportTo(ServerPlayer player, boolean acrossDimensions) throws BookError.DimensionNotFoundError, BookError.WrongDimensionError {
-            ResourceKey<Level> dim = player.getLevel().dimension();
+            ResourceKey<Level> dim = player.level().dimension();
 
             ServerLevel level = Util.getDimension(dimension);
             if(level == null) {
@@ -189,7 +190,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
             int y = tag.getInt(TagNames.Y);
             int z = tag.getInt(TagNames.Z);
             int index = tag.getInt(TagNames.INDEX);
-            ResourceKey<Level> dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString(TagNames.DIMENSION)));
+            ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString(TagNames.DIMENSION)));
             return new TeleportLocation(name, x, y, z, dimension, index);
         }
 
@@ -361,7 +362,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
 
     @Override
     public void addLocation(Player player, String name) throws BookError.DuplicateNameError {
-        addLocation(name, GlobalPos.of(player.level.dimension(), player.blockPosition()));
+        addLocation(name, GlobalPos.of(player.level().dimension(), player.blockPosition()));
     }
 
     @Override
@@ -395,7 +396,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
 
     @Override
     public void saveBackLocation(Player player) {
-        saveBackLocation(player, GlobalPos.of(player.level.dimension(), player.blockPosition()));
+        saveBackLocation(player, GlobalPos.of(player.level().dimension(), player.blockPosition()));
     }
 
     private static final String BACK_KEY = "@back";
@@ -425,7 +426,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
             throw new BookError.NoBackLocationError();
         }
 
-        ResourceKey<Level> dim = player.getLevel().dimension();
+        ResourceKey<Level> dim = player.level().dimension();
 
         ServerLevel level = Util.getDimension(backLocation.dimension());
         if(level == null) {
@@ -447,7 +448,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
 
     @Override
     public void teleportTo(String name, ServerPlayer player, boolean acrossDimensions) throws BookError.NameNotFoundError, BookError.WrongDimensionError, BookError.DimensionNotFoundError {
-        GlobalPos pos = GlobalPos.of(player.level.dimension(), player.blockPosition());
+        GlobalPos pos = GlobalPos.of(player.level().dimension(), player.blockPosition());
         getLocationOrThrow(name).teleportTo(player, acrossDimensions);
         saveBackLocation(player, pos);
     }

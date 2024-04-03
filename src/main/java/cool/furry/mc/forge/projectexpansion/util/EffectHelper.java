@@ -6,7 +6,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-// this only exists currently because all of the parameters in MobEffectInstance are unnamed
+// this only exists currently because all the parameters in MobEffectInstance are unnamed
 public class EffectHelper {
     public static MobEffectInstance create(MobEffect effect) {
         return new MobEffectInstance(effect);

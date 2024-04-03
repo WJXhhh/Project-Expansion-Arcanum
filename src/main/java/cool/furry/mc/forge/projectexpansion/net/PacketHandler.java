@@ -59,7 +59,7 @@ public class PacketHandler {
     }
     public static <MSG extends IPacket> void sendTo(MSG msg, ServerPlayer player) {
         if (!(player instanceof FakePlayer)) {
-            HANDLER.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+            HANDLER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         }
     }
 }

@@ -1,11 +1,11 @@
 modLoader="javafml"
-loaderVersion="[43,)"
+loaderVersion="[47,)"
 license="MIT"
 [[mods]]
 modId="projectexpansion"
 version="${file.jarVersion}"
 displayName="Project Expansion"
-updateJSONURL="https://raw.githubusercontent.com/DonovanDMC/ProjectExpansion/1.19.2/updates.json"
+updateJSONURL="https://raw.githubusercontent.com/DonovanDMC/ProjectExpansion/1.20.1/updates.json"
 displayURL="https://github.com/DonovanDMC/ProjectExpansion"
 logoFile="icon.png"
 itemIcon = "minecraft:anvil"
@@ -15,25 +15,31 @@ description='''
 An unofficial expansion of ProjectE.
 '''
 [[dependencies.projectexpansion]]
-   modId="forge"
-   mandatory=true
-   versionRange="[43,)"
-   ordering="NONE"
-   side="BOTH"
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
 [[dependencies.projectexpansion]]
-   modId="minecraft"
-   mandatory=true
-   versionRange="[1.19.2]"
-   ordering="NONE"
-   side="BOTH"
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1]"
+ordering="NONE"
+side="BOTH"
 [[dependencies.projectexpansion]]
-   modId="projecte"
-   mandatory=true
-   versionRange="*"
-   ordering="AFTER"
-   side="BOTH"
+modId="projecte"
+mandatory=true
+versionRange="*"
+ordering="AFTER"
+side="BOTH"
 [[dependencies.projectexpansion]]
 modId = "catalogue"
+mandatory = false
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"
+[[dependencies.projectexpansion]]
+modId = "curios"
 mandatory = false
 versionRange = "*"
 ordering = "AFTER"

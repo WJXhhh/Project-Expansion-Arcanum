@@ -30,7 +30,7 @@ public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper {
     public final Star.StarType type;
 
     public ItemStar(Star.StarType type, Star tier) {
-        super(new Properties().stacksTo(1).tab(Main.tab).rarity(
+        super(new Properties().stacksTo(1).rarity(
                 tier == Star.OMEGA ? Rarity.EPIC :
                         type == Star.StarType.COLOSSAL ? Rarity.UNCOMMON :
                                 type == Star.StarType.GARGANTUAN ? Rarity.RARE : Rarity.COMMON

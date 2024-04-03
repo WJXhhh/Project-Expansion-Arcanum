@@ -1,13 +1,11 @@
 package cool.furry.mc.forge.projectexpansion.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import cool.furry.mc.forge.projectexpansion.gui.container.ContainerCollector;
 import cool.furry.mc.forge.projectexpansion.util.EMCFormat;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.gui.PEContainerScreen;
 import moze_intel.projecte.utils.Constants;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -32,36 +30,35 @@ public abstract class GUICollector<T extends ContainerCollector> extends PEConta
     }
 
     @Override
-    protected void renderLabels(PoseStack matrix, int x, int y) {
-        this.font.draw(matrix, EMCFormat.format(this.menu.emc.get()), (float)(60 + this.getBonusXShift()), 32.0F, 4210752);
-        long kleinCharge = this.menu.kleinEmc.get();
-        if (kleinCharge > 0L) {
-            this.font.draw(matrix, Constants.EMC_FORMATTER.format(kleinCharge), (float)(60 + this.getBonusXShift()), 44.0F, 4210752);
+    protected void renderLabels(GuiGraphics graphics, int x, int y) {
+        //Don't render title or inventory as we don't have space
+        graphics.drawString(font, EMCFormat.format(menu.emc.get()), 60 + getBonusXShift(), 32, 0x404040, false);
+        long kleinCharge = menu.kleinEmc.get();
+        if (kleinCharge > 0) {
+            graphics.drawString(font, Constants.EMC_FORMATTER.format(kleinCharge), 60 + getBonusXShift(), 44, 0x404040, false);
         }
     }
 
     @Override
-    protected void renderBg(PoseStack matrix, float partialTicks, int x, int y) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, getTexture());
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
+        graphics.blit(getTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
-        blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        graphics.blit(getTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
         //Light Level. Max is 12
         int progress = (int) (menu.sunLevel.get() * 12.0 / 16);
-        blit(matrix, leftPos + 126 + getBonusXShift(), topPos + 49 - progress, 177 + getTextureBonusXShift(), 13 - progress, 12, progress);
+        graphics.blit(getTexture(), leftPos + 126 + getBonusXShift(), topPos + 49 - progress, 177 + getTextureBonusXShift(), 13 - progress, 12, progress);
 
         //EMC storage. Max is 48
-        blit(matrix, leftPos + 64 + getBonusXShift(), topPos + 18, 0, 166, (int) (new BigDecimal(menu.emc.get()).divide(new BigDecimal(menu.collector.getMaximumEmcBigInteger()), 3, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(48)).doubleValue()), 10);
+        graphics.blit(getTexture(), leftPos + 64 + getBonusXShift(), topPos + 18, 0, 166, (int) (new BigDecimal(menu.emc.get()).divide(new BigDecimal(menu.collector.getMaximumEmcBigInteger()), 3, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(48)).doubleValue()), 10);
 
         //Klein Star Charge Progress. Max is 48
         progress = (int) (menu.getKleinChargeProgress() * 48);
-        blit(matrix, leftPos + 64 + getBonusXShift(), topPos + 58, 0, 166, progress, 10);
+        graphics.blit(getTexture(), leftPos + 64 + getBonusXShift(), topPos + 58, 0, 166, progress, 10);
 
         //Fuel Progress. Max is 24.
         progress = (int) (menu.getFuelProgress() * 24);
-        blit(matrix, leftPos + 138 + getBonusXShift(), topPos + 55 - progress, 176 + getTextureBonusXShift(), 38 - progress, 10, progress + 1);
+        graphics.blit(getTexture(), leftPos + 138 + getBonusXShift(), topPos + 55 - progress, 176 + getTextureBonusXShift(), 38 - progress, 10, progress + 1);
     }
 
     public static class Tier1 extends GUICollector<ContainerCollector> {

@@ -2,7 +2,7 @@ package cool.furry.mc.forge.projectexpansion.rendering;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import cool.furry.mc.forge.projectexpansion.util.IChestLike;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
@@ -47,7 +47,7 @@ public class ChestRenderer <B extends Block, BE extends BlockEntity & IChestLike
 			BlockState state = chest.getLevel().getBlockState(chest.getBlockPos());
 			if (blockChecker.test(state.getBlock())) {
 				matrix.translate(0.5D, 0.5D, 0.5D);
-				matrix.mulPose(Vector3f.YP.rotationDegrees(-state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()));
+				matrix.mulPose(Axis.YP.rotationDegrees(-state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()));
 				matrix.translate(-0.5D, -0.5D, -0.5D);
 			}
 		}

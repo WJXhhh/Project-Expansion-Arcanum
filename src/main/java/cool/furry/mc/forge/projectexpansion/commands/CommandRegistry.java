@@ -19,9 +19,9 @@ public class CommandRegistry {
         CommandBuildContext buildContext = event.getBuildContext();
 
         LiteralCommandNode<CommandSourceStack> baseNode = dispatcher.register(Commands.literal(COMMAND_BASE)
-            .then(CommandBook.getArguments())
-            .then(CommandEMC.getArguments())
-            .then(CommandKnowledge.getArguments(buildContext))
+                .then(CommandBook.getArguments())
+                .then(CommandEMC.getArguments())
+                .then(CommandKnowledge.getArguments(buildContext))
         );
         dispatcher.register(Commands.literal("projectexpansion").redirect(baseNode));
     }

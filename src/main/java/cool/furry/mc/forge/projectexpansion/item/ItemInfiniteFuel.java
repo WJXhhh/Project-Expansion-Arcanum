@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ItemInfiniteFuel extends Item {
 
     public ItemInfiniteFuel() {
-        super(new Properties().stacksTo(1).rarity(Rarity.RARE).tab(Main.tab));
+        super(new Properties().stacksTo(1).rarity(Rarity.RARE));
     }
 
     @OnlyIn(Dist.CLIENT)

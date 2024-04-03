@@ -22,8 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -35,7 +34,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class BlockTransmutationInterface extends Block implements EntityBlock {
     public BlockTransmutationInterface() {
-        super(Block.Properties.of(Material.STONE).strength(1.5F, 30).requiresCorrectToolForDrops().lightLevel((state) -> 15));
+        super(Block.Properties.of().strength(1.5F, 30).requiresCorrectToolForDrops().lightLevel((state) -> 15));
         this.registerDefaultState(this.stateDefinition.any().setValue(BlockEntityNBTFilterable.FILTER, true));
     }
 
@@ -86,7 +85,7 @@ public class BlockTransmutationInterface extends Block implements EntityBlock {
     }
 
     @Override
-    public MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor) {
-        return MaterialColor.COLOR_RED;
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        return MapColor.COLOR_RED;
     }
 }

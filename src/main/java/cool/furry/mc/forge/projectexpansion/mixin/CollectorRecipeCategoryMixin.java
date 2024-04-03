@@ -8,6 +8,7 @@ import moze_intel.projecte.integration.jei.collectors.CollectorRecipeCategory;
 import moze_intel.projecte.integration.jei.collectors.FuelUpgradeRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,13 +31,13 @@ public class CollectorRecipeCategoryMixin {
     }
 
     // I hate replacing the entire method, but I spent far too long trying to figure out how @ModifyVariable works
-    @Inject(method = "draw(Lmoze_intel/projecte/integration/jei/collectors/FuelUpgradeRecipe;Lmezz/jei/api/gui/ingredient/IRecipeSlotsView;Lcom/mojang/blaze3d/vertex/PoseStack;DD)V", at = @At("HEAD"), remap = false, cancellable = true)
-    private void draw(FuelUpgradeRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY, CallbackInfo ci) {
+    @Inject(method = "draw(Lmoze_intel/projecte/integration/jei/collectors/FuelUpgradeRecipe;Lmezz/jei/api/gui/ingredient/IRecipeSlotsView;Lnet/minecraft/client/gui/GuiGraphics;DD)V", at = @At("HEAD"), remap = false, cancellable = true)
+    private void draw(FuelUpgradeRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY, CallbackInfo ci) {
         Component emc = EMCFormat.getComponent(recipe.upgradeEMC());
         Font fontRenderer = Minecraft.getInstance().font;
         int stringWidth = fontRenderer.width(emc);
-        fontRenderer.draw(matrix, emc, (float)(this.getBackground().getWidth() - stringWidth) / 2.0F, 5.0F, 8421504);
-        this.arrow.draw(matrix, 55, 18);
+        graphics.drawString(fontRenderer, emc.getVisualOrderText(), (float)(this.getBackground().getWidth() - stringWidth) / 2.0F, 5.0F, 8421504, false);
+        this.arrow.draw(graphics, 55, 18);
         ci.cancel();
     }
 }

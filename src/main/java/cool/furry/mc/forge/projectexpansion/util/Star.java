@@ -2,6 +2,7 @@ package cool.furry.mc.forge.projectexpansion.util;
 
 import cool.furry.mc.forge.projectexpansion.item.ItemStar;
 import cool.furry.mc.forge.projectexpansion.registries.Items;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
@@ -56,6 +57,18 @@ public enum Star {
 
     public static void registerAll() {
         Arrays.stream(StarType.values()).forEach(type -> Arrays.stream(VALUES).forEach(val -> val.register(type)));
+    }
+
+    public static void setAllCreativeTab(CreativeModeTab.Output output) {
+        Arrays.stream(StarType.values()).forEach(type -> {
+            Arrays.stream(VALUES).forEach(val -> val.setCreativeTab(output, type));
+        });
+    }
+
+    private void setCreativeTab(CreativeModeTab.Output output, StarType type) {
+        if (type == StarType.MAGNUM && itemMagnum != null) output.accept(itemMagnum.get());
+        if (type == StarType.COLOSSAL && itemColossal != null) output.accept(itemColossal.get());
+        if (type == StarType.GARGANTUAN && itemGargantuan != null) output.accept(itemGargantuan.get());
     }
 
     public enum StarType {

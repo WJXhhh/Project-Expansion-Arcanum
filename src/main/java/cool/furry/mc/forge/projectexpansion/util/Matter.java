@@ -1,6 +1,5 @@
 package cool.furry.mc.forge.projectexpansion.util;
 
-import cool.furry.mc.forge.projectexpansion.Main;
 import cool.furry.mc.forge.projectexpansion.block.*;
 import cool.furry.mc.forge.projectexpansion.config.Config;
 import cool.furry.mc.forge.projectexpansion.item.ItemCompressedEnergyCollector;
@@ -11,10 +10,11 @@ import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
@@ -30,21 +30,21 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public enum Matter {
-    BASIC(  0,  () -> MaterialColor.COLOR_GRAY, null, null),
-    DARK(   2,  () -> PEBlocks.DARK_MATTER.getBlock().defaultMaterialColor(), PEItems.DARK_MATTER, PEBlocks.DARK_MATTER::getBlock),
-    RED(    4,  () -> PEBlocks.RED_MATTER.getBlock().defaultMaterialColor(), PEItems.RED_MATTER, PEBlocks.RED_MATTER::getBlock),
-    MAGENTA(4,  () -> MaterialColor.COLOR_MAGENTA, null,  null),
-    PINK(   5,  () -> MaterialColor.COLOR_PINK,  null,  null),
-    PURPLE( 5,  () -> MaterialColor.COLOR_PURPLE,  null,  null),
-    VIOLET( 6,  () -> MaterialColor.COLOR_PURPLE,  null,  null),
-    BLUE(   6,  () -> MaterialColor.COLOR_BLACK,  null,  null),
-    CYAN(   7,  () -> MaterialColor.COLOR_CYAN,  null,  null),
-    GREEN(  7,  () -> MaterialColor.COLOR_GREEN,  null,  null),
-    LIME(   8,  () -> MaterialColor.COLOR_LIGHT_GREEN,  null,  null),
-    YELLOW( 8,  () -> MaterialColor.COLOR_YELLOW,  null,  null),
-    ORANGE( 9,  () -> MaterialColor.COLOR_ORANGE,  null,  null),
+    BASIC(  0,  () -> MapColor.COLOR_GRAY, null, null),
+    DARK(   2,  () -> PEBlocks.DARK_MATTER.getBlock().defaultMapColor(), PEItems.DARK_MATTER, PEBlocks.DARK_MATTER::getBlock),
+    RED(    4,  () -> PEBlocks.RED_MATTER.getBlock().defaultMapColor(), PEItems.RED_MATTER, PEBlocks.RED_MATTER::getBlock),
+    MAGENTA(4,  () -> MapColor.COLOR_MAGENTA, null,  null),
+    PINK(   5,  () -> MapColor.COLOR_PINK,  null,  null),
+    PURPLE( 5,  () -> MapColor.COLOR_PURPLE,  null,  null),
+    VIOLET( 6,  () -> MapColor.COLOR_PURPLE,  null,  null),
+    BLUE(   6,  () -> MapColor.COLOR_BLACK,  null,  null),
+    CYAN(   7,  () -> MapColor.COLOR_CYAN,  null,  null),
+    GREEN(  7,  () -> MapColor.COLOR_GREEN,  null,  null),
+    LIME(   8,  () -> MapColor.COLOR_LIGHT_GREEN,  null,  null),
+    YELLOW( 8,  () -> MapColor.COLOR_YELLOW,  null,  null),
+    ORANGE( 9,  () -> MapColor.COLOR_ORANGE,  null,  null),
     WHITE(  9,  null,  null,  null),
-    FADING( 10,  () -> MaterialColor.COLOR_BLACK, null, null),
+    FADING( 10,  () -> MapColor.COLOR_BLACK, null, null),
     FINAL(  10,  null, Items.FINAL_STAR_SHARD, null);
     public final BigDecimal BASE_COLLECTOR_OUTPUT = BigDecimal.valueOf(4L);
     public final BigDecimal BASE_RELAY_BONUS = BigDecimal.valueOf(1L);
@@ -78,7 +78,7 @@ public enum Matter {
     @Deprecated
     public final int fluidEfficiency;
     @Nullable
-    public final Supplier<MaterialColor> materialColor;
+    public final Supplier<MapColor> mapColor;
     @Nullable
     public final Supplier<Item> existingItem;
     @Nullable
@@ -107,7 +107,7 @@ public enum Matter {
     private RegistryObject<BlockItem> itemMatterBlock = null;
     @Nullable
     private RegistryObject<BlockMatter> blockMatterBlock = null;
-    Matter(int fluidEfficiency, @Nullable Supplier<MaterialColor> materialColor, @Nullable Supplier<Item> existingItem, @Nullable Supplier<Block> existingBlock) {
+    Matter(int fluidEfficiency, @Nullable Supplier<MapColor> mapColor, @Nullable Supplier<Item> existingItem, @Nullable Supplier<Block> existingBlock) {
         boolean isFinal = name().equals("FINAL"); // we can't access the FINAL member because we're in the constructor
         this.name = name().toLowerCase(Locale.US);
         this.hasItem = existingItem == null && ordinal() != 0;
@@ -117,7 +117,7 @@ public enum Matter {
         this.relayBonusBase = getValue(BASE_RELAY_BONUS);
         this.relayTransferBase = isFinal ? BigDecimal.valueOf(Long.MAX_VALUE) : getValue(BASE_RELAY_TRANSFER);
         this.fluidEfficiency = fluidEfficiency;
-        this.materialColor = materialColor;
+        this.mapColor = mapColor;
         this.existingItem = existingItem;
         this.existingBlock = existingBlock;
     }
@@ -298,40 +298,56 @@ public enum Matter {
         switch (reg) {
             case MATTER -> {
                 if (hasItem) {
-                    itemMatter = Items.Registry.register(String.format("%s_matter", name), () -> new Item(new Item.Properties().tab(Main.tab).rarity(getRarity())));
+                    itemMatter = Items.Registry.register(String.format("%s_matter", name), () -> new Item(new Item.Properties().rarity(getRarity())));
                 }
             }
 
             case MATTER_BLOCK -> {
                 if (hasBlock) {
                     blockMatterBlock = Blocks.Registry.register(String.format("%s_matter_block", name), () -> new BlockMatter(this));
-                    itemMatterBlock = Items.Registry.register(String.format("%s_matter_block", name), () -> new BlockItem(Objects.requireNonNull(blockMatterBlock).get(), new Item.Properties().tab(Main.tab).rarity(getRarity())));
+                    itemMatterBlock = Items.Registry.register(String.format("%s_matter_block", name), () -> new BlockItem(Objects.requireNonNull(blockMatterBlock).get(), new Item.Properties().rarity(getRarity())));
                 }
             }
 
             case COLLECTOR -> {
                 collector = Blocks.Registry.register(String.format("%s_collector", name), () -> new BlockCollector(this));
-                itemCollector = Items.Registry.register(String.format("%s_collector", name), () -> new BlockItem(Objects.requireNonNull(collector).get(), new Item.Properties().tab(Main.tab).rarity(getRarity())));
+                itemCollector = Items.Registry.register(String.format("%s_collector", name), () -> new BlockItem(Objects.requireNonNull(collector).get(), new Item.Properties().rarity(getRarity())));
             }
 
             case COMPRESSED_COLLECTOR -> itemCompressedCollector = Items.Registry.register(String.format("%s_compressed_collector", name), () -> new ItemCompressedEnergyCollector(this));
             case POWER_FLOWER -> {
                 powerFlower = Blocks.Registry.register(String.format("%s_power_flower", name), () -> new BlockPowerFlower(this));
-                itemPowerFlower = Items.Registry.register(String.format("%s_power_flower", name), () -> new BlockItem(Objects.requireNonNull(powerFlower).get(), new Item.Properties().tab(Main.tab).rarity(getRarity())));
+                itemPowerFlower = Items.Registry.register(String.format("%s_power_flower", name), () -> new BlockItem(Objects.requireNonNull(powerFlower).get(), new Item.Properties().rarity(getRarity())));
             }
             case RELAY -> {
                 relay = Blocks.Registry.register(String.format("%s_relay", name), () -> new BlockRelay(this));
-                itemRelay = Items.Registry.register(String.format("%s_relay", name), () -> new BlockItem(Objects.requireNonNull(relay).get(), new Item.Properties().tab(Main.tab).rarity(getRarity())));
+                itemRelay = Items.Registry.register(String.format("%s_relay", name), () -> new BlockItem(Objects.requireNonNull(relay).get(), new Item.Properties().rarity(getRarity())));
             }
             case EMC_LINK -> {
                 emcLink = Blocks.Registry.register(String.format("%s_emc_link", name), () -> new BlockEMCLink(this));
-                itemEMCLink = Items.Registry.register(String.format("%s_emc_link", name), () -> new BlockItem(Objects.requireNonNull(emcLink).get(), new Item.Properties().tab(Main.tab).rarity(getRarity())));
+                itemEMCLink = Items.Registry.register(String.format("%s_emc_link", name), () -> new BlockItem(Objects.requireNonNull(emcLink).get(), new Item.Properties().rarity(getRarity())));
             }
         }
     }
 
     public static void registerAll() {
         Arrays.stream(RegistrationType.values()).forEach(type -> Arrays.stream(VALUES).forEach(val -> val.register(type)));
+    }
+
+    public static void setAllCreativeTab(CreativeModeTab.Output output) {
+        Arrays.stream(RegistrationType.values()).forEach(type -> {
+            Arrays.stream(VALUES).forEach(val -> val.setCreativeTab(output, type));
+        });
+    }
+
+    private void setCreativeTab(CreativeModeTab.Output output, RegistrationType type) {
+        if (type == RegistrationType.MATTER && itemMatter != null) output.accept(itemMatter.get());
+        if (type == RegistrationType.MATTER_BLOCK && itemMatterBlock != null) output.accept(itemMatterBlock.get());
+        if (type == RegistrationType.COLLECTOR && itemCollector != null) output.accept(itemCollector.get());
+        if (type == RegistrationType.COMPRESSED_COLLECTOR && itemCompressedCollector != null) output.accept(itemCompressedCollector.get());
+        if (type == RegistrationType.POWER_FLOWER && itemPowerFlower != null) output.accept(itemPowerFlower.get());
+        if (type == RegistrationType.RELAY && itemRelay != null) output.accept(itemRelay.get());
+        if (type == RegistrationType.EMC_LINK && itemEMCLink != null) output.accept(itemEMCLink.get());
     }
 
     private enum RegistrationType {

@@ -175,7 +175,7 @@ public abstract class ContainerBase extends AbstractContainerMenu {
 
     protected static boolean stillValid(Player player, BlockEntity blockEntity, Supplier<Block> block) {
         BlockPos pos = blockEntity.getBlockPos();
-        return player.level.getBlockState(pos).getBlock() == block.get() &&
+        return player.level().getBlockState(pos).getBlock() == block.get() &&
                 player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64.0;
     }
 

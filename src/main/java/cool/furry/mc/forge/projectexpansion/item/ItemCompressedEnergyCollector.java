@@ -18,7 +18,7 @@ import java.util.List;
 public class ItemCompressedEnergyCollector extends Item {
     public final Matter matter;
     public ItemCompressedEnergyCollector(Matter matter) {
-        super(new Properties().tab(Main.tab).rarity(matter.getRarity()));
+        super(new Properties().rarity(matter.getRarity()));
         this.matter = matter;
     }
 

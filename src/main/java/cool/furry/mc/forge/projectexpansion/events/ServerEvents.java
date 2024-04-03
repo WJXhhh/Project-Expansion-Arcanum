@@ -3,11 +3,12 @@ package cool.furry.mc.forge.projectexpansion.events;
 import cool.furry.mc.forge.projectexpansion.Main;
 import cool.furry.mc.forge.projectexpansion.block.BlockCompactSun;
 import cool.furry.mc.forge.projectexpansion.registries.DamageSources;
+import cool.furry.mc.forge.projectexpansion.registries.DamageTypes;
 import cool.furry.mc.forge.projectexpansion.registries.Items;
 import cool.furry.mc.forge.projectexpansion.util.EffectHelper;
 import cool.furry.mc.forge.projectexpansion.util.SunExposureHelper;
-import cool.furry.mc.forge.projectexpansion.util.Util;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -72,8 +73,9 @@ public class ServerEvents {
     private static void handleSunExposure(TickEvent.ServerTickEvent event, ServerPlayer player) {
         Set<SunExposureTimer> toRemove = new HashSet<>();
         HitResult result = player.pick(10.0f, 0.0f, false);
+        DamageSources damage = DamageSources.fromServer(event.getServer());
         if(result instanceof BlockHitResult hit) {
-            Block block = player.level.getBlockState(hit.getBlockPos()).getBlock();
+            Block block = player.level().getBlockState(hit.getBlockPos()).getBlock();
             if (block instanceof BlockCompactSun) {
                 SunExposureTimer timer = SunExposureTimer.addOrIncrement(player, block);
                 if (timer.over()) {
@@ -83,7 +85,7 @@ public class ServerEvents {
                         player.addEffect(EffectHelper.create(MobEffects.FIRE_RESISTANCE, 2, 0, false, false));
                         player.setRemainingFireTicks(2);
                         if(timer.time() % 15 == 0) {
-                            player.hurt(DamageSources.STARE_AT_SUN, 8.0f);
+                            player.hurt(damage.stareAtSun(), 8.0f);
                         }
                         Advancement advancement = event.getServer().getAdvancements().getAdvancement(BLINDED_BY_THE_LIGHT);
                         if (advancement != null) {

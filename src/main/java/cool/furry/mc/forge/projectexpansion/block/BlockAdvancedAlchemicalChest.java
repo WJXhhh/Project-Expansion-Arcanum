@@ -39,8 +39,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -67,7 +66,7 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	private final DyeColor color;
 
 	public BlockAdvancedAlchemicalChest(DyeColor color) {
-		super(Block.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(10, 3_600_000).lightLevel((state) -> 10));
+		super(Block.Properties.of().requiresCorrectToolForDrops().strength(10, 3_600_000).lightLevel((state) -> 10));
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, Boolean.FALSE));
 		this.color = color;
 	}
@@ -230,7 +229,7 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	}
 
 	@Override
-	public MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor) {
-		return MaterialColor.byId(this.color.getId());
+	public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+		return MapColor.byId(this.color.getId());
 	}
 }

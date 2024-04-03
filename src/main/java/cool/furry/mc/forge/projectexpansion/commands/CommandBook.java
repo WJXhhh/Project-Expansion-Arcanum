@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Objects;
 
 // TODO: consolidate player/hand & add autocomplete to location
+@SuppressWarnings("unused")
 public class CommandBook {
     public static LiteralArgumentBuilder<CommandSourceStack> getArguments() {
         return Commands.literal("book")
@@ -67,13 +68,13 @@ public class CommandBook {
             .then(Commands.literal("clear")
                 .requires(Permissions.BOOK_CLEAR)
                 .then(Commands.literal("player")
-                        .requires(Permissions.BOOK_CLEAR_PLAYER)
+                    .requires(Permissions.BOOK_CLEAR_PLAYER)
                     .then(Commands.argument("player", EntityArgument.player())
                         .executes((ctx) -> handleClear(ctx, new BookTarget(ctx)))
                     )
                 )
                 .then(Commands.literal("hand")
-                        .requires(Permissions.BOOK_CLEAR_HAND)
+                    .requires(Permissions.BOOK_CLEAR_HAND)
                     .executes((ctx) -> handleClear(ctx, new BookTarget(ctx)))
                 )
             )
@@ -90,19 +91,19 @@ public class CommandBook {
                     .executes((ctx) -> handleDump(ctx, new BookTarget(ctx)))
                 )
             )
-                .then(Commands.literal("list")
-                    .requires(Permissions.BOOK_LIST)
-                    .then(Commands.literal("player")
-                        .requires(Permissions.BOOK_LIST_PLAYER)
-                        .then(Commands.argument("player", EntityArgument.player())
-                            .executes((ctx) -> handleList(ctx, new BookTarget(ctx)))
-                        )
-                    )
-                    .then(Commands.literal("hand")
-                        .requires(Permissions.BOOK_LIST_HAND)
+            .then(Commands.literal("list")
+                .requires(Permissions.BOOK_LIST)
+                .then(Commands.literal("player")
+                    .requires(Permissions.BOOK_LIST_PLAYER)
+                    .then(Commands.argument("player", EntityArgument.player())
                         .executes((ctx) -> handleList(ctx, new BookTarget(ctx)))
                     )
                 )
+                .then(Commands.literal("hand")
+                        .requires(Permissions.BOOK_LIST_HAND)
+                        .executes((ctx) -> handleList(ctx, new BookTarget(ctx)))
+                )
+            )
             .then(Commands.literal("remove")
                 .requires(Permissions.BOOK_REMOVE)
                 .then(Commands.literal("player")
@@ -219,6 +220,10 @@ public class CommandBook {
         }
     }
 
+    private static void sendSuccess(CommandSourceStack source, Component message, boolean notify) {
+        source.sendSuccess(() -> message, notify);
+    }
+
     private static int handleDump(CommandContext<CommandSourceStack> ctx, BookTarget target) throws CommandSyntaxException {
         @Nullable IAlchemicalBookLocationsProvider provider = getCapability(ctx, target, "dump");
         if(provider == null) {
@@ -226,17 +231,17 @@ public class CommandBook {
         }
 
         if (provider.getLocations().isEmpty()) {
-            ctx.getSource().sendSuccess(Lang.Commands.BOOK_EMPTY.translateColored(ChatFormatting.GREEN), false);
+            sendSuccess(ctx.getSource(), Lang.Commands.BOOK_EMPTY.translateColored(ChatFormatting.GREEN), false);
             return 0;
         }
 
         String content = provider.serializeNBT().toString();
-        ctx.getSource().sendSuccess(Component.literal(content).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, content)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.Commands.BOOK_CLICK_TO_COPY.translateColored(ChatFormatting.AQUA)))).withStyle(ChatFormatting.GRAY), false);
+        sendSuccess(ctx.getSource(), Component.literal(content).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, content)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.Commands.BOOK_CLICK_TO_COPY.translateColored(ChatFormatting.AQUA)))).withStyle(ChatFormatting.GRAY), false);
         return 1;
     }
 
     private static Style suggestTeleportPos(CommandContext<CommandSourceStack> ctx, Style style, CapabilityAlchemicalBookLocations.TeleportLocation location) {
-        boolean isSameDimension = Objects.requireNonNull(ctx.getSource().getPlayer()).level.dimension().equals(location.dimension());
+        boolean isSameDimension = Objects.requireNonNull(ctx.getSource().getPlayer()).level().dimension().equals(location.dimension());
 
         if(isSameDimension) {
             return Util.suggestCommand(style, String.format("/tp %s %s %s", location.x(), location.y(), location.z())).withUnderlined(true);
@@ -246,7 +251,7 @@ public class CommandBook {
     }
 
     private static Style suggestTeleportDimension(CommandContext<CommandSourceStack> ctx, Style style, CapabilityAlchemicalBookLocations.TeleportLocation location) {
-        boolean isSameDimension = Objects.requireNonNull(ctx.getSource().getPlayer()).level.dimension().equals(location.dimension());
+        boolean isSameDimension = Objects.requireNonNull(ctx.getSource().getPlayer()).level().dimension().equals(location.dimension());
 
         if(!isSameDimension) {
             return Util.suggestCommand(style, String.format("/execute in %s run tp ~ ~ ~", location.dimension().location())).withUnderlined(true);
@@ -269,7 +274,7 @@ public class CommandBook {
         }
 
         if (provider.getLocations().isEmpty()) {
-            ctx.getSource().sendSuccess(Lang.Commands.BOOK_EMPTY.translateColored(ChatFormatting.GREEN), false);
+            sendSuccess(ctx.getSource(), Lang.Commands.BOOK_EMPTY.translateColored(ChatFormatting.GREEN), false);
             return 0;
         }
 
@@ -288,7 +293,7 @@ public class CommandBook {
 
         List<CapabilityAlchemicalBookLocations.TeleportLocation> locations = provider.getLocations().stream().toList();
         if(locations.isEmpty()) {
-            ctx.getSource().sendSuccess(Lang.Commands.BOOK_EMPTY.translateColored(ChatFormatting.RED), false);
+            sendSuccess(ctx.getSource(), Lang.Commands.BOOK_EMPTY.translateColored(ChatFormatting.RED), false);
             return 0;
         }
 
@@ -327,12 +332,12 @@ public class CommandBook {
         try {
             location = provider.getLocationOrThrow(name);
             if(location.isBack()) {
-                ctx.getSource().sendSuccess(Lang.Commands.BOOK_REMOVE_INTERNAL_LOCATION.translateColored(ChatFormatting.RED), false);
+                sendSuccess(ctx.getSource(), Lang.Commands.BOOK_REMOVE_INTERNAL_LOCATION.translateColored(ChatFormatting.RED), false);
                 return 0;
             }
             provider.removeLocation(name);
         } catch (CapabilityAlchemicalBookLocations.BookError.NameNotFoundError ignore) {
-            ctx.getSource().sendSuccess(Lang.Commands.BOOK_REMOVE_INVALID_LOCATION.translateColored(ChatFormatting.RED), false);
+            sendSuccess(ctx.getSource(), Lang.Commands.BOOK_REMOVE_INVALID_LOCATION.translateColored(ChatFormatting.RED), false);
             return 0;
         }
 
@@ -370,14 +375,14 @@ public class CommandBook {
         String name = StringArgumentType.getString(ctx, "name");
 
         if(CapabilityAlchemicalBookLocations.isForbiddenName(name)) {
-            ctx.getSource().sendSuccess(Lang.Commands.BOOK_ADD_INVALID_NAME.translateColored(ChatFormatting.RED), false);
+            sendSuccess(ctx.getSource(), Lang.Commands.BOOK_ADD_INVALID_NAME.translateColored(ChatFormatting.RED), false);
             return 0;
         }
 
         try {
             provider.addLocation(name, GlobalPos.of(dimension.dimension(), pos));
         } catch (CapabilityAlchemicalBookLocations.BookError.DuplicateNameError e) {
-            ctx.getSource().sendSuccess(Lang.Commands.BOOK_ADD_DUPLICATE_NAME.translateColored(ChatFormatting.RED), false);
+            sendSuccess(ctx.getSource(), Lang.Commands.BOOK_ADD_DUPLICATE_NAME.translateColored(ChatFormatting.RED), false);
             return 0;
         }
 

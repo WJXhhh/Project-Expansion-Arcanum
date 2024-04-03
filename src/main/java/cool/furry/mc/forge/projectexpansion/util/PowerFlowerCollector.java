@@ -19,6 +19,7 @@ public class PowerFlowerCollector {
         UUID uuid = player.getUUID();
         stored.put(uuid, stored.containsKey(uuid) ? stored.get(uuid).add(amount) : amount);
     }
+
     @SubscribeEvent
     public static void onTick(TickEvent.ServerTickEvent event) {
         tick++;

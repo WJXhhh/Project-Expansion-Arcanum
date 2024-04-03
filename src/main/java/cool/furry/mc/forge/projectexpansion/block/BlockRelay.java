@@ -17,8 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -32,7 +31,7 @@ public class BlockRelay extends Block implements IHasMatter, EntityBlock {
     private final Matter matter;
 
     public BlockRelay(Matter matter) {
-        super(Block.Properties.of(Material.STONE).strength(10, 30).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15)));
+        super(Block.Properties.of().strength(10, 30).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15)));
         this.matter = matter;
     }
 
@@ -71,8 +70,8 @@ public class BlockRelay extends Block implements IHasMatter, EntityBlock {
     }
 
     @Override
-    public MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor) {
-        MaterialColor color = matter.materialColor == null ? null : matter.materialColor.get();
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        MapColor color = matter.mapColor == null ? null : matter.mapColor.get();
         return color != null ? color : super.getMapColor(state, level, pos, defaultColor);
     }
 }

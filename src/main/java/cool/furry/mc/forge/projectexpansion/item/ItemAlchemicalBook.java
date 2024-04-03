@@ -30,7 +30,7 @@ import java.util.List;
 public class ItemAlchemicalBook extends Item {
     private final Tier tier;
     public ItemAlchemicalBook(Tier tier) {
-        super(new Properties().tab(Main.tab).rarity(tier.getRarity()).stacksTo(1).fireResistant());
+        super(new Properties().rarity(tier.getRarity()).stacksTo(1).fireResistant());
         this.tier = tier;
     }
 
