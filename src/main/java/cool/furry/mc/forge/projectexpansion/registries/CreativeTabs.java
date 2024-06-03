@@ -1,10 +1,7 @@
 package cool.furry.mc.forge.projectexpansion.registries;
 
 import cool.furry.mc.forge.projectexpansion.Main;
-import cool.furry.mc.forge.projectexpansion.util.AdvancedAlchemicalChest;
-import cool.furry.mc.forge.projectexpansion.util.Fuel;
-import cool.furry.mc.forge.projectexpansion.util.Lang;
-import cool.furry.mc.forge.projectexpansion.util.Matter;
+import cool.furry.mc.forge.projectexpansion.util.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +18,7 @@ public class CreativeTabs {
                     .icon(() -> new ItemStack(Objects.requireNonNull(Matter.FADING.getMatter())))
                     .title(Lang.ITEMGROUP.translate())
                     .displayItems((displayParameters, output) -> {
+                        Star.setAllCreativeTab(output);
                         Matter.setAllCreativeTab(output);
                         Fuel.setAllCreativeTab(output);
                         AdvancedAlchemicalChest.setAllCreativeTab(output);

@@ -163,7 +163,12 @@ public enum Fuel {
         BigInteger nearest250 = orderOfMagnitude.divide(BigInteger.valueOf(4));
 
         // Calculate the rounded value (using divideAndRemainder() to determine rounding direction)
-        BigInteger[] divRem = number.divideAndRemainder(nearest250);
+        BigInteger[] divRem;
+        try {
+            divRem = number.divideAndRemainder(nearest250);
+        } catch (ArithmeticException ignored) {
+            divRem = new BigInteger[]{BigInteger.ONE, BigInteger.ZERO};
+        }
         BigInteger roundedValue = divRem[1].compareTo(BigInteger.ZERO) > 0 ? divRem[0].add(BigInteger.ONE) : divRem[0];
 
         // Multiply the rounded value by the nearest multiple of 250
