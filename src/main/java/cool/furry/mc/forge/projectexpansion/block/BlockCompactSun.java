@@ -3,6 +3,7 @@ package cool.furry.mc.forge.projectexpansion.block;
 import cool.furry.mc.forge.projectexpansion.registries.DamageSources;
 import cool.furry.mc.forge.projectexpansion.util.Lang;
 import cool.furry.mc.forge.projectexpansion.util.SunExposureHelper;
+import cool.furry.mc.forge.projectexpansion.util.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,7 +52,9 @@ public class BlockCompactSun extends Block {
     public void stepOn(Level level, BlockPos pos, BlockState blockState, Entity entity) {
         DamageSources damage = DamageSources.fromLevel(level);
         if (entity instanceof ServerPlayer player && !SunExposureHelper.wearingProtectiveBoots(player)) {
-            player.hurt(damage.walkOnSun(), 12.0F);
+            float maxPlayerHealth = player.getMaxHealth();
+            // deal 60% of the player's max health (6 hearts for 20) in damage every 20 ticks
+            player.hurt(damage.walkOnSun(), maxPlayerHealth * 0.6f);
         }
         super.stepOn(level, pos, blockState, entity);
     }
