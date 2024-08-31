@@ -33,6 +33,7 @@ public final class Config {
     public static final ForgeConfigSpec.ConfigValue<Boolean> zeroEmcFluidsAreFree = Builder.comment("If fluids which end their calculations at zero emc should be returned as free.").define("zeroEmcFluidsAreFree", true);
     public static final ForgeConfigSpec.ConfigValue<Boolean> enableCollectorOptimizations = Builder.comment("If optimizations (ticking only once per second) should be enabled for collectors. This will make them process at most one item each second.").define("enableCollectorOptimizations", false);
     public static final ForgeConfigSpec.ConfigValue<Integer> compactSunBonus = Builder.comment("The bonus (multiplicative) the compact sun block should give. Set to 0 to disable.").define("compactSunBonus", 10);
+    public static final ForgeConfigSpec.ConfigValue<Boolean> sunMultiplierPriceCompensation = Builder.comment("Enable determining the sun bonus mutiplier via the difference in emc price between the final power flower and the compact sun block, rounded up to the next 10. In normal gameplay this is ~33x, so a 40x multiplier. If either block has no emc value or the multiplier is lower than compactSunBonus, that value will be used instead.").define("sunMultiplierPriceCompensation", true);
     static { Spec = Builder.build(); }
     public static AlchemicalBookEditLevel editOthersAlchemicalBooks() {
         try {

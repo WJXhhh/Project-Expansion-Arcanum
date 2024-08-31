@@ -253,6 +253,7 @@
 	"block.projectexpansion.transmutation_interface.tooltip": "This can be used with compatible mods like Applied Energistics to access your transmutation inventory.",
 	"block.projectexpansion.compact_sun": "Compact Sun",
 	"block.projectexpansion.compact_sun.tooltip": "The power of the sun in a single block.",
+	"block.projectexpansion.compact_sun.tooltip2": "When put above or below certain blocks, multiplies their output by %s.",
 	"block.projectexpansion.power_flower.tooltip": "Generates EMC once per %s tick%s. (20/second)",
 	"block.projectexpansion.power_flower.emc": "Produced EMC: %s/s",
 	"block.projectexpansion.power_flower.stack_emc": "Stack Produced EMC: %s/s",

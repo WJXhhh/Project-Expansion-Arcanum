@@ -10,7 +10,8 @@ public interface IHasSunBonus {
     boolean hasSunBonus();
 
     default @Nullable Integer getSunBonus() {
-        int bonus = Config.compactSunBonus.get();
-        return bonus == 0 || !hasSunBonus() ? null : bonus;
+        if (!hasSunBonus()) return null;
+        int bonus = Util.getSunBonus();
+        return bonus == 0 ? null : bonus;
     }
 }
