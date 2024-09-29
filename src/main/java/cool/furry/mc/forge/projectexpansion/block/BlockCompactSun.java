@@ -52,7 +52,9 @@ public class BlockCompactSun extends Block {
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState blockState, Entity entity) {
         if (entity instanceof ServerPlayer player && !SunExposureHelper.wearingProtectiveBoots(player)) {
-            player.hurt(DamageSources.WALK_ON_SUN, 12.0F);
+            float maxPlayerHealth = player.getMaxHealth();
+            // deal 60% of the player's max health (6 hearts for 20) in damage every 20 ticks
+            player.hurt(DamageSources.WALK_ON_SUN, maxPlayerHealth * 0.6f);
         }
         super.stepOn(level, pos, blockState, entity);
     }
