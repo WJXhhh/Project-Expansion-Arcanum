@@ -1,21 +1,15 @@
 package cool.furry.mc.forge.projectexpansion.mixin;
 
-import cool.furry.mc.forge.projectexpansion.config.Config;
 import cool.furry.mc.forge.projectexpansion.registries.Enchantments;
-import cool.furry.mc.forge.projectexpansion.registries.SoundEvents;
 import cool.furry.mc.forge.projectexpansion.util.AlchemicalCollectionCollector;
 import cool.furry.mc.forge.projectexpansion.util.AtomicBigInteger;
 import cool.furry.mc.forge.projectexpansion.util.TagNames;
 import cool.furry.mc.forge.projectexpansion.util.Util;
-import moze_intel.projecte.api.ItemInfo;
-import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
-import moze_intel.projecte.emc.nbt.NBTManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -32,9 +26,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.stream.Collectors;
 
 // This mixin enables converting mined items with EMC into EMC and knowledge
@@ -67,7 +58,7 @@ public abstract class AlchemicalCollectionMixin {
             .collect(Collectors.toList());
 
         if (newDrops.size() < initialDrops.size() || addEMC.get().compareTo(BigInteger.ZERO) > 0) {
-            AlchemicalCollectionCollector.add(player.getUUID(), addEMC.get(), newDrops);
+            AlchemicalCollectionCollector.add(player.getUUID(), addEMC.get(), initialDrops);
             cir.setReturnValue(newDrops);
         }
     }
