@@ -221,9 +221,6 @@ public abstract class BlockEntityEMC extends BlockEntity implements IEmcStorageB
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        if (getStoredEmcBigInteger().compareTo(getMaximumEmcBigInteger()) > 0) {
-            emc = getMaximumEmcBigInteger();
-        }
         tag.putString(TagNames.STORED_EMC, getStoredEmcBigInteger().toString());
     }
 
@@ -231,9 +228,6 @@ public abstract class BlockEntityEMC extends BlockEntity implements IEmcStorageB
     public void load(CompoundTag tag) {
         super.load(tag);
         BigInteger set = new BigInteger(tag.getString(TagNames.STORED_EMC));
-        if (set.compareTo(getMaximumEmcBigInteger()) > 0) {
-            set = getMaximumEmcBigInteger();
-        }
         emc = set;
     }
 
