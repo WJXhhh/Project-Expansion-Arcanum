@@ -3,6 +3,8 @@ package cool.furry.mc.forge.projectexpansion.mixin;
 import cool.furry.mc.forge.projectexpansion.config.Config;
 import cool.furry.mc.forge.projectexpansion.registries.Enchantments;
 import cool.furry.mc.forge.projectexpansion.registries.SoundEvents;
+import cool.furry.mc.forge.projectexpansion.util.AlchemicalCollectionCollector;
+import cool.furry.mc.forge.projectexpansion.util.AtomicBigInteger;
 import cool.furry.mc.forge.projectexpansion.util.TagNames;
 import cool.furry.mc.forge.projectexpansion.util.Util;
 import moze_intel.projecte.api.ItemInfo;
@@ -49,12 +51,12 @@ public abstract class AlchemicalCollectionMixin {
             return;
         }
         List<ItemStack> initialDrops = cir.getReturnValue();
-        AtomicLong addEMC = new AtomicLong();
+        AtomicBigInteger addEMC = new AtomicBigInteger();
         List<ItemStack> knowledgeAdditions = new ArrayList<>();
         List<ItemStack> newDrops = initialDrops.stream()
             .map(drop -> {
                 if(proxy.hasValue(drop)) {
-                    addEMC.addAndGet(proxy.getValue(drop));
+                    addEMC.addAndGet(BigInteger.valueOf(proxy.getValue(drop)));
                     if(!provider.hasKnowledge(drop) && !knowledgeAdditions.contains(drop)) knowledgeAdditions.add(drop);
                     return null;
                 } else return drop;
@@ -62,15 +64,8 @@ public abstract class AlchemicalCollectionMixin {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        if (newDrops.size() < initialDrops.size() || addEMC.get() > 0) {
-            provider.setEmc(provider.getEmc().add(BigInteger.valueOf(addEMC.get())));
-            if(knowledgeAdditions.size() > 0) {
-                knowledgeAdditions.forEach(knowledge -> {
-                    if(provider.addKnowledge(knowledge)) provider.syncKnowledgeChange(player, NBTManager.getPersistentInfo(ItemInfo.fromStack(stack)), true);
-                });
-            }
-            provider.syncEmc(player);
-            if(Config.alchemicalCollectionSound.get()) level.playSound(null, pos, SoundEvents.ALCHEMICAL_COLLECTION_COLLECT.get(), SoundSource.BLOCKS, 1f, 0.75f);
+        if (newDrops.size() < initialDrops.size() || addEMC.get().compareTo(BigInteger.ZERO) > 0) {
+            AlchemicalCollectionCollector.add(player.getUUID(), addEMC.get(), knowledgeAdditions);
             cir.setReturnValue(newDrops);
         }
     }
