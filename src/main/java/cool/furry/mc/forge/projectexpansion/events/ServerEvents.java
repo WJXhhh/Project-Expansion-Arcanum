@@ -85,7 +85,9 @@ public class ServerEvents {
                         player.addEffect(EffectHelper.create(MobEffects.FIRE_RESISTANCE, 2, 0, false, false));
                         player.setRemainingFireTicks(2);
                         if(timer.time() % 15 == 0) {
-                            player.hurt(DamageSources.STARE_AT_SUN, 8.0f);
+                            float playerMaxHealth = player.getMaxHealth();
+                            // deal 40% of the player's max health (4 hearts for 20) in damage every 15 ticks
+                            player.hurt(DamageSources.STARE_AT_SUN, playerMaxHealth * 0.4f);
                         }
                         Advancement advancement = ServerLifecycleHooks.getCurrentServer().getAdvancements().getAdvancement(BLINDED_BY_THE_LIGHT);
                         if (advancement != null) {

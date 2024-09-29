@@ -127,6 +127,7 @@ public enum Lang implements ILangEntry {
         // Misc
         TRANSMUTATION_INTERFACE_TOOLTIP("transmutation_interface", "tooltip"),
         COMPACT_SUN_TOOLTIP("compact_sun", "tooltip"),
+        COMPACT_SUN_TOOLTIP2("compact_sun", "tooltip2"),
 
         BASIC_COLLECTOR("basic_collector"),
         DARK_COLLECTOR("dark_collector"),
