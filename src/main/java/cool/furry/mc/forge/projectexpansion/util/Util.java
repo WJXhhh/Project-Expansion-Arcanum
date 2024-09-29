@@ -1,6 +1,9 @@
 package cool.furry.mc.forge.projectexpansion.util;
 
+import cool.furry.mc.forge.projectexpansion.config.Config;
+import cool.furry.mc.forge.projectexpansion.registries.Blocks;
 import moze_intel.projecte.api.ItemInfo;
+import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
@@ -36,6 +39,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -289,5 +293,23 @@ public class Util {
             sb.append(c);
         }
         return sb.toString();
+    }
+
+    public static int getSunMultiplier() {
+        float pfValue = (float) ProjectEAPI.getEMCProxy().getValue(Objects.requireNonNull(Matter.FINAL.getPowerFlower()));
+        float sunValue = (float) ProjectEAPI.getEMCProxy().getValue(Blocks.COMPACT_SUN.get());
+        if (pfValue == 0 || sunValue == 0) return Config.compactSunBonus.get();
+        int diff = (int) Math.ceil(sunValue / pfValue) + 1;
+        // round to nearest 10
+        return ((int) Math.ceil(diff / 10.0) * 10);
+    }
+    public static int getSunBonus() {
+        if (Config.sunMultiplierPriceCompensation.get()) {
+            int priceBonus = getSunMultiplier();
+            int staticBonus = Config.compactSunBonus.get();
+            return Math.max(priceBonus, staticBonus);
+        } else {
+            return Config.compactSunBonus.get();
+        }
     }
 }
