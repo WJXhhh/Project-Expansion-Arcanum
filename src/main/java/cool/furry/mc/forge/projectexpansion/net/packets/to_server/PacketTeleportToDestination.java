@@ -49,7 +49,7 @@ public class PacketTeleportToDestination implements IPacket {
                     knowledgeProvider.setEmc(emc.subtract(cost));
                     knowledgeProvider.syncEmc((ServerPlayer) player);
                 }
-                GlobalPos pos = GlobalPos.of(player.getLevel().dimension(), player.getOnPos());
+                GlobalPos pos = GlobalPos.of(player.getLevel().dimension(), player.blockPosition());
                 location.teleportTo((ServerPlayer) player, book.getTier().isAcrossDimensions());
                 if(location.distanceFrom(pos.pos()) > 1) {
                     provider.saveBackLocation(player, pos);
