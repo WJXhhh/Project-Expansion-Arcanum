@@ -25,7 +25,6 @@ import java.util.Objects;
 public class Main {
 
     public static final String MOD_ID = "projectexpansion";
-    public static CreativeModeTab tab = CreativeModeTab.builder().displayItems((params, output) -> new ItemStack(Objects.requireNonNull(Matter.FADING.getMatter()))).build();
     @SuppressWarnings("unused")
     public static final org.apache.logging.log4j.Logger Logger = LogManager.getLogger();
 

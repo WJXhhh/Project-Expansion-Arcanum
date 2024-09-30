@@ -15,7 +15,7 @@ public class CreativeTabs {
     public static final DeferredRegister<CreativeModeTab> Registry = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Main.MOD_ID);
     public static final RegistryObject<CreativeModeTab> MAIN = Registry.register(Main.MOD_ID, () ->
             CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(Objects.requireNonNull(Matter.FADING.getMatter())))
+                    .icon(() -> new ItemStack(Objects.requireNonNull(Items.FINAL_STAR.get())))
                     .title(Lang.ITEMGROUP.translate())
                     .displayItems((displayParameters, output) -> {
                         Star.setAllCreativeTab(output);
