@@ -297,7 +297,7 @@ public class Util {
     public static int getSunMultiplier() {
         float pfValue = (float) IEMCProxy.INSTANCE.getValue(Objects.requireNonNull(Matter.FINAL.getPowerFlower()));
         float sunValue = (float) IEMCProxy.INSTANCE.getValue(Blocks.COMPACT_SUN.get());
-        if (pfValue == 0 || sunValue == 0) return 10;
+        if (pfValue == 0 || sunValue == 0) return Config.compactSunBonus.get();
         int diff = (int) Math.ceil(sunValue / pfValue) + 1;
         // round to nearest 10
         return ((int) Math.ceil(diff / 10.0) * 10);

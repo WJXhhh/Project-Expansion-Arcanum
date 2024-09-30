@@ -58,7 +58,7 @@ public abstract class AlchemicalCollectionMixin {
             .collect(Collectors.toList());
 
         if (newDrops.size() < initialDrops.size() || addEMC.get().compareTo(BigInteger.ZERO) > 0) {
-            AlchemicalCollectionCollector.add(player.getUUID(), addEMC.get(), initialDrops);
+            AlchemicalCollectionCollector.add(player.getUUID(), addEMC.get(), knowledgeAdditions);
             cir.setReturnValue(newDrops);
         }
     }

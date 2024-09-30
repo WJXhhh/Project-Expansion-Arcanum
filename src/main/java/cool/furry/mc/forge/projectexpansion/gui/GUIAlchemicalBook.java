@@ -37,10 +37,13 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public class GUIAlchemicalBook extends Screen {
     private final List<CapabilityAlchemicalBookLocations.TeleportLocation> locations = new ArrayList<>();
-    public static final int BUTTONS_PER_COLUMN = 8;
+    private @Nullable CapabilityAlchemicalBookLocations.TeleportLocation backLocation = null;
     ButtonCreate buttonCreate;
     ButtonBack buttonBack;
     ButtonClose buttonClose;
+    @Nullable
+    ButtonPrev buttonPrev = null;
+    @Nullable ButtonNext buttonNext = null;
     EditBox createName;
     LocalPlayer player;
     InteractionHand hand;
@@ -49,6 +52,8 @@ public class GUIAlchemicalBook extends Screen {
     private @Nullable IKnowledgeProvider knowledgeProvider = null;
     private boolean canEdit;
     private final boolean acrossDimensions;
+    private int page = 1;
+    private int maxPages = 1;
     public GUIAlchemicalBook(LocalPlayer player, InteractionHand hand, List<CapabilityAlchemicalBookLocations.TeleportLocation> locations, boolean canEdit) {
         super(Lang.ALCHEMICAL_BOOK.translate());
         this.player = player;
@@ -56,6 +61,7 @@ public class GUIAlchemicalBook extends Screen {
         this.locations.addAll(locations);
         this.canEdit = canEdit;
         this.acrossDimensions = getTier().isAcrossDimensions();
+        extractBackLocation();
     }
 
     private IKnowledgeProvider getKnowledgeCapability() {
@@ -107,28 +113,50 @@ public class GUIAlchemicalBook extends Screen {
     }
 
     public void drawLocations() {
-        int ypad = 1, delete_w = 20, rowpad = 8;
+        int rowpad = 1, delete_w = 20, delpad = 2, colpad = 8;
         teleportButtons.forEach(this::removeWidget);
         teleportButtons.clear();
         deleteButtons.forEach(this::removeWidget);
         deleteButtons.clear();
-        int yStart = 45, xStart = this.width / 10, x = xStart, y = yStart;
+        if (this.buttonPrev != null) {
+            this.removeWidget(this.buttonPrev);
+            this.buttonPrev = null;
+        }
+        if (this.buttonNext != null) {
+            this.removeWidget(this.buttonNext);
+            this.buttonNext = null;
+        }
+        // we take up 70% of the height
+        int midHeight = (int) Math.floor(this.height * 0.7);
+        // we take up 85% of the width
+        int midWidth = (int) Math.floor(this.width * 0.85);
+        int maxRows = midHeight / (h + rowpad), maxColumns = midWidth / (w + colpad + delpad + delete_w);
+        // left calculates the total space the max amount of columns would take up, divides the remaining space by two
+        int boxLeft = ((this.width - (((delete_w + delpad + w) * maxColumns) + (colpad * 2))) / 2), boxTop = 46;
+        // adds the width of a delete button and padding due to the xStart applying to the teleport button, which then draws the delete button to the left
+        int yStart = boxTop, xStart = boxLeft + (delete_w + delpad),
+            x = xStart, y = yStart,
+            xIndex = 1, yIndex = 1,
+            perPage = maxRows * maxColumns;
 
-        boolean hasBack = false;
-        for (CapabilityAlchemicalBookLocations.TeleportLocation loc : locations) {
-            if(loc.isBack()) {
-                buttonBack.updateLocation(loc);
-                hasBack = true;
-                continue;
-            }
-            if((loc.index() % BUTTONS_PER_COLUMN) == 0) {
-                x += w + delete_w + rowpad;
-                y = yStart;
+        this.maxPages = (int) Math.ceil((double) locations.size() / perPage);
+        for (CapabilityAlchemicalBookLocations.TeleportLocation loc : locations.subList(perPage * (page - 1), Math.min(locations.size(), perPage * page))) {
+            if (xIndex > maxColumns) {
+                x = xStart;
+                xIndex = 2;
+                yIndex++;
+                y += h + rowpad;
             } else {
-                y += h + ypad;
+                if (xIndex > 1) {
+                    x += w + delete_w + colpad;
+                }
+                xIndex++;
+            }
+            if (yIndex > maxRows) {
+                break;
             }
             ButtonTeleport teleportButton = new ButtonTeleport(x, y, w, h, loc);
-            ButtonDelete deleteButton = new ButtonDelete(x - delete_w - 2, y, delete_w, h, loc.name());
+            ButtonDelete deleteButton = new ButtonDelete(x - delete_w - delpad, y, delete_w, h, loc.name());
             deleteButton.active = canEdit;
             addRenderableWidget(teleportButton);
             addRenderableWidget(deleteButton);
@@ -136,13 +164,24 @@ public class GUIAlchemicalBook extends Screen {
             deleteButtons.add(deleteButton);
         }
 
-        if(!hasBack) buttonBack.updateLocation(null);
+        int prevY = boxTop + (h + rowpad) * yIndex, prevX = boxLeft,
+            nextY = boxTop + (h + rowpad) * yIndex, nextX = boxLeft + ((w + colpad + delete_w + delpad) * maxColumns) - w + colpad;
+
+        if (this.maxPages > 1) {
+            this.buttonPrev = new ButtonPrev(prevX, prevY, w - delete_w, h, page > 1);
+            this.buttonNext = new ButtonNext(nextX, nextY, w - delete_w, h, page < maxPages);
+            addRenderableWidget(this.buttonPrev);
+            addRenderableWidget(this.buttonNext);
+        }
+
+        if(this.backLocation != null) buttonBack.updateLocation(this.backLocation);
     }
 
     public void setLocations(List<CapabilityAlchemicalBookLocations.TeleportLocation> locations, boolean canEdit) {
         this.locations.clear();
         this.locations.addAll(locations);
-        if(canEdit != this.canEdit) {
+        extractBackLocation();
+        if (canEdit != this.canEdit) {
             this.canEdit = canEdit;
             this.rebuildWidgets();
         } else {
@@ -153,6 +192,26 @@ public class GUIAlchemicalBook extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    private void extractBackLocation() {
+        this.backLocation = locations.stream().filter(CapabilityAlchemicalBookLocations.TeleportLocation::isBack).findFirst().orElse(null);
+        if (backLocation != null) {
+            this.locations.remove(backLocation);
+        }
+    }
+
+    public void previousPage() {
+        this.setPage(this.page - 1);
+    }
+
+    public void nextPage() {
+        this.setPage(this.page + 1);
+    }
+
+    public void setPage(int page) {
+        this.page = Math.max(1, Math.min(this.maxPages, page));
+        this.drawLocations();
     }
 
     private class ButtonClose extends Button {
@@ -222,6 +281,7 @@ public class GUIAlchemicalBook extends Screen {
             if(isHoveredOrFocused()) {
                 if(location == null) {
                     setTooltipForNextRenderPass(Lang.ALCHEMICAL_BOOK_NO_BACK_LOCATION.translate());
+                    super.renderWidget(graphics, pMouseX, pMouseY, unknown);
                     return;
                 }
                 setTooltipForNextRenderPass(getTeleportationTooltip(location, canTeleport));
@@ -239,6 +299,20 @@ public class GUIAlchemicalBook extends Screen {
                 this.location = location;
                 this.canTeleport = acrossDimensions || location.dimension().equals(player.level().dimension());
             }
+        }
+    }
+
+    private class ButtonPrev extends Button {
+        public ButtonPrev(int x, int y, int w, int h, boolean active) {
+            super(Button.builder(Lang.ALCHEMICAL_BOOK_PREV.translate(), (button) -> GUIAlchemicalBook.this.previousPage()).pos(x, y).size(w, h));
+            this.active = active;
+        }
+    }
+
+    private class ButtonNext extends Button {
+        public ButtonNext(int x, int y, int w, int h, boolean active) {
+            super(Button.builder(Lang.ALCHEMICAL_BOOK_NEXT.translate(), (button) -> GUIAlchemicalBook.this.nextPage()).pos(x, y).size(w, h));
+            this.active = active;
         }
     }
 
