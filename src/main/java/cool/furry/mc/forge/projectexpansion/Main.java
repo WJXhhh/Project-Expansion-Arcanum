@@ -39,7 +39,7 @@ public class Main {
             @Nonnull
             @OnlyIn(Dist.CLIENT)
             public ItemStack makeIcon() {
-                return new ItemStack(Matter.FADING.getMatter());
+                return new ItemStack(Items.FINAL_STAR.get());
             }
         };
         PacketHandler.register();
