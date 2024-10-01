@@ -26,4 +26,9 @@ public class ContainerAdvancedAlchemicalChest extends AlchBagContainer {
 	public boolean blockEntityMatches(BlockEntityAdvancedAlchemicalChest be) {
 		return blockEntity == be;
 	}
+
+	@Override
+	public boolean stillValid(Player player) {
+		return ContainerBase.stillValid(player, blockEntity, () -> blockEntity.getBlockState().getBlock());
+	}
 }
