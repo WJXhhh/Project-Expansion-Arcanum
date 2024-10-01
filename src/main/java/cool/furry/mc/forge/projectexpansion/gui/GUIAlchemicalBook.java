@@ -41,8 +41,7 @@ public class GUIAlchemicalBook extends Screen {
     ButtonCreate buttonCreate;
     ButtonBack buttonBack;
     ButtonClose buttonClose;
-    @Nullable
-    ButtonPrev buttonPrev = null;
+    @Nullable ButtonPrev buttonPrev = null;
     @Nullable ButtonNext buttonNext = null;
     EditBox createName;
     LocalPlayer player;
@@ -316,7 +315,6 @@ public class GUIAlchemicalBook extends Screen {
         }
     }
 
-    // TODO: make sure this works
     public Component getTeleportationTooltip(CapabilityAlchemicalBookLocations.TeleportLocation location, boolean canTeleport) {
         ArrayList<Component> tooltips = new ArrayList<>();
         if(canTeleport) {

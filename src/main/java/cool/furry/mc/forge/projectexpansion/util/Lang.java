@@ -90,7 +90,7 @@ public enum Lang implements ILangEntry {
     public enum Blocks implements ILangEntry {
         // Advanced Alchemical Chest
         ADVANCED_ALCHEMICAL_CHEST_COLOR_SET("advanced_alchemical_chest", "color_set"),
-        ADVANCED_ALCHEMICAL_CHEST_INVLID_ITEM("advanced_alchemical_chest", "invalid_item"),
+        ADVANCED_ALCHEMICAL_CHEST_INVALID_ITEM("advanced_alchemical_chest", "invalid_item"),
         ADVANCED_ALCHEMICAL_CHEST_COLOR("advanced_alchemical_chest", "color"),
         ADVANCED_ALCHEMICAL_CHEST_TOOLTIP("advanced_alchemical_chest", "tooltip"),
 
