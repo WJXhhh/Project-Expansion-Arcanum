@@ -1,0 +1,23 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "cool.furry.mc.neoforge.projectexpansion.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"refmap": "projectexpansion.refmap.json",
+	"client": [
+		"DeleteWeebShitMixin",
+		"EMCFormatterMixin"
+	],
+	"mixins": [
+		"AlchemicalBagMixin",
+		"AlchemicalCollectionMixin",
+		"AlchemicalCollectionToggleMixin",
+		"CollectorRecipeCategoryMixin",
+		"EnchantmentProcessorMixin",
+		"PhilosophersStoneMixin",
+		"TomeMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
