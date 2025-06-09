@@ -35,15 +35,10 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocationsProvider {
-    public static final StreamCodec<RegistryFriendlyByteBuf, CapabilityAlchemicalBookLocations> STREAM_CODEC = StreamCodec.composite(
-        ItemAlchemicalBook.Mode.STREAM_CODEC, CapabilityAlchemicalBookLocations::getMode,
-        ByteBufCodecs.optional(Util.SERVER_PLAYER_STREAM_CODEC), (cap)-> Optional.ofNullable(cap.getPlayer()),
-        ByteBufCodecs.optional(ItemStack.STREAM_CODEC), (cap)-> Optional.ofNullable(cap.getItemStack()),
-        (mode, player, itemStack) -> new CapabilityAlchemicalBookLocations(mode, player.orElse(null), itemStack.orElse(null))
-    );
     public static final int BASIC_DISTANCE_RATIO = 1000;
     public static final int ADVANCED_DISTANCE_RATIO = 500;
     public static final int MASTER_DISTANCE_RATIO = 100;
@@ -146,7 +141,8 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
         }
 
         // records are immutable
-        public TeleportLocation withIndex(int index) {
+        public TeleportLocation setIndex(int index) {
+            if (index() == index) return this;
             return from(name, new BlockPos(x, y, z), dimension, index);
         }
 
@@ -177,6 +173,12 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
 
         public TeleportLocation copy() {
             return new TeleportLocation(name, x, y, z, dimension, index);
+        }
+
+        // make a copy if the input matches current, used to avoid double copying when paired with setIndex
+        public TeleportLocation copyIfEquals(TeleportLocation location) {
+            if (location == this) return copy();
+            return this;
         }
 
         public static TeleportLocation from(String name, GlobalPos pos, int index) {
@@ -310,63 +312,34 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
         }
     }
 
-    protected @Nullable AttachmentAlchemicalBookLocations getAttachment() {
+    protected AlchemicalBookLocationData getData() {
         if (player != null) {
             return player.getData(AttachmentTypes.ALCHEMICAL_BOOK_LOCATIONS);
         } else if (itemStack != null) {
-            return null;
+            return itemStack.getOrDefault(DataComponentTypes.ALCHEMICAL_BOOK_LOCATIONS, new AlchemicalBookLocationData());
         } else {
             throw new NullPointerException("Both Player and ItemStack are null");
         }
-    }
-
-    protected @Nullable ItemStackDataProvider getItemStackDataProvider() {
-        if (itemStack != null) {
-            return itemStack.getOrDefault(DataComponentTypes.ALCHEMICAL_BOOK_LOCATIONS, new ItemStackDataProvider(new HashMap<>()));
-        } else if (player != null) {
-            return null;
-        } else {
-            throw new NullPointerException("Both Player and ItemStack are null");
-        }
-    }
-
-    protected ILocationsProvider getLocationsProvider() {
-        @Nullable ILocationsProvider provider = null;
-        if (itemStack != null) {
-            provider = getItemStackDataProvider();
-        } else if (player != null) {
-            provider = getAttachment();
-        } else {
-            throw new NullPointerException("Both Player and ItemStack are null");
-        }
-
-        if (provider == null) {
-            throw new NullPointerException("Failed to get locations provider");
-        }
-
-        return provider;
     }
 
     @Override
     public ImmutableList<TeleportLocation> getLocations() {
-        return getLocationsProvider().getLocations().values().stream().sorted(Comparator.comparingInt(TeleportLocation::index)).collect(ImmutableList.toImmutableList());
+        return getData().getLocations().stream().sorted(Comparator.comparingInt(TeleportLocation::index)).collect(ImmutableList.toImmutableList());
     }
 
     @Override
     public void addLocation(String name, GlobalPos pos) throws BookError.DuplicateNameError {
-        ILocationsProvider provider = getLocationsProvider();
-        if(provider.getLocations().containsKey(name) && !name.equals(BACK_KEY)) {
+        AlchemicalBookLocationData data = getData();
+        if(data.hasLocation(name) && !name.equals(BACK_KEY)) {
             throw new BookError.DuplicateNameError(name);
         }
-        int index = provider.getLocations().size();
-        if(name.equals(BACK_KEY)) {
-            index = -1;
-        } else if(provider.getLocations().containsKey(BACK_KEY)) {
-            index -= 1;
-        }
-        TeleportLocation location = TeleportLocation.from(name, pos, index);
-        provider = provider.addLocation(name, location);
-        markDirty(provider);
+        int lastIndex = -1;
+        try {
+            lastIndex = data.getLocations().getLast().index();
+        } catch (NoSuchElementException ignore) {}
+        TeleportLocation location = TeleportLocation.from(name, pos, lastIndex + 1);
+        data = data.addLocation(name, location);
+        markDirty(data);
     }
 
     @Override
@@ -375,27 +348,35 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
     }
 
     @Override
+    public void reindex() {
+        AlchemicalBookLocationData data = getData();
+        data = data.reindex();
+        markDirty(data);
+    }
+
+    @Override
     public void removeLocation(String name) throws BookError.NameNotFoundError {
-        ILocationsProvider provider = getLocationsProvider();
-        if(!provider.getLocations().containsKey(name)) {
+        AlchemicalBookLocationData data = getData();
+        if(!data.hasLocation(name)) {
             throw new BookError.NameNotFoundError(name);
         }
 
-        int index = provider.getLocations().get(name).index();
-        provider = provider.removeLocation(name);
-        markDirty(provider);
+        data = data.removeLocation(name);
+        markDirty(data);
     }
 
     @Override
     public void saveBackLocation(Player player, GlobalPos pos) {
         try {
-            if(getLocationsProvider().getLocations().containsKey(BACK_KEY)) {
-                removeLocation(BACK_KEY);
+            AlchemicalBookLocationData data = getData();
+            if (data.hasLocation(BACK_KEY)) {
+                data = data.removeLocation(BACK_KEY);
+                markDirty(data);
             }
 
             addLocation(BACK_KEY, pos);
             sync((ServerPlayer) player);
-        } catch (BookError.NameNotFoundError | BookError.DuplicateNameError e) {
+        } catch (BookError.DuplicateNameError e) {
             throw new RuntimeException(e);
         }
     }
@@ -405,15 +386,20 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
         saveBackLocation(player, GlobalPos.of(player.level().dimension(), player.blockPosition()));
     }
 
+    private void setLocations(List<TeleportLocation> locations) {
+        getData().setLocations(locations);
+    }
+
     private static final String BACK_KEY = "@back";
+    private static final int BACK_INDEX = 0;
     @Override
     public @Nullable TeleportLocation getBackLocation() {
-        ILocationsProvider provider = getLocationsProvider();
-        if(!provider.getLocations().containsKey(BACK_KEY)) {
+        AlchemicalBookLocationData data = getData();
+        if(!data.hasLocation(BACK_KEY)) {
             return null;
         }
 
-        return provider.getLocations().get(BACK_KEY);
+        return data.getLocation(BACK_KEY);
     }
 
     @Override
@@ -462,7 +448,7 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
 
     @Override
     public @Nullable TeleportLocation getLocation(String name) {
-        return getLocationsProvider().getLocations().get(name);
+        return getData().getLocations().stream().filter(location -> location.name().equals(name)).findFirst().orElse(null);
     }
 
     @Override
@@ -477,9 +463,9 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
 
     @Override
     public void resetLocations() {
-        ILocationsProvider provider = getLocationsProvider();
-        provider = provider.clearLocations();
-        markDirty(provider);
+        AlchemicalBookLocationData data = getData();
+        data = data.clearLocations();
+        markDirty(data);
     }
 
     @Override
@@ -553,132 +539,112 @@ public class CapabilityAlchemicalBookLocations implements IAlchemicalBookLocatio
         }
     }
 
-    protected void markDirty(ILocationsProvider provider) {
+    protected void markDirty(AlchemicalBookLocationData provider) {
         if (itemStack != null) {
-            itemStack.set(DataComponentTypes.ALCHEMICAL_BOOK_LOCATIONS, (ItemStackDataProvider) provider);
+            itemStack.set(DataComponentTypes.ALCHEMICAL_BOOK_LOCATIONS, provider);
         } else if (player != null) {
-            player.setData(AttachmentTypes.ALCHEMICAL_BOOK_LOCATIONS, (AttachmentAlchemicalBookLocations) provider);
+            player.setData(AttachmentTypes.ALCHEMICAL_BOOK_LOCATIONS, provider);
         } else {
             throw new NullPointerException("Both Player and ItemStack are null");
         }
     }
 
-    public static class AttachmentAlchemicalBookLocations implements ILocationsProvider {
-        public static final Codec<AttachmentAlchemicalBookLocations> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-             Codec.unboundedMap(Codec.STRING, TeleportLocation.CODEC).fieldOf("locations").forGetter(AttachmentAlchemicalBookLocations::getLocations)
-        ).apply(instance, AttachmentAlchemicalBookLocations::new));
-        public static final StreamCodec<RegistryFriendlyByteBuf, AttachmentAlchemicalBookLocations> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, TeleportLocation.STREAM_CODEC), AttachmentAlchemicalBookLocations::getLocations,
-                AttachmentAlchemicalBookLocations::new
+    public static class AlchemicalBookLocationData {
+        public static final Codec<AlchemicalBookLocationData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                TeleportLocation.CODEC.listOf().fieldOf(TagNames.LOCATIONS).forGetter(AlchemicalBookLocationData::getLocations)
+        ).apply(instance, AlchemicalBookLocationData::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, AlchemicalBookLocationData> STREAM_CODEC = StreamCodec.composite(
+                TeleportLocation.STREAM_CODEC.apply(ByteBufCodecs.list()), AlchemicalBookLocationData::getLocations,
+                AlchemicalBookLocationData::new
         );
 
-        private final Map<String, TeleportLocation> locations;
+        private final ImmutableList<TeleportLocation> locations;
 
-        public AttachmentAlchemicalBookLocations() {
-            this(new HashMap<>());
+        public AlchemicalBookLocationData() {
+            this(new ArrayList<>());
         }
 
-        private AttachmentAlchemicalBookLocations(Map<String, TeleportLocation> locations) {
-            this.locations = locations;
+        private AlchemicalBookLocationData(List<TeleportLocation> locations) {
+            this.locations = ImmutableList.copyOf(locations);
         }
 
         @Nullable
-        public AttachmentAlchemicalBookLocations copy(IAttachmentHolder holder, HolderLookup.Provider registries) {
-            HashMap<String, TeleportLocation> locationsCopy = new HashMap<>();
-            for (Map.Entry<String, TeleportLocation> entry : locations.entrySet()) {
-                locationsCopy.put(entry.getKey(), entry.getValue().copy());
+        public CapabilityAlchemicalBookLocations.AlchemicalBookLocationData copy(IAttachmentHolder holder, HolderLookup.Provider registries) {
+            List<TeleportLocation> locationsCopy = new ArrayList<>();
+            for (TeleportLocation location : getLocations()) {
+                locationsCopy.add(location.copy());
             }
-            return new AttachmentAlchemicalBookLocations(locationsCopy);
+            return new AlchemicalBookLocationData(locationsCopy);
         }
 
-        public Map<String, TeleportLocation> getLocations() {
-            return locations;
+        public ImmutableList<TeleportLocation> getLocations() {
+            return ImmutableList.copyOf(locations.stream().sorted(Comparator.comparingInt(TeleportLocation::index)).collect(Collectors.toList()));
         }
 
-        @Override
-        public AttachmentAlchemicalBookLocations removeLocation(String name) {
-            HashMap<String, TeleportLocation> newLocations = new HashMap<>();
-            int index = locations.get(name).index();
-            locations.forEach((locationName, location) -> {
-                int locationIndex = location.index();
-                if(locationIndex < index) {
-                    newLocations.put(locationName, location.copy());
-                } else if (locationIndex > index) {
-                    newLocations.put(locationName, location.withIndex(location.index() + 1));
+        public boolean hasLocation(String name) {
+            return getLocations().stream().anyMatch(location -> location.name().equals(name));
+        }
+
+        public @Nullable TeleportLocation getLocation(String name) {
+            return getLocations().stream().filter(location -> location.name().equals(name)).findFirst().orElse(null);
+        }
+
+        public AlchemicalBookLocationData removeLocation(String name) {
+            List<TeleportLocation> newLocations = new ArrayList<>();
+
+            for (TeleportLocation location : getLocations()) {
+                if (location.name().equals(name)) continue;
+                newLocations.add(location.copy());
+            }
+
+            return setLocations(newLocations).reindex();
+        }
+
+        public AlchemicalBookLocationData addLocation(String name, TeleportLocation newLocation) {
+            List<TeleportLocation> newLocations = new ArrayList<>();
+            for (TeleportLocation location : getLocations()) {
+                newLocations.add(location.copy());
+            }
+            newLocations.add(newLocation);
+            return setLocations(newLocations).reindex();
+        }
+
+        public AlchemicalBookLocationData clearLocations() {
+            return setLocations(new ArrayList<>());
+        }
+
+        public AlchemicalBookLocationData setLocations(List<TeleportLocation> locations) {
+            return new AlchemicalBookLocationData(locations);
+        }
+
+        public AlchemicalBookLocationData reindex() {
+            List<TeleportLocation> locations = getLocations();
+            if (locations.isEmpty()) return this;
+            ArrayList<TeleportLocation> newLocations = new ArrayList<>();
+
+            int index = BACK_INDEX + 1; // the back index should never be used for a normal location
+            for (TeleportLocation location : locations) {
+                if (location.isBack()) {
+                    newLocations.add(location.setIndex(BACK_INDEX).copyIfEquals(location));
+                    continue;
                 }
-                // ignore if locationIndex == index
-            });
-
-            return new AttachmentAlchemicalBookLocations(newLocations);
-        }
-
-        @Override
-        public AttachmentAlchemicalBookLocations addLocation(String name, TeleportLocation location) {
-            HashMap<String, TeleportLocation> newLocations = new HashMap<>();
-            for (Map.Entry<String, TeleportLocation> entry : locations.entrySet()) {
-                newLocations.put(entry.getKey(), entry.getValue().copy());
+                newLocations.add(location.setIndex(index).copyIfEquals(location));
+                index++;
             }
-            newLocations.put(name, location);
-            return new AttachmentAlchemicalBookLocations(newLocations);
+
+            return setLocations(newLocations);
         }
 
         @Override
-        public AttachmentAlchemicalBookLocations clearLocations() {
-            return new AttachmentAlchemicalBookLocations(new HashMap<>());
-        }
-    }
-
-    public record ItemStackDataProvider(Map<String, TeleportLocation> locations) implements ILocationsProvider {
-        public static final Codec<ItemStackDataProvider> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.unboundedMap(Codec.STRING, TeleportLocation.CODEC).fieldOf("locations").forGetter(ItemStackDataProvider::getLocations)
-        ).apply(instance, ItemStackDataProvider::new));
-        public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackDataProvider> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, TeleportLocation.STREAM_CODEC), ItemStackDataProvider::getLocations,
-                ItemStackDataProvider::new
-        );
-
-        public Map<String, TeleportLocation> getLocations() {
-            return locations;
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            AlchemicalBookLocationData that = (AlchemicalBookLocationData) o;
+            return Objects.equals(locations, that.locations);
         }
 
         @Override
-        public ItemStackDataProvider removeLocation(String name) {
-            HashMap<String, TeleportLocation> newLocations = new HashMap<>();
-            int index = locations.get(name).index();
-
-            locations.forEach((locationName, location) -> {
-                int locationIndex = location.index();
-                if (locationIndex < index) {
-                    newLocations.put(locationName, location.copy());
-                } else if (locationIndex > index) {
-                    newLocations.put(locationName, location.withIndex(location.index() + 1));
-                }
-                // ignore if locationIndex == index
-            });
-
-            return new ItemStackDataProvider(newLocations);
+        public int hashCode() {
+            return Objects.hashCode(locations);
         }
-
-        @Override
-        public ItemStackDataProvider addLocation(String name, TeleportLocation location) {
-            HashMap<String, TeleportLocation> newLocations = new HashMap<>();
-            for (Map.Entry<String, TeleportLocation> entry : locations.entrySet()) {
-                newLocations.put(entry.getKey(), entry.getValue().copy());
-            }
-            newLocations.put(name, location);
-            return new ItemStackDataProvider(newLocations);
-        }
-
-        @Override
-        public ItemStackDataProvider clearLocations() {
-            return new ItemStackDataProvider(new HashMap<>());
-        }
-    }
-
-    public interface ILocationsProvider {
-        Map<String, TeleportLocation> getLocations();
-        ILocationsProvider removeLocation(String name);
-        ILocationsProvider addLocation(String name, TeleportLocation location);
-        ILocationsProvider clearLocations();
     }
 }

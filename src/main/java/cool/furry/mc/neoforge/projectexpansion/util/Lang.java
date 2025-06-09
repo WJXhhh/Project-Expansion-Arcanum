@@ -246,6 +246,10 @@ public enum Lang implements ILangEntry {
         BOOK_ADD_PLAYER_SUCCESS("book", "add", "player_success"),
         BOOK_ADD_PLAYER_SUCCESS_SELF("book", "add", "player_success_self"),
         BOOK_ADD_PLAYER_NOTIFICATION("book", "add", "player_notification"),
+        BOOK_REINDEX_ITEMSTACK_SUCCESS("book", "reindex", "itemstack_success"),
+        BOOK_REINDEX_PLAYER_SUCCESS("book", "reindex", "player_success"),
+        BOOK_REINDEX_PLAYER_SUCCESS_SELF("book", "reindex", "player_success_self"),
+        BOOK_REINDEX_PLAYER_NOTIFICATION("book", "reindex", "player_notification"),
 
         // dumpfuelmap
         DUMP_FUEL_MAP_FUEL("dumpfuelmap", "fuel"),

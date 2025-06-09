@@ -23,6 +23,7 @@ public interface IAlchemicalBookLocationsProvider {
     ItemAlchemicalBook.Mode getMode();
     @Nullable ServerPlayer getPlayer();
     ServerPlayer getPlayerOrException();
+    void reindex();
     void removeLocation(String name) throws CapabilityAlchemicalBookLocations.BookError.NameNotFoundError;
     void resetLocations();
     void saveBackLocation(Player player);

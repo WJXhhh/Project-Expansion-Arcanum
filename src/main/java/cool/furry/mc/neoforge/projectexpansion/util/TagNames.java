@@ -25,4 +25,5 @@ public class TagNames {
     public static String AUX_SLOTS = "AuxSlots";
     public static String VALUE = "Value";
     public static String LOCK = "Lock";
+    public static String LOCATIONS = "Locations";
 }

@@ -45,6 +45,9 @@ public class Permissions {
     public static final CommandPermissionNode BOOK_LIST = nodeOpCommand("book.list");
     public static final CommandPermissionNode BOOK_LIST_HAND = nodeOpCommand("book.list.hand");
     public static final CommandPermissionNode BOOK_LIST_PLAYER = nodeOpCommand("book.list.player");
+    public static final CommandPermissionNode BOOK_REINDEX = nodeOpCommand("book.reindex");
+    public static final CommandPermissionNode BOOK_REINDEX_HAND = nodeOpCommand("book.reindex.hand");
+    public static final CommandPermissionNode BOOK_REINDEX_PLAYER = nodeOpCommand("book.reindex.player");
     public static final CommandPermissionNode BOOK_REMOVE = nodeOpCommand("book.remove");
     public static final CommandPermissionNode BOOK_REMOVE_HAND = nodeOpCommand("book.remove.hand");
     public static final CommandPermissionNode BOOK_REMOVE_PLAYER = nodeOpCommand("book.remove.player");
