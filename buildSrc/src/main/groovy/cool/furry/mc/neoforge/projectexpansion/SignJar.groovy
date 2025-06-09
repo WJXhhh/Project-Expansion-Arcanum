@@ -52,5 +52,7 @@ abstract class SignJar extends Exec {
         }
 
         setCommandLine(scriptFile.get(), inputFile.get().asFile.name)
+
+        super.exec()
     }
 }
