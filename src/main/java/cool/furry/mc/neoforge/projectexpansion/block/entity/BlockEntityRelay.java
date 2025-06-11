@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -18,10 +19,14 @@ import java.math.BigInteger;
 public class BlockEntityRelay extends BlockEntityEMC implements IHasMatter, IRelayBigInteger {
     public Matter matter;
     public static final Direction[] DIRECTIONS = Direction.values();
+    private BigInteger bonusEMC = BigInteger.ZERO;
     public BlockEntityRelay(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.RELAY.get(), pos, state);
     }
-    private BigInteger bonusEMC = BigInteger.ZERO;
+
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        BlockEntityEMC.registerCapabilities(event, BlockEntityTypes.RELAY.get());
+    }
 
     public static void tickServer(Level level, BlockPos pos, BlockState state, BlockEntity blockEntity) {
         if (blockEntity instanceof BlockEntityRelay be) be.tickServer(level, pos, state, be);
@@ -31,7 +36,7 @@ public class BlockEntityRelay extends BlockEntityEMC implements IHasMatter, IRel
         // we can't use the user defined value due to emc duplication possibilities
         if ((level.getGameTime() % 20L) != Util.mod(hashCode(), 20)) return;
 
-        sendToAllAcceptors(level, pos, getStoredEmcBigInteger(), Util.safeLongValue(getMatter().getRelayTransfer()));
+        sendToAllAcceptors(level, pos, getStoredEmcBigInteger().min(getMatter().getRelayTransfer()));
     }
 
 
@@ -71,7 +76,7 @@ public class BlockEntityRelay extends BlockEntityEMC implements IHasMatter, IRel
     public void addBonus(@NotNull Level level, @NotNull BlockPos pos) {
         bonusEMC = bonusEMC.add(getBigIntegerBonusToAdd());
         if (bonusEMC.compareTo(BigInteger.ONE) >= 0) {
-            Util.stepBigInteger(bonusEMC, (val) -> insertEmc(val, EmcAction.EXECUTE));
+            insertEmcBigInteger(bonusEMC, EmcAction.EXECUTE);
             bonusEMC = BigInteger.ZERO;
         }
         markDirty(level, pos);

@@ -8,6 +8,7 @@ import cool.furry.mc.neoforge.projectexpansion.util.IChestLike;
 import cool.furry.mc.neoforge.projectexpansion.util.TagNames;
 import cool.furry.mc.neoforge.projectexpansion.util.Util;
 import moze_intel.projecte.api.ItemInfo;
+import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
 import moze_intel.projecte.api.event.PlayerAttemptCondenserSetEvent;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -50,7 +51,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 
 public class BlockEntityCondenserMK3 extends BlockEntityBase implements IChestLike, MenuProvider {
-    public static ICapabilityProvider<BlockEntityCondenserMK3, @Nullable Direction, IItemHandler> ITEM_HANDLER_CAPABILITY = BlockEntityCondenserMK3::getAutomationSidedItemHandler;
+    public static final ICapabilityProvider<BlockEntityCondenserMK3, @Nullable Direction, IItemHandler> ITEM_HANDLER_CAPABILITY = BlockEntityCondenserMK3::getAutomationSidedItemHandler;
+    public static final ICapabilityProvider<BlockEntityCondenserMK3, @Nullable Direction, IEmcStorage> EMC_STORAGE_PROVIDER = BlockEntityCondenserMK3::getSidedHandler;
     public static final Direction OUTPUT_DIRECTION = Direction.DOWN;
     private static final int INPUT_SIZE = 91;
     private static final int OUTPUT_SIZE = 180;
@@ -91,6 +93,7 @@ public class BlockEntityCondenserMK3 extends BlockEntityBase implements IChestLi
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BlockEntityTypes.CONDENSER_MK3.get(), ITEM_HANDLER_CAPABILITY);
+        event.registerBlockEntity(PECapabilities.EMC_STORAGE_CAPABILITY, BlockEntityTypes.CONDENSER_MK3.get(), EMC_STORAGE_PROVIDER);
     }
 
     protected SidedHandler createSidedHandler(Direction direction) {
@@ -117,13 +120,6 @@ public class BlockEntityCondenserMK3 extends BlockEntityBase implements IChestLi
 
     protected StackHandler getOutputHandler() {
         return getOutput().getInventory();
-    }
-
-    public StackHandler getSidedItemHandler(@Nullable Direction direction) {
-        if (direction == null) direction = Direction.UP;
-
-        SidedHandler handler = getSidedHandler(direction);
-        return handler.getInventory();
     }
 
     public WrappedItemHandler getAutomationSidedItemHandler(@Nullable Direction direction) {

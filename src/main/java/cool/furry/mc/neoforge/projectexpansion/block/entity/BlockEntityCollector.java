@@ -1,6 +1,5 @@
 package cool.furry.mc.neoforge.projectexpansion.block.entity;
 
-import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.block.BlockCollector;
 import cool.furry.mc.neoforge.projectexpansion.block.BlockCompactSun;
 import cool.furry.mc.neoforge.projectexpansion.config.Config;
@@ -81,8 +80,8 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     private final IItemHandler joined;
 
 
-    private boolean hasChargeableItem;
-    private boolean hasFuel;
+    public boolean hasChargeableItem;
+    public boolean hasFuel;
     private BigDecimal unprocessedEMC = BigDecimal.ZERO;
     //Start as needing to check for compacting when loaded
     private boolean needsCompacting = true;
@@ -109,6 +108,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BlockEntityTypes.COLLECTOR.get(), ITEM_HANDLER_CAPABILITY);
+        BlockEntityEMC.registerCapabilities(event, BlockEntityTypes.COLLECTOR.get());
     }
 
     private void resetStackHandlers() {
@@ -221,9 +221,11 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
                     }
                 }
             } else {
+                BigInteger a = getStoredEmcBigInteger();
                 // Only send EMC when we are not upgrading fuel or charging an item
                 BigInteger toSend = getStoredEmcBigInteger().compareTo(generated.toBigInteger()) < 0 ? getStoredEmcBigInteger() : generated.toBigInteger();
                 sendToAllAcceptors(level, pos, toSend);
+                BigInteger b = getStoredEmcBigInteger();
                 sendRelayBonus(level, pos);
             }
         }
@@ -362,7 +364,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
                     hasChargeableItem = false;
                 }
             } else {
-                hasFuel = true;
+                hasFuel = FuelMapper.isStackFuel(upgrading);
                 hasChargeableItem = false;
             }
         } else {

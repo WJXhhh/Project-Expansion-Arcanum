@@ -41,8 +41,9 @@ public class CapabilityEvents {
 
         BlockEntityAdvancedAlchemicalChest.registerCapabilities(event);
         BlockEntityCollector.registerCapabilities(event);
+        BlockEntityCondenserMK3.registerCapabilities(event);
         BlockEntityEMCLink.registerCapabilities(event);
         BlockEntityTransmutationInterface.registerCapabilities(event);
-        BlockEntityCondenserMK3.registerCapabilities(event);
+        BlockEntityRelay.registerCapabilities(event);
     }
 }

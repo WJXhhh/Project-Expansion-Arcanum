@@ -1,5 +1,7 @@
 package cool.furry.mc.neoforge.projectexpansion.block.entity;
 
+import com.mojang.datafixers.util.Either;
+import cool.furry.mc.neoforge.projectexpansion.registries.Capabilities;
 import cool.furry.mc.neoforge.projectexpansion.util.IEmcStorageBigInteger;
 import cool.furry.mc.neoforge.projectexpansion.util.TagNames;
 import cool.furry.mc.neoforge.projectexpansion.util.Util;
@@ -11,10 +13,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -25,7 +27,8 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public abstract class BlockEntityEMC extends BlockEntityBase implements IEmcStorageBigInteger {
-    public static final ICapabilityProvider<BlockEntityEMC, @Nullable Direction, IEmcStorageBigInteger> EMC_STORAGE_PROVIDER = (be, side) -> be;
+    public static final ICapabilityProvider<BlockEntityEMC, @Nullable Direction, IEmcStorage> EMC_STORAGE_PROVIDER = (be, side) -> be;
+    public static final ICapabilityProvider<BlockEntityEMC, @Nullable Direction, IEmcStorageBigInteger> BIG_EMC_STORAGE_PROVIDER = (be, side) -> be;
     private BigInteger maximumEMC;
     private BigInteger emc = BigInteger.ZERO;
     public static final Direction[] DIRECTIONS = Direction.values();
@@ -37,6 +40,11 @@ public abstract class BlockEntityEMC extends BlockEntityBase implements IEmcStor
     public BlockEntityEMC(BlockEntityType<?> type, BlockPos pos, BlockState state, BigInteger maximumEMC) {
         super(type, pos, state);
         setMaximumEMC(maximumEMC);
+    }
+
+    public static void registerCapabilities(RegisterCapabilitiesEvent event, BlockEntityType<? extends BlockEntityEMC> type) {
+        event.registerBlockEntity(PECapabilities.EMC_STORAGE_CAPABILITY, type, EMC_STORAGE_PROVIDER);
+        event.registerBlockEntity(Capabilities.BIG_EMC_STORAGE_CAPABILITY, type, BIG_EMC_STORAGE_PROVIDER);
     }
 
     /*******
@@ -126,6 +134,7 @@ public abstract class BlockEntityEMC extends BlockEntityBase implements IEmcStor
             emc = emc.subtract(toRemove);
             storedEmcChanged();
         }
+
         return toRemove;
     }
 
@@ -146,27 +155,43 @@ public abstract class BlockEntityEMC extends BlockEntityBase implements IEmcStor
     }
 
     protected void sendToAllAcceptors(@NotNull Level level, BlockPos pos, BigInteger emc) {
-        sendToAllAcceptors(level, pos, emc, Long.MAX_VALUE);
+        sendToAllAcceptors(level, pos, emc, null);
     }
 
-    protected void sendToAllAcceptors(@NotNull Level level, BlockPos pos, BigInteger emc, long transferLimit) {
-        if(emc.equals(BigInteger.ZERO) || !canProvideEmc()) {
+    protected void sendToAllAcceptors(@NotNull Level level, BlockPos pos, BigInteger emc, @Nullable BigInteger transferLimit) {
+        if (emc.equals(BigInteger.ZERO) || !canProvideEmc()) {
             return;
         }
         emc = getEmcExtractLimitBigInteger().min(emc);
 
-        List<IEmcStorage> targets = new ArrayList<>(1);
+        List<IEmcStorage> targets = new ArrayList<>();
 
-        for (Direction dir : DIRECTIONS) {
-            BlockPos neighbor = worldPosition.relative(dir);
-            if (level.isLoaded(neighbor)) {
-                BlockEntity be = level.getBlockEntity(neighbor);
-                if (be != null) {
-                    IEmcStorage storage = WorldHelper.getCapability(level, PECapabilities.EMC_STORAGE_CAPABILITY, pos.relative(dir), dir.getOpposite());
-                    if (storage != null && ((!isRelay() || !storage.isRelay()) && storage.insertEmc(1L, IEmcStorage.EmcAction.SIMULATE) > 0L)) {
+        for (Direction dir : Direction.values()) {
+            Either<IEmcStorage, IEmcStorageBigInteger> anyStorage = null;
+            IEmcStorageBigInteger bigStorage = WorldHelper.getCapability(level, Capabilities.BIG_EMC_STORAGE_CAPABILITY, pos.relative(dir), dir.getOpposite());
+            if (bigStorage == null) {
+                IEmcStorage storage = WorldHelper.getCapability(level, PECapabilities.EMC_STORAGE_CAPABILITY, pos.relative(dir), dir.getOpposite());
+                if (storage != null) {
+                    anyStorage = Either.left(storage);
+                }
+            } else {
+                anyStorage = Either.right(bigStorage);
+            }
+
+            if (anyStorage != null) {
+                // If they are both relays don't add the pairing to prevent thrashing
+                // If they are wiling to accept any Emc then we consider them to be an "acceptor"
+                anyStorage.ifLeft(storage -> {
+                    if ((!isRelay() || !storage.isRelay()) && storage.insertEmc(1, EmcAction.SIMULATE) > 0) {
                         targets.add(storage);
                     }
-                }
+                });
+
+                anyStorage.ifRight(storage -> {
+                    if ((!isRelay() || !storage.isRelay()) && storage.insertEmcBigInteger(BigInteger.ONE, EmcAction.SIMULATE).compareTo(BigInteger.ZERO) > 0) {
+                        targets.add(storage);
+                    }
+                });
             }
         }
 

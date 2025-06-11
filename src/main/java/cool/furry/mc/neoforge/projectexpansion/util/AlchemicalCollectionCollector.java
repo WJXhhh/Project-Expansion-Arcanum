@@ -1,6 +1,5 @@
 package cool.furry.mc.neoforge.projectexpansion.util;
 
-import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.config.Config;
 import cool.furry.mc.neoforge.projectexpansion.registries.SoundEvents;
 import moze_intel.projecte.api.ItemInfo;
@@ -23,7 +22,6 @@ public class AlchemicalCollectionCollector {
         }
 
         public boolean process() {
-            Main.Logger.info("process {}", emc);
             @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
             @Nullable ServerPlayer serverPlayer = Util.getServerPlayer(player);
             if (provider == null || serverPlayer == null) return false;

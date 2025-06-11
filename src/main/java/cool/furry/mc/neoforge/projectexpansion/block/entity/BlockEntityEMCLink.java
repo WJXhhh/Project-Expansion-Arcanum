@@ -50,6 +50,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHasMatter {
     public static final ICapabilityProvider<BlockEntityEMCLink, @org.jetbrains.annotations.Nullable Direction, IEmcStorage> EMC_STORAGE_PROVIDER = (link, side) -> link.getEMCHandler();
+    public static final ICapabilityProvider<BlockEntityEMCLink, @org.jetbrains.annotations.Nullable Direction, IEmcStorageBigInteger> BIG_EMC_STORAGE_PROVIDER = (link, side) -> link.getEMCHandler();
     public static final ICapabilityProvider<BlockEntityEMCLink, @org.jetbrains.annotations.Nullable Direction, IItemHandler> ITEM_HANDLER_PROVIDER = (link, side) -> link.getItemHandler();
     public static final ICapabilityProvider<BlockEntityEMCLink, @org.jetbrains.annotations.Nullable Direction, IFluidHandler> FLUID_HANDLER_PROVIDER = (link, side) -> link.getFluidHandler();
     public BigInteger emc = BigInteger.ZERO;
@@ -62,6 +63,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(PECapabilities.EMC_STORAGE_CAPABILITY, BlockEntityTypes.EMC_LINK.get(), EMC_STORAGE_PROVIDER);
+        event.registerBlockEntity(cool.furry.mc.neoforge.projectexpansion.registries.Capabilities.BIG_EMC_STORAGE_CAPABILITY, BlockEntityTypes.EMC_LINK.get(), BIG_EMC_STORAGE_PROVIDER);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BlockEntityTypes.EMC_LINK.get(), ITEM_HANDLER_PROVIDER);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BlockEntityTypes.EMC_LINK.get(), FLUID_HANDLER_PROVIDER);
     }
@@ -249,31 +251,30 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
      * Capabilities *
      ****************/
 
-    private class EMCHandler implements IEmcStorage {
+    private class EMCHandler implements IEmcStorageBigInteger {
         @Override
-        public long getStoredEmc() {
-            return 0L;
+        public BigInteger getStoredEmcBigInteger() {
+            return BigInteger.ZERO;
+        }
+        @Override
+        public BigInteger getMaximumEmcBigInteger() {
+            return getMatter().getEMCLinkEMCLimit();
         }
 
         @Override
-        public long getMaximumEmc() {
-            return Util.safeLongValue(getMatter().getEMCLinkEMCLimit());
+        public BigInteger extractEmcBigInteger(BigInteger value, EmcAction action) {
+            return emc.compareTo(BigInteger.ZERO) < 0 ? insertEmcBigInteger(value.negate(), action) : value;
         }
 
         @Override
-        public long extractEmc(long emc, EmcAction action) {
-            return emc < 0L ? insertEmc(-emc, action) : 0L;
-        }
-
-        @Override
-        public long insertEmc(long emc, EmcAction action) {
+        public BigInteger insertEmcBigInteger(BigInteger value, EmcAction action) {
             boolean isFinal = getMatter() == Matter.FINAL;
-            long v = isFinal ? emc : Math.min(Util.safeLongValue(remainingEMC), emc);
+            BigInteger v = isFinal ? emc : remainingEMC.min(emc);
 
-            if (emc <= 0L) return 0L;
+            if (emc.compareTo(BigInteger.ZERO) < 0) return BigInteger.ZERO;
             if (action.execute()) {
-                if(!isFinal) remainingEMC = remainingEMC.subtract(BigInteger.valueOf(v));
-                BlockEntityEMCLink.this.emc = BlockEntityEMCLink.this.emc.add(BigInteger.valueOf(v));
+                if(!isFinal) remainingEMC = remainingEMC.subtract(v);
+                emc = emc.add(v);
                 markDirty();
             }
 
