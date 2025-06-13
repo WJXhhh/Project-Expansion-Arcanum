@@ -325,27 +325,27 @@ public enum Matter implements StringRepresentable, IMatterType {
 
             case MATTER_BLOCK -> {
                 if (hasBlock) {
-                    blockMatterBlock = Blocks.Registry.register(String.format("%s_matter_block", name), () -> new BlockMatter(this));
+                    blockMatterBlock = Blocks.Registry.register(String.format("%s_matter_block", name), () -> new BlockMatter(BlockMatter.getProperties(this), this));
                     itemMatterBlock = Items.Registry.register(String.format("%s_matter_block", name), () -> new BlockItem(Objects.requireNonNull(blockMatterBlock).get(), new Item.Properties().rarity(getRarity())));
                 }
             }
 
             case COLLECTOR -> {
-                collector = Blocks.Registry.register(String.format("%s_collector", name), () -> new BlockCollector(this));
+                collector = Blocks.Registry.register(String.format("%s_collector", name), () -> new BlockCollector(BlockCollector.getProperties(this), this));
                 itemCollector = Items.Registry.register(String.format("%s_collector", name), () -> new BlockItem(Objects.requireNonNull(collector).get(), new Item.Properties().rarity(getRarity())));
             }
 
             case COMPRESSED_COLLECTOR -> itemCompressedCollector = Items.Registry.register(String.format("%s_compressed_collector", name), () -> new ItemCompressedCollector(this));
             case POWER_FLOWER -> {
-                powerFlower = Blocks.Registry.register(String.format("%s_power_flower", name), () -> new BlockPowerFlower(this));
+                powerFlower = Blocks.Registry.register(String.format("%s_power_flower", name), () -> new BlockPowerFlower(BlockPowerFlower.getProperties(this), this));
                 itemPowerFlower = Items.Registry.register(String.format("%s_power_flower", name), () -> new BlockItem(Objects.requireNonNull(powerFlower).get(), new Item.Properties().rarity(getRarity())));
             }
             case RELAY -> {
-                relay = Blocks.Registry.register(String.format("%s_relay", name), () -> new BlockRelay(this));
+                relay = Blocks.Registry.register(String.format("%s_relay", name), () -> new BlockRelay(BlockRelay.getProperties(this), this));
                 itemRelay = Items.Registry.register(String.format("%s_relay", name), () -> new BlockItem(Objects.requireNonNull(relay).get(), new Item.Properties().rarity(getRarity())));
             }
             case EMC_LINK -> {
-                emcLink = Blocks.Registry.register(String.format("%s_emc_link", name), () -> new BlockEMCLink(this));
+                emcLink = Blocks.Registry.register(String.format("%s_emc_link", name), () -> new BlockEMCLink(BlockEMCLink.getProperties(this), this));
                 itemEMCLink = Items.Registry.register(String.format("%s_emc_link", name), () -> new BlockItem(Objects.requireNonNull(emcLink).get(), new Item.Properties().rarity(getRarity())));
             }
         }
