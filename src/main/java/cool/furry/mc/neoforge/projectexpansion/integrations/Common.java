@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.Random;
 import java.util.function.Consumer;
 
 public class Common {
@@ -122,8 +121,6 @@ public class Common {
             }
             addTooltip.accept(Lang.OWNER.translateColored(ChatFormatting.GRAY, Component.literal(ownerName).withStyle(isOwner ? ChatFormatting.DARK_GREEN : ChatFormatting.DARK_RED)));
         }
-
-        addTooltip.accept(Component.literal(String.valueOf(new Random().nextInt())));
     }
 
     private static MutableComponent formatEMC(BigInteger value) {
