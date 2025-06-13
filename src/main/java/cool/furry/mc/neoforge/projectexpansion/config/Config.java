@@ -14,7 +14,7 @@ public final class Config {
     public static final class Client {
         public final ModConfigSpec.Builder Builder = new ModConfigSpec.Builder();
         public final ModConfigSpec Spec;
-        private final ModConfigSpec.ConfigValue<String> emcDisplayPosition = Builder.comment("The Position of the emc display. Allowed values: TOPLEFT, TOPRIGHT, BOTTOMLEFT, BOTTOMRIGHT").define("emcDisplayPosition", "TOPLEFT");
+        private final ModConfigSpec.ConfigValue<String> emcDisplayPosition = Builder.comment("The Position of the emc display. Allowed values: TOPLEFT, TOPRIGHT, BOTTOMLEFT, BOTTOMRIGHT").define("emcDisplayPosition", EmcDisplayPosition.TOPLEFT.name());
         public final ModConfigSpec.ConfigValue<Boolean> formatEMC = Builder.comment("If EMC should be formatted as M/B/T/etc").define("formatEMC", true);
         public final ModConfigSpec.ConfigValue<Boolean> fullNumberNames = Builder.comment("If full number names (Million/Billion/Trillion) should be used instead of abbreviations").define("fullNumberNames", true);
         public final ModConfigSpec.ConfigValue<Boolean> emcDisplay = Builder.comment("Displays your current emc and gained emc per second in the top left corner.").define("emcDisplay", true);
