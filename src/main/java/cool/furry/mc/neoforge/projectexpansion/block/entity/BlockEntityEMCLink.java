@@ -124,7 +124,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         if (level.isClientSide || (level.getGameTime() % 20L) != Util.mod(hashCode(), 20)) return;
         resetLimits();
         if (emc.equals(BigInteger.ZERO)) return;
-        ServerPlayer player = Util.getServerPlayer(level, owner);
+        ServerPlayer player = Util.getPlayer(level, owner);
         @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(owner);
         if (provider == null) return;
 
@@ -210,7 +210,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             long cost = fluidHandler.getFluidCost(1000);
             @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(owner);
             if(provider == null) {
-                player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getServerPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getServerPlayer(owner)).getDisplayName()), true);
+                player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getPlayer(owner)).getDisplayName()), true);
                 return InteractionResult.FAIL;
             }
             BigInteger emc = provider.getEmc();
@@ -311,7 +311,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
             boolean isFinal = getMatter() == Matter.FINAL;
-            if (slot == 0 || (!isFinal && remainingImport <= 0) || owner == null || stack.isEmpty() || !isItemValid(slot, stack) || Util.getServerPlayer(owner) == null) return stack;
+            if (slot == 0 || (!isFinal && remainingImport <= 0) || owner == null || stack.isEmpty() || !isItemValid(slot, stack) || Util.getPlayer(owner) == null) return stack;
 
             int count = stack.getCount();
             stack = stack.copyWithCount(1);
@@ -328,7 +328,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
                 if (provider == null) return stack;
                 BigInteger totalValue = BigInteger.valueOf(itemValue).multiply(BigInteger.valueOf(insertCount));
                 provider.setEmc(provider.getEmc().add(totalValue));
-                ServerPlayer player = Util.getServerPlayer(owner);
+                ServerPlayer player = Util.getPlayer(owner);
                 if (player != null) {
                     if (provider.addKnowledge(stack))
                         provider.syncKnowledgeChange(player, IEMCProxy.INSTANCE.getPersistentInfo(info), true);
@@ -352,7 +352,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 
         public ItemStack extractItemInternal(int slot, int amount, boolean simulate, boolean limit) {
             boolean isFinal = getMatter() == Matter.FINAL;
-            if (slot != 0 || (!isFinal && remainingExport <= 0) || owner == null || itemStack.isEmpty() || Util.getServerPlayer(owner) == null) return ItemStack.EMPTY;
+            if (slot != 0 || (!isFinal && remainingExport <= 0) || owner == null || itemStack.isEmpty() || Util.getPlayer(owner) == null) return ItemStack.EMPTY;
 
             BigInteger itemValue = BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(itemStack));
             if(itemValue.equals(BigInteger.ZERO)) return ItemStack.EMPTY;
@@ -368,7 +368,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 
             BigInteger totalPrice = itemValue.multiply(BigInteger.valueOf(extractCount));
             provider.setEmc(provider.getEmc().subtract(totalPrice));
-            ServerPlayer player = Util.getServerPlayer(owner);
+            ServerPlayer player = Util.getPlayer(owner);
             if (player != null) provider.syncEmc(player);
 
             if (limit && !isFinal) remainingExport -= extractCount;
@@ -474,7 +474,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         public FluidStack drain(int maxDrain, FluidAction action) {
             boolean isFinal = getMatter() == Matter.FINAL;
             Fluid fluid = getFluid();
-            if(fluid == null || !isValid() || Util.getServerPlayer(owner) == null) return FluidStack.EMPTY;
+            if(fluid == null || !isValid() || Util.getPlayer(owner) == null) return FluidStack.EMPTY;
             if(!isFinal && maxDrain > remainingFluid) maxDrain = remainingFluid;
             if(maxDrain > remainingFluid) maxDrain = remainingFluid;
             long cost = getFluidCost(maxDrain);
@@ -496,7 +496,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
                 markDirty();
                 if(!isFreeFluid()) {
                     provider.setEmc(emc.subtract(BigInteger.valueOf(cost)));
-                    provider.syncEmc(Objects.requireNonNull(Util.getServerPlayer(owner)));
+                    provider.syncEmc(Objects.requireNonNull(Util.getPlayer(owner)));
                 }
             }
             return new FluidStack(fluid, maxDrain);

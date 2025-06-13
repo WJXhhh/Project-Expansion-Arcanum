@@ -50,7 +50,7 @@ public class BlockEntityPowerFlower extends BlockEntityOwnable implements IHasMa
         if(hasSunBonus() && getSunBonus() != null) {
             res = res.multiply(BigInteger.valueOf(getSunBonus()));
         }
-        ServerPlayer player = Util.getServerPlayer(level, owner);
+        ServerPlayer player = Util.getPlayer(level, owner);
 
         if (player != null) {
             PowerFlowerCollector.add(player, emc.add(res));

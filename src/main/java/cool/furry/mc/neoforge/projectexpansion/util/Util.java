@@ -13,8 +13,6 @@ import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.items.IFireProtector;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
@@ -39,8 +37,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
@@ -68,29 +64,14 @@ public class Util {
     public static final StreamCodec<ByteBuf, BigInteger> BIG_INTEGER_STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(val -> val.isEmpty() ? BigInteger.ZERO : new BigInteger(val), BigInteger::toString);
     public static final Codec<Player> PLAYER_CODEC = UUIDUtil.CODEC.xmap(Util::getPlayer, Player::getUUID);
     public static final StreamCodec<ByteBuf, Player> PLAYER_STREAM_CODEC = UUIDUtil.STREAM_CODEC.map(Util::getPlayer, Player::getUUID);
-    public static final Codec<ServerPlayer> SERVER_PLAYER_CODEC = UUIDUtil.CODEC.xmap(Util::getServerPlayer, ServerPlayer::getUUID);
-    public static final StreamCodec<ByteBuf, ServerPlayer> SERVER_PLAYER_STREAM_CODEC = UUIDUtil.STREAM_CODEC.map(Util::getServerPlayer, ServerPlayer::getUUID);
     public static final Function<String, ResourceLocation> SUN_EXPOSURE_PROTECTION = slot -> Main.rl(String.format("sun_exposure_protection_%s", slot));
     public static final String WIKI = "https://github.com/DonovanDMC/ProjectExpansion/wiki";
 
-    public static @Nullable Player getPlayer(UUID uuid) {
-        if (EffectiveSide.get() == LogicalSide.SERVER) {
-            return getServerPlayer(uuid);
-        } else {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && player.getUUID().equals(uuid)) {
-                return player;
-            }
-
-            return null;
-        }
-    }
-
-    public static @Nullable ServerPlayer getServerPlayer(UUID uuid) {
+    public static @Nullable ServerPlayer getPlayer(UUID uuid) {
         return ServerLifecycleHooks.getCurrentServer() == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
     }
 
-    public static @Nullable ServerPlayer getServerPlayer(@Nullable Level level, UUID uuid) {
+    public static @Nullable ServerPlayer getPlayer(@Nullable Level level, UUID uuid) {
         return level == null || level.getServer() == null ? null : level.getServer().getPlayerList().getPlayer(uuid);
     }
 
@@ -166,7 +147,7 @@ public class Util {
     }
 
     public static @Nullable IKnowledgeProvider getKnowledgeProvider(UUID uuid) {
-        @Nullable ServerPlayer player = getServerPlayer(uuid);
+        @Nullable ServerPlayer player = getPlayer(uuid);
         if(player == null) {
             return null;
         }

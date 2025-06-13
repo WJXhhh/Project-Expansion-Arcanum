@@ -23,7 +23,7 @@ public class AlchemicalCollectionCollector {
 
         public boolean process() {
             @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
-            @Nullable ServerPlayer serverPlayer = Util.getServerPlayer(player);
+            @Nullable ServerPlayer serverPlayer = Util.getPlayer(player);
             if (provider == null || serverPlayer == null) return false;
             for (ItemInfo item : items) {
                 if(provider.addKnowledge(item)) {

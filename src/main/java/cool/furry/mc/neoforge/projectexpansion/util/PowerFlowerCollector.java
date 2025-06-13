@@ -28,7 +28,7 @@ public class PowerFlowerCollector {
             Set<UUID> toRemove = new HashSet<>();
             for(UUID uuid : stored.keySet()) {
                 BigInteger amount = stored.get(uuid);
-                ServerPlayer player = Util.getServerPlayer(uuid);
+                ServerPlayer player = Util.getPlayer(uuid);
                 if (player == null) continue;
                 @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(uuid);
                 if(provider == null) continue;

@@ -67,7 +67,7 @@ public class ItemAlchemicalBook extends Item {
 
     public @Nullable ServerPlayer getPlayer(ItemStack stack) {
         if(stack.getItem() instanceof ItemAlchemicalBook book && book.getMode(stack) == Mode.STACK) return null;
-        return Util.getServerPlayer(Objects.requireNonNull(stack.get(DataComponentTypes.OWNER)).uuid());
+        return Util.getPlayer(Objects.requireNonNull(stack.get(DataComponentTypes.OWNER)).uuid());
     }
 
     public enum Mode {

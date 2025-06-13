@@ -2,7 +2,10 @@ package cool.furry.mc.neoforge.projectexpansion.item;
 
 import cool.furry.mc.neoforge.projectexpansion.config.Config;
 import cool.furry.mc.neoforge.projectexpansion.registries.DataComponentTypes;
-import cool.furry.mc.neoforge.projectexpansion.util.*;
+import cool.furry.mc.neoforge.projectexpansion.util.ColorStyle;
+import cool.furry.mc.neoforge.projectexpansion.util.EMCFormat;
+import cool.furry.mc.neoforge.projectexpansion.util.Lang;
+import cool.furry.mc.neoforge.projectexpansion.util.Util;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -53,7 +56,7 @@ public class ItemInfiniteFuel extends Item {
         @Nullable UUID owner = ownerData == null ? null : ownerData.uuid();
         if (owner == null)
             return stack;
-        ServerPlayer player = Util.getServerPlayer(owner);
+        ServerPlayer player = Util.getPlayer(owner);
         @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(owner);
         if (provider == null) return stack;
         provider.setEmc(provider.getEmc().subtract(BigInteger.valueOf(Config.server.infiniteFuelCost.get())));

@@ -60,7 +60,7 @@ public class ItemKnowledgeSharingBook extends Item {
                     @Nullable IKnowledgeProvider ownerProvider = Util.getKnowledgeProvider(owner);
                     @Nullable IKnowledgeProvider learnerProvider = Util.getKnowledgeProvider(player);
                     if(ownerProvider == null) {
-                        player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getServerPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getServerPlayer(owner)).getDisplayName()), true);
+                        player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getPlayer(owner)).getDisplayName()), true);
                         return InteractionResultHolder.fail(stack);
                     }
                     if(learnerProvider == null) {

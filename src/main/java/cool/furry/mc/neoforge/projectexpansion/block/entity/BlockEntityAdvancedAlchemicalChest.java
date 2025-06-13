@@ -139,7 +139,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 	}
 
 	public @Nullable IItemHandler getBag() {
-		@Nullable ServerPlayer player = Util.getServerPlayer(level, owner);
+		@Nullable ServerPlayer player = Util.getPlayer(level, owner);
 		if(player == null) {
 			return null;
 		}

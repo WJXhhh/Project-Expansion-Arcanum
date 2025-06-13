@@ -101,16 +101,36 @@ public class EMCDisplay {
             String text = String.format("EMC: %s", str);
             int x = PADDING_X, y = PADDING_Y, width = mc.getWindow().getGuiScaledWidth(), height = mc.getWindow().getGuiScaledHeight(), fontWidth = mc.font.width(text), fontHeight = mc.font.lineHeight;
 
-            String position = Config.client.emcDisplayPosition.get();
+            EmcDisplayPosition position = Config.client.emcDisplayPosition();
 
-            if (position.endsWith("RIGHT")) {
+            if (position.isRight()) {
                 x = width - fontWidth - PADDING_X;
             }
-            if (position.startsWith("BOTTOM")) {
+            if (position.isBottom()) {
                 y = height - fontHeight - PADDING_Y;
             }
 
             guiGraphics.drawString(mc.font, text, x, y, 0xffffff);
+        }
+    }
+
+    public enum EmcDisplayPosition {
+        TOPLEFT, TOPRIGHT, BOTTOMLEFT, BOTTOMRIGHT;
+
+        public boolean isTop() {
+            return name().contains("TOP");
+        }
+
+        public boolean isBottom() {
+            return name().contains("BOTTOM");
+        }
+
+        public boolean isRight() {
+            return name().contains("RIGHT");
+        }
+
+        public boolean isLeft() {
+            return name().contains("LEFT");
         }
     }
 }
