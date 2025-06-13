@@ -74,6 +74,7 @@ public class BlockCompactSun extends Block implements IMatterBlock {
         return Util.getMatterForProjectE(Matter.FINAL);
     }
 
+    @SuppressWarnings("unused")
     public static boolean adjacent(@Nullable BlockGetter level, @NotNull BlockPos pos) {
         return adjacent(level, pos, null);
     }

@@ -42,7 +42,6 @@ import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, IMatterBlock {
     private static final VoxelShape SHAPE = Shapes.or(
             box(0, 0, 0, 16, 1, 16),

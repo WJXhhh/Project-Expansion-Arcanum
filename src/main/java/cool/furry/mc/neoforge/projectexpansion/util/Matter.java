@@ -114,7 +114,7 @@ public enum Matter implements StringRepresentable, IMatterType {
     private DeferredHolder<Item, BlockItem> itemMatterBlock = null;
     @Nullable
     private DeferredHolder<Block, BlockMatter> blockMatterBlock = null;
-    private DyeColor color;
+    private final DyeColor color;
     Matter(int fluidEfficiency, float attackDamage, float efficiency, float chargeModifier, TagKey<Block> incorrectBlockForDrops, @Nullable Supplier<MapColor> mapColor, @Nullable Supplier<Item> existingItem, @Nullable Supplier<Block> existingBlock, DyeColor color) {
         boolean isFinal = name().equals("FINAL"); // we can't access the FINAL member because we're in the constructor
         this.name = name().toLowerCase(Locale.US);
@@ -356,9 +356,7 @@ public enum Matter implements StringRepresentable, IMatterType {
     }
 
     public static void setAllCreativeTab(CreativeModeTab.Output output) {
-        Arrays.stream(RegistrationType.values()).forEach(type -> {
-            Arrays.stream(VALUES).forEach(val -> val.setCreativeTab(output, type));
-        });
+        Arrays.stream(RegistrationType.values()).forEach(type -> Arrays.stream(VALUES).forEach(val -> val.setCreativeTab(output, type)));
     }
 
     private void setCreativeTab(CreativeModeTab.Output output, RegistrationType type) {

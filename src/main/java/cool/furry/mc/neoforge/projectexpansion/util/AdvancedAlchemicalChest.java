@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class AdvancedAlchemicalChest {
 	private static final Map<DyeColor, DeferredHolder<Block, BlockAdvancedAlchemicalChest>> blocks = new HashMap<>();
-	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	private static final Map<DyeColor, DeferredHolder<Item, BlockItem>> blockItems = new HashMap<>();
 	public static void register() {
 		for(DyeColor color : DyeColor.values()) {

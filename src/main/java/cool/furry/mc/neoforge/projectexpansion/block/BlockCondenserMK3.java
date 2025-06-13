@@ -120,6 +120,7 @@ public class BlockCondenserMK3 extends BaseEntityBlock {
         return triggerBlockEntityEvent(state, level, pos, id, param);
     }
 
+    @SuppressWarnings("unused")
     public boolean triggerBlockEntityEvent(@NotNull BlockState state, Level level, BlockPos pos, int id, int param) {
         BlockEntity blockEntity = WorldHelper.getBlockEntity(BlockEntityCondenserMK3.class, level, pos);
         return blockEntity != null && blockEntity.triggerEvent(id, param);
