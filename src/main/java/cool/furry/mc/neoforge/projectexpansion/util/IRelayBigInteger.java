@@ -6,8 +6,8 @@ import java.math.BigInteger;
 
 public interface IRelayBigInteger extends IRelay {
     default double getBonusToAdd() {
-        return Util.safeLongValue(getBigIntegerBonusToAdd());
+        return Util.safeLongValue(getBonusToAddBigInteger());
     }
 
-    BigInteger getBigIntegerBonusToAdd();
+    BigInteger getBonusToAddBigInteger();
 }

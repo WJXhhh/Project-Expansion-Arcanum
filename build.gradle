@@ -153,8 +153,8 @@ dependencies {
     runtimeOnly("curse.maven:jade-324717:${jade_version}")
 
     compileOnly("curse.maven:wthit-455982:${wthit_version}")
-    // runtimeOnly("curse.maven:wthit-455982:${wthit_version}")
-    // runtimeOnly("curse.maven:bad-packets-615134:${bad_packets_version}")
+    runtimeOnly("curse.maven:wthit-455982:${wthit_version}")
+    runtimeOnly("curse.maven:bad-packets-615134:${bad_packets_version}")
 
     // https://github.com/McJtyMods/TheOneProbe/issues/548
     compileOnly("mcjty.theoneprobe:theoneprobe:${top_version}:api") {

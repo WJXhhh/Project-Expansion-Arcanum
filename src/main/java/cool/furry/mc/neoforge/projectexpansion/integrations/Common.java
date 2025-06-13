@@ -5,34 +5,51 @@ import cool.furry.mc.neoforge.projectexpansion.block.entity.BlockEntityEMCLink;
 import cool.furry.mc.neoforge.projectexpansion.block.entity.BlockEntityNBTFilterable;
 import cool.furry.mc.neoforge.projectexpansion.block.entity.BlockEntityOwnable;
 import cool.furry.mc.neoforge.projectexpansion.block.entity.BlockEntityRelay;
+import cool.furry.mc.neoforge.projectexpansion.registries.Capabilities;
 import cool.furry.mc.neoforge.projectexpansion.util.*;
 import moze_intel.projecte.api.block_entity.IRelay;
+import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
 import moze_intel.projecte.gameObjs.blocks.Collector;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
 import moze_intel.projecte.gameObjs.blocks.Relay;
+import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Consumer;
 
 public class Common {
-    public static void registerCommonTooltips(Consumer<Component> addTooltip, Block block, BlockEntity blockEntity) {
-        if (blockEntity instanceof IEmcStorageBigInteger storage) {
-            BigInteger total = storage.getStoredEmcBigInteger();
-            BigInteger maximum = storage.getMaximumEmcBigInteger();
+    public static void registerCommonTooltips(Consumer<Component> addTooltip, IDataProvider provider) {
+        Level level = provider.getLevel();
+        BlockPos pos = provider.getBlockPos();
+        Block block = provider.getBlock();
+        BlockEntity blockEntity = provider.getBlockEntity();
+        Direction side = provider.getSide();
+        BlockState state = provider.getBlockState();
+        @Nullable IEmcStorage emcStorage = WorldHelper.getCapability(level, PECapabilities.EMC_STORAGE_CAPABILITY, pos, state, blockEntity, side);
+        @Nullable IEmcStorageBigInteger bigEmcStorage = WorldHelper.getCapability(level, Capabilities.BIG_EMC_STORAGE_CAPABILITY, pos, state, blockEntity, side);
+        if (bigEmcStorage != null) {
+            BigInteger total = bigEmcStorage.getStoredEmcBigInteger();
+            BigInteger maximum = bigEmcStorage.getMaximumEmcBigInteger();
             addTooltip.accept(Lang.EMC_STORAGE.translateColored(ChatFormatting.GRAY, formatEMC(total), formatEMC(maximum)));
-        } else if (blockEntity instanceof IEmcStorage storage) { // IEmcStorageBigInteger extends IEmcStorage
-            BigInteger total = BigInteger.valueOf(storage.getStoredEmc());
-            BigInteger maximum = BigInteger.valueOf(storage.getMaximumEmc());
+        } else if (emcStorage != null) { // IEmcStorageBigInteger extends IEmcStorage
+            BigInteger total = BigInteger.valueOf(emcStorage.getStoredEmc());
+            BigInteger maximum = BigInteger.valueOf(emcStorage.getMaximumEmc());
             addTooltip.accept(Lang.EMC_STORAGE.translateColored(ChatFormatting.GRAY, formatEMC(total), formatEMC(maximum)));
         }
 
@@ -80,7 +97,7 @@ public class Common {
         }
 
         if (blockEntity instanceof IRelayBigInteger relay) {
-            BigInteger bonus = relay.getBigIntegerBonusToAdd();
+            BigInteger bonus = relay.getBonusToAddBigInteger();
             addTooltip.accept(Lang.RELAY_BONUS.translateColored(ChatFormatting.GRAY, formatEMC(bonus)));
         } else if (blockEntity instanceof IRelay relay) { // IRelayBigInteger extends IRelay
             BigDecimal bonus = BigDecimal.valueOf(relay.getBonusToAdd());
@@ -97,7 +114,7 @@ public class Common {
             addTooltip.accept(Lang.CHARGE_RATE.translateColored(ChatFormatting.GRAY, Component.literal(String.valueOf(chargeRate))));
         }
 
-        if(blockEntity instanceof BlockEntityOwnable ownable) {
+        if (blockEntity instanceof BlockEntityOwnable ownable) {
             boolean isOwner = Objects.requireNonNull(Minecraft.getInstance().player).getUUID().equals(ownable.owner);
             String ownerName = ownable.ownerName;
             if (ownerName.isEmpty()) {
@@ -105,6 +122,8 @@ public class Common {
             }
             addTooltip.accept(Lang.OWNER.translateColored(ChatFormatting.GRAY, Component.literal(ownerName).withStyle(isOwner ? ChatFormatting.DARK_GREEN : ChatFormatting.DARK_RED)));
         }
+
+        addTooltip.accept(Component.literal(String.valueOf(new Random().nextInt())));
     }
 
     private static MutableComponent formatEMC(BigInteger value) {

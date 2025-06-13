@@ -68,13 +68,13 @@ public class BlockEntityRelay extends BlockEntityEMC implements IHasMatter, IRel
     }
 
     @Override
-    public BigInteger getBigIntegerBonusToAdd() {
+    public BigInteger getBonusToAddBigInteger() {
         return getMatter().getRelayBonus();
     }
 
     @Override
     public void addBonus(@NotNull Level level, @NotNull BlockPos pos) {
-        bonusEMC = bonusEMC.add(getBigIntegerBonusToAdd());
+        bonusEMC = bonusEMC.add(getBonusToAddBigInteger());
         if (bonusEMC.compareTo(BigInteger.ONE) >= 0) {
             insertEmcBigInteger(bonusEMC, EmcAction.EXECUTE);
             bonusEMC = BigInteger.ZERO;

@@ -221,12 +221,13 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
                     }
                 }
             } else {
-                BigInteger a = getStoredEmcBigInteger();
+                BigInteger before = getStoredEmcBigInteger();
                 // Only send EMC when we are not upgrading fuel or charging an item
                 BigInteger toSend = getStoredEmcBigInteger().compareTo(generated.toBigInteger()) < 0 ? getStoredEmcBigInteger() : generated.toBigInteger();
                 sendToAllAcceptors(level, pos, toSend);
-                BigInteger b = getStoredEmcBigInteger();
+                BigInteger after = getStoredEmcBigInteger();
                 sendRelayBonus(level, pos);
+                if (!before.equals(after)) markDirty(level, pos, true);
             }
         }
     }
