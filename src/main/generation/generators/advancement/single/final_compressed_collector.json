@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:final_compressed_collector"
-            ]
+            "items": "projectexpansion:final_compressed_collector"
           }
         ]
       },

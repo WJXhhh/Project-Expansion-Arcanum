@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:final_emc_link"
-            ]
+            "items": "projectexpansion:final_emc_link"
           }
         ]
       },

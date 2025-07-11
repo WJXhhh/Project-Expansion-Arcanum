@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:purple_matter_block"
-            ]
+            "items": "projectexpansion:purple_matter_block"
           }
         ]
       },

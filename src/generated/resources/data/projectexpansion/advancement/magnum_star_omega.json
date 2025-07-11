@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:magnum_star_omega"
-            ]
+            "items": "projectexpansion:magnum_star_omega"
           }
         ]
       },

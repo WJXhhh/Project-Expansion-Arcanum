@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "projectexpansion:emc_link"
+            "items": "#projectexpansion:emc_link"
           }
         ]
       },

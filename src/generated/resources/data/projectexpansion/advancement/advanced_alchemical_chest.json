@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "projectexpansion:advanced_alchemical_chest"
+            "items": "#projectexpansion:advanced_alchemical_chest"
           }
         ]
       },

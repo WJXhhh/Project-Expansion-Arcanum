@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:$TIER$_matter"
-            ]
+            "items": "projectexpansion:$TIER$_matter"
           }
         ]
       },

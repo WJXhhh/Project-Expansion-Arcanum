@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:magenta_fuel"
-            ]
+            "items": "projectexpansion:magenta_fuel"
           }
         ]
       },

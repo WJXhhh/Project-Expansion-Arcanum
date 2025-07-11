@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:blue_fuel_block"
-            ]
+            "items": "projectexpansion:blue_fuel_block"
           }
         ]
       },

@@ -5,9 +5,7 @@
 			"conditions": {
 				"items": [
 					{
-						"items": [
-							"projectexpansion:compact_sun"
-						]
+						"items": "projectexpansion:compact_sun"
 					}
 				]
 			},

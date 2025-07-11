@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:arcane_alchemical_book"
-            ]
+            "items": "projectexpansion:arcane_alchemical_book"
           }
         ]
       },

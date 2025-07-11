@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:transmutation_interface"
-            ]
+            "items": "projectexpansion:transmutation_interface"
           }
         ]
       },

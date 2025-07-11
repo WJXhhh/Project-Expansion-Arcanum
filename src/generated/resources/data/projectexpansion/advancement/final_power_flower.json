@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:final_power_flower"
-            ]
+            "items": "projectexpansion:final_power_flower"
           }
         ]
       },

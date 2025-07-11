@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "projectexpansion:colossal_star_omega"
-            ]
+            "items": "projectexpansion:colossal_star_omega"
           }
         ]
       },

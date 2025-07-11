@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "projectexpansion:compressed_collector"
+            "items": "#projectexpansion:compressed_collector"
           }
         ]
       },
