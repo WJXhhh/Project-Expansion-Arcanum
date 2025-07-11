@@ -2,6 +2,7 @@ package cool.furry.mc.neoforge.projectexpansion.item;
 
 import cool.furry.mc.neoforge.projectexpansion.util.IHasCapability;
 import cool.furry.mc.neoforge.projectexpansion.util.Star;
+import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.gameObjs.items.IBarHelper;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-// projecte registers the emc capability internally because of the IItemEmcHolder capability
 public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHasCapability {
     public static final long[] STAR_EMC = new long[18];
 
@@ -45,6 +45,7 @@ public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHas
     @Override
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         IntegrationHelper.registerCuriosCapability(event, this);
+        event.registerItem(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY, (stack, dir) -> this, this);
     }
 
     @Override
