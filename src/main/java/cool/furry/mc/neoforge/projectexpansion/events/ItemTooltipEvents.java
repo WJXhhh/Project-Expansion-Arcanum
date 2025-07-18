@@ -38,7 +38,7 @@ public class ItemTooltipEvents {
             return;
         }
 
-        learnedTooltip: if(Config.client.enabledLearnedTooltip.get() && (!ProjectEConfig.client.shiftEmcToolTips.get() || Screen.hasShiftDown())) {
+        learnedTooltip: if(Config.client.enableLearnedTooltip.get() && (!ProjectEConfig.client.shiftEmcToolTips.get() || Screen.hasShiftDown())) {
             boolean hasValue = IEMCProxy.INSTANCE.hasValue(stack);
             if (!hasValue) {
                 break learnedTooltip;
