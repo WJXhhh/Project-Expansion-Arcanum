@@ -3,6 +3,7 @@ package cool.furry.mc.neoforge.projectexpansion.events;
 import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.block.BlockAdvancedAlchemicalChest;
 import cool.furry.mc.neoforge.projectexpansion.registries.BlockEntityTypes;
+import cool.furry.mc.neoforge.projectexpansion.registries.Blocks;
 import cool.furry.mc.neoforge.projectexpansion.rendering.ChestRenderer;
 import cool.furry.mc.neoforge.projectexpansion.util.AdvancedAlchemicalChest;
 import moze_intel.projecte.PECore;
@@ -21,7 +22,7 @@ public class RenderingEvent {
         for(DyeColor color: DyeColor.values()) {
             DeferredHolder<Block, BlockAdvancedAlchemicalChest> block = AdvancedAlchemicalChest.getRegistryBlock(color);
             event.registerBlockEntityRenderer(BlockEntityTypes.ADVANCED_ALCHEMICAL_CHEST.get(), context -> new ChestRenderer<>(context, Main.rl(String.format("textures/block/advanced_alchemical_chest/%s.png", color.getName())), block));
-            event.registerBlockEntityRenderer(BlockEntityTypes.CONDENSER_MK3.get(), context -> new ChestRenderer<>(context, PECore.rl("textures/block/condenser_mk1.png"), block));
         }
+        event.registerBlockEntityRenderer(BlockEntityTypes.CONDENSER_MK3.get(), context -> new ChestRenderer<>(context, PECore.rl("textures/block/condenser_mk1.png"), Blocks.CONDENSER_MK3));
     }
 }

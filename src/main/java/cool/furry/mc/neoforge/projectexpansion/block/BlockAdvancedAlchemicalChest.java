@@ -71,7 +71,7 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 
 	public BlockAdvancedAlchemicalChest(BlockBehaviour.Properties properties, DyeColor color) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, Boolean.FALSE));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
 		this.color = color;
 	}
 
@@ -96,6 +96,11 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	@Override
     public RenderShape getRenderShape(BlockState p_51567_) {
 		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState p_51569_, BlockGetter p_51570_, BlockPos p_51571_, CollisionContext p_51572_) {
+		return SHAPE;
 	}
 
 	@Nullable
@@ -157,11 +162,6 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState p_51569_, BlockGetter p_51570_, BlockPos p_51571_, CollisionContext p_51572_) {
-		return SHAPE;
-	}
-
-	@Override
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity instanceof BlockEntityAdvancedAlchemicalChest be) be.recheckOpen();
@@ -200,7 +200,7 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	@Nonnull
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return Objects.requireNonNull(super.getStateForPlacement(context)).setValue(FACING, context.getPlayer() == null ? Direction.NORTH : context.getPlayer().getDirection().getOpposite()).setValue(BlockStateProperties.WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
+		return Objects.requireNonNull(super.getStateForPlacement(context)).setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(BlockStateProperties.WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 	}
 
 	@Nonnull
