@@ -150,7 +150,7 @@ dependencies {
     runtimeOnly("curse.maven:tagtooltips-899941:${tagtooltips_version}")
 
     compileOnly("curse.maven:jade-api-324717:${jade_api_version}")
-    // runtimeOnly("curse.maven:jade-324717:${jade_version}")
+    runtimeOnly("curse.maven:jade-324717:${jade_version}")
 
     compileOnly("curse.maven:wthit-455982:${wthit_version}")
     // runtimeOnly("curse.maven:wthit-455982:${wthit_version}")

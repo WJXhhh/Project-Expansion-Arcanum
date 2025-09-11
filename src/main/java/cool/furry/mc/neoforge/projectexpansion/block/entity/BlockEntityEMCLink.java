@@ -269,11 +269,11 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         @Override
         public BigInteger insertEmcBigInteger(BigInteger value, EmcAction action) {
             boolean isFinal = getMatter() == Matter.FINAL;
-            BigInteger v = isFinal ? emc : remainingEMC.min(emc);
+            BigInteger v = isFinal ? value : remainingEMC.min(value);
 
-            if (emc.compareTo(BigInteger.ZERO) < 0) return BigInteger.ZERO;
+            if (value.compareTo(BigInteger.ZERO) < 0) return BigInteger.ZERO;
             if (action.execute()) {
-                if(!isFinal) remainingEMC = remainingEMC.subtract(v);
+                if (!isFinal) remainingEMC = remainingEMC.subtract(v);
                 emc = emc.add(v);
                 markDirty();
             }

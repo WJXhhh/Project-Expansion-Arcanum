@@ -402,6 +402,8 @@
 	"projectexpansion.configuration.zeroEmcFluidsAreFree": "Zero EMC Fluids are Free",
 	"projectexpansion.configuration.enableCollectorOptimizations": "Enable Collector Optimizations",
 	"projectexpansion.configuration.editOthersAlchemicalBooks": "Edit Others Alchemical Books",
+	"projectexpansion.configuration.compactSunBonus": "Compact Sun Bonus",
+	"projectexpansion.configuration.sunMultiplierPriceCompensation": "Sun Multiplier Price Compensation",
 	"gui.projectexpansion.advanced_alchemical_chest.title": "Advanced Alchemical Chest",
 	"gui.projectexpansion.alchemical_book": "Alchemical Chest",
 	"gui.projectexpansion.alchemical_book.close": "Close",
