@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+<!-- Remove everything between and including <> -->
+<!-- Fill in the template or your issue may be closed without explanation. -->
+
 **Description**
 <!-- A clear and concise description of what the bug is. -->
 
