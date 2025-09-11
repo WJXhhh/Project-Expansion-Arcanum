@@ -177,7 +177,7 @@ public class ItemAlchemicalBook extends Item {
     }
 
     public static boolean canEdit(ServerPlayer player, ServerPlayer owner) {
-        Config.AlchemicalBookEditLevel editLevel = Config.server.editOthersAlchemicalBooks();
+        Config.AlchemicalBookEditLevel editLevel = Config.server.editOthersAlchemicalBooks.get();
 
         if(editLevel == Config.AlchemicalBookEditLevel.ENABLED) return true;
         if(player.hasPermissions(Commands.LEVEL_GAMEMASTERS) && editLevel == Config.AlchemicalBookEditLevel.OP_ONLY) return true;

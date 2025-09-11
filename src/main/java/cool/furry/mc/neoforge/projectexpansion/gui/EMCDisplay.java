@@ -22,7 +22,6 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 
 import javax.annotation.Nullable;
 import java.math.BigInteger;
-import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = Main.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -30,7 +29,6 @@ public class EMCDisplay {
     public static final Overlay INSTANCE = new Overlay();
     public static final int PADDING_X = 2;
     public static final int PADDING_Y = 2;
-    public static final List<String> POSITIONS = List.of("TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT");
     private static BigInteger emc = BigInteger.ZERO;
     private static final BigInteger[] history = new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO};
     private static BigInteger lastEMC = BigInteger.ZERO;
@@ -101,7 +99,7 @@ public class EMCDisplay {
             String text = String.format("EMC: %s", str);
             int x = PADDING_X, y = PADDING_Y, width = mc.getWindow().getGuiScaledWidth(), height = mc.getWindow().getGuiScaledHeight(), fontWidth = mc.font.width(text), fontHeight = mc.font.lineHeight;
 
-            EmcDisplayPosition position = Config.client.emcDisplayPosition();
+            EmcDisplayPosition position = Config.client.emcDisplayPosition.get();
 
             if (position.isRight()) {
                 x = width - fontWidth - PADDING_X;
@@ -115,22 +113,33 @@ public class EMCDisplay {
     }
 
     public enum EmcDisplayPosition {
-        TOPLEFT, TOPRIGHT, BOTTOMLEFT, BOTTOMRIGHT;
+        TOP_LEFT(true, true),
+        TOP_RIGHT(true, false),
+        BOTTOM_LEFT(false, true),
+        BOTTOM_RIGHT(false, false);
+
+        private final boolean top;
+        private final boolean left;
+
+        EmcDisplayPosition(boolean top, boolean left) {
+            this.top = top;
+            this.left = left;
+        }
 
         public boolean isTop() {
-            return name().contains("TOP");
+            return top;
         }
 
         public boolean isBottom() {
-            return name().contains("BOTTOM");
-        }
-
-        public boolean isRight() {
-            return name().contains("RIGHT");
+            return !top;
         }
 
         public boolean isLeft() {
-            return name().contains("LEFT");
+            return left;
+        }
+
+        public boolean isRight() {
+            return !left;
         }
     }
 }
