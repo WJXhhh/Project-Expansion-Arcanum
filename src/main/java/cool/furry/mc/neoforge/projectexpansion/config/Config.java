@@ -4,8 +4,6 @@ import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.gui.EMCDisplay.EmcDisplayPosition;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class Config {
@@ -51,7 +49,6 @@ public final class Config {
     }
 
     public static void register(ModContainer modContainer) {
-        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modContainer.registerConfig(ModConfig.Type.CLIENT, client.Spec, String.format("%s/client.toml", Main.MOD_ID));
         modContainer.registerConfig(ModConfig.Type.SERVER, server.Spec, String.format("%s/server.toml", Main.MOD_ID));
     }
