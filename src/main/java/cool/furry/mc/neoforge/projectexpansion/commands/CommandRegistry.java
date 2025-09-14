@@ -24,6 +24,7 @@ public class CommandRegistry {
                 .then(CommandDumpFuelMap.getArguments())
                 .then(CommandDevTest.getArguments())
                 .then(CommandWiki.getArguments())
+                .then(CommandSetOwner.getArguments())
         );
         dispatcher.register(Commands.literal("projectexpansion").redirect(baseNode));
     }

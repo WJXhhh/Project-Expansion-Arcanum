@@ -1,0 +1,4 @@
+{
+  "command.projectexpansion.set_owner.success": "Successfully set the owner of the block to %s.",
+  "command.projectexpansion.set_owner.failure": "Invalid block."
+}

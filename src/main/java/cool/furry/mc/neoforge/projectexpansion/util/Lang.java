@@ -256,6 +256,10 @@ public enum Lang implements ILangEntry {
         DUMP_FUEL_MAP_EMC("dumpfuelmap", "emc"),
         DUMP_FUEL_MAP_INDEX("dumpfuelmap", "index"),
 
+        // setowner
+        SET_OWNER_SUCCESS("set_owner", "success"),
+        SET_OWNER_FAILURE("set_owner", "failure"),
+
         // Misc
         CONSOLE("console"),
         PLAYER_ONLY("player_only"),

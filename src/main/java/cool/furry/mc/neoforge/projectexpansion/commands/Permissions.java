@@ -46,6 +46,7 @@ public class Permissions {
     public static final CommandPermissionNode BOOK_REMOVE_PLAYER = nodeOpCommand("book.remove.player");
     public static final CommandPermissionNode DUMP_FUEL_MAP = nodeAllCommand("dump_fuel_map");
     public static final CommandPermissionNode WIKI = nodeAllCommand("wiki");
+    public static final CommandPermissionNode SET_OWNER = nodeOpCommand("set_owner");
 
     private static CommandPermissionNode nodeAllCommand(String nodeName) {
         PermissionNode<Boolean> node = node("command." + nodeName, PermissionTypes.BOOLEAN, PLAYER_IS_ALL);

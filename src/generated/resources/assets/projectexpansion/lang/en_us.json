@@ -376,6 +376,8 @@
 	"command.projectexpansion.knowledge.test.fail_self": "You do not have knowledge of %s.",
 	"command.projectexpansion.console": "Console",
 	"command.projectexpansion.player_only": "This command must be executed by a player.",
+	"command.projectexpansion.set_owner.success": "Successfully set the owner of the block to %s.",
+	"command.projectexpansion.set_owner.failure": "Invalid block.",
 	"projectexpansion.configuration.tickDelay": "Tick Delay",
 	"projectexpansion.configuration.formatEMC": "Format EMC",
 	"projectexpansion.configuration.fullNumberNames": "Full Number Names",
