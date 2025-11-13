@@ -28,6 +28,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -337,5 +338,19 @@ public class Util {
         }
 
         return matter;
+    }
+
+    public static void openTransmutationTable(Player player) {
+        player.openMenu(new TransmutationContainerProvider(null), (buf) -> {
+            buf.writeBoolean(false);
+        });
+    }
+
+    public static void openTransmutationTable(Player player, InteractionHand hand) {
+        player.openMenu(new TransmutationContainerProvider(hand), (buf) -> {
+            buf.writeBoolean(true);
+            buf.writeEnum(hand);
+            buf.writeByte(player.getInventory().selected);
+        });
     }
 }

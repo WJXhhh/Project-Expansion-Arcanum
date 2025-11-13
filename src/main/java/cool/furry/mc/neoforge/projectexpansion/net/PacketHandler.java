@@ -2,10 +2,7 @@ package cool.furry.mc.neoforge.projectexpansion.net;
 
 import cool.furry.mc.neoforge.projectexpansion.net.packets.IPacket;
 import cool.furry.mc.neoforge.projectexpansion.net.packets.to_client.*;
-import cool.furry.mc.neoforge.projectexpansion.net.packets.to_server.PacketCreateTeleportLocation;
-import cool.furry.mc.neoforge.projectexpansion.net.packets.to_server.PacketDeleteTeleportLocation;
-import cool.furry.mc.neoforge.projectexpansion.net.packets.to_server.PacketTeleportBack;
-import cool.furry.mc.neoforge.projectexpansion.net.packets.to_server.PacketTeleportToLocation;
+import cool.furry.mc.neoforge.projectexpansion.net.packets.to_server.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -26,6 +23,7 @@ public final class PacketHandler {
     public void register(PayloadRegistrar registrar) {
         registrar.playToServer(PacketCreateTeleportLocation.TYPE, PacketCreateTeleportLocation.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketDeleteTeleportLocation.TYPE, PacketDeleteTeleportLocation.STREAM_CODEC, IPacket::handle);
+        registrar.playToServer(PacketOpenTransmutationTablet.TYPE, PacketOpenTransmutationTablet.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketTeleportBack.TYPE, PacketTeleportBack.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketTeleportToLocation.TYPE, PacketTeleportToLocation.STREAM_CODEC, IPacket::handle);
         registrar.playToClient(PacketOpenAlchemicalBookGUI.TYPE, PacketOpenAlchemicalBookGUI.STREAM_CODEC, IPacket::handle);

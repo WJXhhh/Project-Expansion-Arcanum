@@ -11,7 +11,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class CommandRegistry {
-    public static final String COMMAND_BASE = "pex";
+    public static final String COMMAND_BASE = "px";
     @SubscribeEvent
     public static void onRegisterCommandsEvent(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
@@ -27,5 +27,6 @@ public class CommandRegistry {
                 .then(CommandSetOwner.getArguments())
         );
         dispatcher.register(Commands.literal("projectexpansion").redirect(baseNode));
+        dispatcher.register(Commands.literal("pex").redirect(baseNode));
     }
 }

@@ -574,6 +574,8 @@
 	"death.attack.stare_at_sun.player": "%s decided to stare at the sun whilst fighting %s",
 	"config.jade.plugin_projectexpansion.provider": "Project Expansion Provider",
 	"attribute.projectexpansion.sun_exposure_protection": "Sun Exposure Protection",
+	"curios.identifier.transmutation_tablet": "Transmutation Tablet",
+	"key.projecte.curios.open_transmutation_tablet": "Open Transmutation Tablet",
 	"sounds.projectexpansion.knowledge_sharing_book.store": "Knowledge Stored",
 	"sounds.projectexpansion.knowledge_sharing_book.use": "Knowledge Gained",
 	"sounds.projectexpansion.knowledge_sharing_book.use_none": "No Knowledge Gained",

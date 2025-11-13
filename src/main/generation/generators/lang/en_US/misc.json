@@ -38,5 +38,7 @@
   "death.attack.stare_at_sun": "%s decided staring at the sun was a good idea",
   "death.attack.stare_at_sun.player": "%s decided to stare at the sun whilst fighting %s",
   "config.jade.plugin_projectexpansion.provider": "Project Expansion Provider",
-  "attribute.projectexpansion.sun_exposure_protection": "Sun Exposure Protection"
+  "attribute.projectexpansion.sun_exposure_protection": "Sun Exposure Protection",
+  "curios.identifier.transmutation_tablet": "Transmutation Tablet",
+  "key.projecte.curios.open_transmutation_tablet": "Open Transmutation Tablet"
 }

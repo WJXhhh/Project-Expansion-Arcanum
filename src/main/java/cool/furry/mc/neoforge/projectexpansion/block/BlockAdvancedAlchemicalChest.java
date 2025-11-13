@@ -238,14 +238,12 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	// graciously borrowed from ProjectE
 	// https://github.com/sinkillerj/ProjectE/blob/98aee771bdb09beecf51b5608938d93de6f1afb6/src/main/java/moze_intel/projecte/gameObjs/items/AlchemicalBag.java#L76-L100
 	private record ContainerProvider(BlockEntityAdvancedAlchemicalChest blockEntity, InteractionHand hand) implements MenuProvider {
-		@Nonnull
 		@Override
 		public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player player) {
 			IItemHandlerModifiable inv = (IItemHandlerModifiable) blockEntity.getBag();
 			return new ContainerAdvancedAlchemicalChest(windowId, playerInventory, hand, Objects.requireNonNull(inv), playerInventory.selected, false, blockEntity);
 		}
 
-		@Nonnull
 		@Override
 		public Component getDisplayName() {
 			return Lang.ADVANCED_ALCHEMICAL_CHEST_TITLE.translate();
