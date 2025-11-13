@@ -173,7 +173,7 @@ public enum Matter implements StringRepresentable, IMatterType {
 
     /* Limits */
     public BigInteger getPowerFlowerOutput() {
-        return collectorOutputBase.multiply(BigDecimal.valueOf(18)).add(relayBonusBase.multiply(BigDecimal.valueOf(30))).multiply(BigDecimal.valueOf(Config.server.powerflowerMultiplier.get())).multiply(BigDecimal.valueOf(20)).toBigInteger();
+        return collectorOutputBase.multiply(BigDecimal.valueOf(18)).add(relayBonusBase.multiply(BigDecimal.valueOf(30))).multiply(BigDecimal.valueOf(Config.server.powerflowerMultiplier.get())).toBigInteger();
     }
 
     public BigInteger getPowerFlowerOutputForTicks(int ticks) {
@@ -183,7 +183,7 @@ public enum Matter implements StringRepresentable, IMatterType {
     }
 
     public BigInteger getCollectorOutput() {
-        return collectorOutputBase.multiply(BigDecimal.valueOf(Config.server.collectorMultiplier.get())).multiply(BigDecimal.valueOf(20)).toBigInteger();
+        return collectorOutputBase.multiply(BigDecimal.valueOf(Config.server.collectorMultiplier.get())).toBigInteger();
     }
 
     public BigDecimal getCollectorOutputForTicks(int ticks) {
