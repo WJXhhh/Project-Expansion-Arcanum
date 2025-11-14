@@ -9,12 +9,14 @@ import moze_intel.projecte.gameObjs.items.IBarHelper;
 import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.integration.IntegrationHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.Level;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
 
 public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHasCapability {
     public static final long[] STAR_EMC = new long[18];
@@ -36,7 +38,7 @@ public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHas
                 tier == Star.OMEGA ? Rarity.EPIC :
                         type == Star.StarType.COLOSSAL ? Rarity.UNCOMMON :
                                 type == Star.StarType.GARGANTUAN ? Rarity.RARE : Rarity.COMMON
-        ));
+        ).component(PEDataComponentTypes.STORED_EMC, 0L));
 
         this.type = type;
         this.tier = tier;
@@ -49,7 +51,7 @@ public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHas
     }
 
     @Override
-    public boolean isBarVisible(@NotNull ItemStack stack) {
+    public boolean isBarVisible(ItemStack stack) {
         return getStoredEmc(stack) > 0;
     }
 
@@ -60,50 +62,58 @@ public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHas
     }
 
     @Override
-    public int getBarWidth(@NotNull ItemStack stack) {
+    public int getBarWidth(ItemStack stack) {
         return getScaledBarWidth(stack);
     }
 
     @Override
-    public int getBarColor(@NotNull ItemStack stack) {
+    public int getBarColor(ItemStack stack) {
         return getColorForBar(stack);
     }
 
     @Override
-    public long insertEmc(@Nonnull ItemStack stack, long toInsert, IEmcStorage.EmcAction action) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!level.isClientSide && !FMLEnvironment.production && player.isCreative()) {
+            stack.set(PEDataComponentTypes.STORED_EMC, getMaximumEmc(stack));
+            return InteractionResultHolder.success(stack);
+        }
+        return InteractionResultHolder.pass(stack);
+    }
+
+    @Override
+    public long insertEmc(ItemStack stack, long toInsert, IEmcStorage.EmcAction action) {
         if (toInsert < 0L) return extractEmc(stack, -toInsert, action);
-        else {
-            long storedEmc = getStoredEmc(stack);
-            long toAdd = Math.min(getNeededEmc(stack), toInsert);
-            if (action.execute()) {
-                stack.set(PEDataComponentTypes.STORED_EMC, storedEmc + toAdd);
-            }
 
-            return toAdd;
+        long maxEmc = getMaximumEmc(stack);
+        long storedEmc = getStoredEmc(stack);
+        if (storedEmc >= maxEmc) return 0L;
+
+        long toAdd = Math.min(maxEmc - storedEmc, toInsert);
+        if (action.execute()) {
+            stack.set(PEDataComponentTypes.STORED_EMC, storedEmc + toAdd);
         }
+        return toAdd;
     }
 
     @Override
-    public long extractEmc(@Nonnull ItemStack stack, long toExtract, IEmcStorage.EmcAction action) {
-        if (toExtract < 0L)
-            return insertEmc(stack, -toExtract, action);
-        else {
-            long storedEmc = getStoredEmc(stack);
-            long toRemove = Math.min(storedEmc, toExtract);
-            if (action.execute()) {
-                stack.set(PEDataComponentTypes.STORED_EMC, storedEmc - toRemove);
-            }
-            return toRemove;
+    public long extractEmc(ItemStack stack, long toExtract, IEmcStorage.EmcAction action) {
+        if (toExtract < 0L) return insertEmc(stack, -toExtract, action);
+        long storedEmc = getStoredEmc(stack);
+        long toRemove = Math.min(storedEmc, toExtract);
+        if (action.execute()) {
+            stack.set(PEDataComponentTypes.STORED_EMC, storedEmc - toRemove);
         }
+        return toRemove;
     }
 
     @Override
-    public long getStoredEmc(@Nonnull ItemStack stack) {
+    public long getStoredEmc(ItemStack stack) {
         return stack.getOrDefault(PEDataComponentTypes.STORED_EMC, 0L);
     }
 
     @Override
-    public long getMaximumEmc(@Nonnull ItemStack stack) {
+    public long getMaximumEmc(ItemStack stack) {
         return STAR_EMC[tier.ordinal() + type.getOffset()];
     }
 }
