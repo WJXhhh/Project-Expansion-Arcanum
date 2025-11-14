@@ -45,7 +45,6 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -269,7 +268,7 @@ public class BlockEntityCondenserMK3 extends BlockEntityBase implements IChestLi
             return level != null && attemptCondenserSet(level, worldPosition, player);
         }
 
-        private boolean attemptCondenserSet(@NotNull Level level, @NotNull BlockPos pos, Player player) {
+        private boolean attemptCondenserSet(Level level, BlockPos pos, Player player) {
             if (level.isClientSide) {
                 return false;
             }
@@ -321,7 +320,7 @@ public class BlockEntityCondenserMK3 extends BlockEntityBase implements IChestLi
 
             return new WrappedItemHandler(inventory, WrappedItemHandler.WriteMode.IN) {
                 @Override
-                public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+                public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
                     return SlotPredicates.HAS_EMC.test(stack) && !isStackEqualToLock(stack) ? super.insertItem(slot, stack, simulate) : stack;
                 }
             };

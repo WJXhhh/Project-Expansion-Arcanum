@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
@@ -40,7 +39,7 @@ public class ChestRenderer <B extends Block, BE extends BlockEntity & IChestLike
 	}
 
 	@Override
-	public void render(@NotNull BE chest, float partialTick, @NotNull PoseStack matrix, @NotNull MultiBufferSource renderer, int light, int overlayLight) {
+	public void render(BE chest, float partialTick, PoseStack matrix, MultiBufferSource renderer, int light, int overlayLight) {
 		matrix.pushPose();
 		if (chest.getLevel() != null && !chest.isRemoved()) {
 			BlockState state = chest.getLevel().getBlockState(chest.getBlockPos());

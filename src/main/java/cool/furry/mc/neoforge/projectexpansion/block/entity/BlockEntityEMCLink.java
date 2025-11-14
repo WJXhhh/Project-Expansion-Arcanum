@@ -38,9 +38,7 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -90,7 +88,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
      *******/
 
     @Override
-    public void loadAdditional(@Nonnull CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         if (tag.contains(TagNames.STORED_EMC, Tag.TAG_STRING)) emc = new BigInteger(tag.getString((TagNames.STORED_EMC)));
         if (tag.contains(TagNames.ITEM, Tag.TAG_COMPOUND)) itemStack = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(ItemStack.parseOptional(registries, tag.getCompound(TagNames.ITEM)))).createStack();
@@ -101,7 +99,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putString(TagNames.STORED_EMC, emc.toString());
         tag.put(TagNames.ITEM, itemStack.saveOptional(registries));
@@ -155,7 +153,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         if (level != null) {
             BlockEMCLink block = (BlockEMCLink) getBlockState().getBlock();
             if (block.getMatter() != matter) setMatter(block.getMatter());
@@ -292,7 +290,6 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             return getMatter().getEMCLinkInventorySize();
         }
 
-        @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
             if (slot != 0 || itemStack.isEmpty()) return ItemStack.EMPTY;
@@ -307,9 +304,8 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             return itemStack.copyWithCount(count);
         }
 
-        @Nonnull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
             boolean isFinal = getMatter() == Matter.FINAL;
             if (slot == 0 || (!isFinal && remainingImport <= 0) || owner == null || stack.isEmpty() || !isItemValid(slot, stack) || Util.getPlayer(owner) == null) return stack;
 
@@ -344,7 +340,6 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             return stack;
         }
 
-        @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return extractItemInternal(slot, amount, simulate, true);
@@ -382,7 +377,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, ItemStack stack) {
             return IEMCProxy.INSTANCE.hasValue(stack);
         }
     }
@@ -430,7 +425,6 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             return 1;
         }
 
-        @Nonnull
         @Override
         public FluidStack getFluidInTank(int tank) {
             if(tank != 0) {
@@ -452,7 +446,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
         }
 
         @Override
-        public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+        public boolean isFluidValid(int tank, FluidStack stack) {
             return false;
         }
 
@@ -461,7 +455,6 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             return 0;
         }
 
-        @Nonnull
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
             Fluid fluid = getFluid();
@@ -469,7 +462,6 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
             return drain(resource.getAmount(), action);
         }
 
-        @Nonnull
         @Override
         public FluidStack drain(int maxDrain, FluidAction action) {
             boolean isFinal = getMatter() == Matter.FINAL;

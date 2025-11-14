@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 
 public class GUICondenserMK3Output extends PEContainerScreen<ContainerCondenserMK3Output> {
     public GUICondenserMK3Output(ContainerCondenserMK3Output container, Inventory playerInventory, Component title) {
@@ -26,7 +25,7 @@ public class GUICondenserMK3Output extends PEContainerScreen<ContainerCondenserM
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {}
 
     @Override
-    protected void renderBg(@NotNull GuiGraphics graphics, float partialTicks, int x, int y) {
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getTexture());

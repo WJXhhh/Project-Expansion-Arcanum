@@ -23,12 +23,12 @@ public class Main {
     public static final org.apache.logging.log4j.Logger Logger = LogManager.getLogger();
     @SuppressWarnings("unused")
     public static ModContainer MOD_CONTAINER;
-    private static Main instance;
+    private static Main INSTANCE;
 
     private final PacketHandler packetHandler;
 
     public Main(IEventBus modEventBus, ModContainer modContainer) {
-        instance = this;
+        INSTANCE = this;
         MOD_CONTAINER = modContainer;
 
         AttachmentTypes.Registry.register(modEventBus);
@@ -54,7 +54,7 @@ public class Main {
 
     @SuppressWarnings("unused")
     public static PacketHandler packetHandler() {
-        return instance.packetHandler;
+        return INSTANCE.packetHandler;
     }
 
     private void serverTick(ServerTickEvent.Post event) {

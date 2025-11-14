@@ -7,6 +7,7 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'net.neoforged.moddev' version '2.0.80'
+    id 'com.github.spotbugs' version '6.0.22'
 }
 
 version = minecraft_version + "-" + mod_version
@@ -32,6 +33,14 @@ repositories {
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
     }
+}
+
+spotbugs {
+    toolVersion = '4.8.3'
+    //noinspection UnnecessaryQualifiedReference
+    effort = com.github.spotbugs.snom.Effort.MORE
+    //noinspection UnnecessaryQualifiedReference
+    reportLevel = com.github.spotbugs.snom.Confidence.valueOf("LOW")
 }
 
 base {

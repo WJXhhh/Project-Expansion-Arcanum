@@ -38,7 +38,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -80,7 +79,7 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         return matter;
     }
 
@@ -129,13 +128,13 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 
     @Override
     @Deprecated
-    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
     @Deprecated
-    public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         CollectorMK1BlockEntity collector = WorldHelper.getBlockEntity(CollectorMK1BlockEntity.class, level, pos, true);
         if (collector == null) {
             //If something went wrong fallback to default implementation
@@ -159,7 +158,7 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 
     @Override
     @Deprecated
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntityCollector collector = WorldHelper.getBlockEntity(BlockEntityCollector.class, level, pos);
             if (collector != null) {

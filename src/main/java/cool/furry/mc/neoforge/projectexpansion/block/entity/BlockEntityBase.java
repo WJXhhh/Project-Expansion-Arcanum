@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.IntStream;
 
@@ -55,11 +54,11 @@ public class BlockEntityBase extends BlockEntity {
         }
     }
 
-    public void markDirty(@NotNull Level level, @NotNull BlockPos pos) {
+    public void markDirty(Level level, BlockPos pos) {
         markDirty(level, pos, false);
     }
 
-    public void markDirty(@NotNull Level level, @NotNull BlockPos pos, boolean recheckComparators) {
+    public void markDirty(Level level, BlockPos pos, boolean recheckComparators) {
         Util.markDirty(level, pos);
         if (recheckComparators && !level.isClientSide) {
             updateComparators = true;
@@ -80,7 +79,7 @@ public class BlockEntityBase extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    public class StackHandler extends ItemStackHandler {
+    protected class StackHandler extends ItemStackHandler {
 
         public StackHandler(int size) {
             super(size);
@@ -94,7 +93,7 @@ public class BlockEntityBase extends BlockEntity {
     }
 
     @SuppressWarnings("unused")
-    public class CompactableStackHandler extends StackHandler {
+    protected class CompactableStackHandler extends StackHandler {
 
         //Start as needing to check for compacting when loaded
         private boolean needsCompacting = true;

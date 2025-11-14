@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
@@ -155,12 +154,12 @@ public abstract class BlockEntityEMC extends BlockEntityBase implements IEmcStor
         return toAdd;
     }
 
-    protected void sendToAllAcceptors(@NotNull Level level, BlockPos pos, BigInteger emc) {
+    protected void sendToAllAcceptors(Level level, BlockPos pos, BigInteger emc) {
         sendToAllAcceptors(level, pos, emc, null);
     }
 
     @SuppressWarnings("SameParameterValue")
-    protected void sendToAllAcceptors(@NotNull Level level, BlockPos pos, BigInteger emc, @Nullable BigInteger transferLimit) {
+    protected void sendToAllAcceptors(Level level, BlockPos pos, BigInteger emc, @Nullable BigInteger transferLimit) {
         if (emc.equals(BigInteger.ZERO) || !canProvideEmc()) {
             return;
         }

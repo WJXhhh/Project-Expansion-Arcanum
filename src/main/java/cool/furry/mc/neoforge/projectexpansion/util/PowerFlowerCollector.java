@@ -26,15 +26,14 @@ public class PowerFlowerCollector {
         if (tick >= 20) {
             tick = 0;
             Set<UUID> toRemove = new HashSet<>();
-            for(UUID uuid : stored.keySet()) {
-                BigInteger amount = stored.get(uuid);
-                ServerPlayer player = Util.getPlayer(uuid);
+            for(Map.Entry<UUID, BigInteger> entry : stored.entrySet()) {
+                ServerPlayer player = Util.getPlayer(entry.getKey());
                 if (player == null) continue;
-                @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(uuid);
+                @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(entry.getKey());
                 if(provider == null) continue;
-                provider.setEmc(provider.getEmc().add(amount));
+                provider.setEmc(provider.getEmc().add(entry.getValue()));
                 provider.syncEmc(player);
-                toRemove.add(uuid);
+                toRemove.add(entry.getKey());
             }
             toRemove.forEach(stored::remove);
         }

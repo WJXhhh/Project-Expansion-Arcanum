@@ -27,7 +27,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -61,7 +60,7 @@ public class BlockRelay extends Block implements IHasMatter, EntityBlock, IMatte
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         return matter;
     }
 

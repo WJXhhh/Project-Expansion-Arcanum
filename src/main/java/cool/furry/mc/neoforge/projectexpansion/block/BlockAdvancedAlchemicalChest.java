@@ -54,9 +54,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
@@ -79,7 +77,6 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 		return BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(10, 3_600_000).lightLevel((state) -> 10);
 	}
 
-	@NotNull
 	@Override
 	public DyeColor getColor() {
 		return color;
@@ -197,19 +194,16 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 		return ItemHandlerHelper.calcRedstoneFromInventory(handler);
 	}
 
-	@Nonnull
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return Objects.requireNonNull(super.getStateForPlacement(context)).setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(BlockStateProperties.WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 	}
 
-	@Nonnull
 	@Override
 	public FluidState getFluidState(BlockState state) {
 		return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
-	@Nonnull
 	@Override
 	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
 		if (state.getValue(BlockStateProperties.WATERLOGGED)) {
@@ -241,7 +235,8 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 		@Override
 		public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player player) {
 			IItemHandlerModifiable inv = (IItemHandlerModifiable) blockEntity.getBag();
-			return new ContainerAdvancedAlchemicalChest(windowId, playerInventory, hand, Objects.requireNonNull(inv), playerInventory.selected, false, blockEntity);
+            if (inv == null) throw new NullPointerException("Bag is null");
+			return new ContainerAdvancedAlchemicalChest(windowId, playerInventory, hand, inv, playerInventory.selected, false, blockEntity);
 		}
 
 		@Override

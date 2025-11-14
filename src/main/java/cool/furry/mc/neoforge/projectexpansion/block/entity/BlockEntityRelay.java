@@ -11,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -41,7 +40,7 @@ public class BlockEntityRelay extends BlockEntityEMC implements IHasMatter, IRel
 
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         BlockRelay block = (BlockRelay) getBlockState().getBlock();
         if (block.getMatter() != matter) {
             this.matter = block.getMatter();
@@ -73,7 +72,7 @@ public class BlockEntityRelay extends BlockEntityEMC implements IHasMatter, IRel
     }
 
     @Override
-    public void addBonus(@NotNull Level level, @NotNull BlockPos pos) {
+    public void addBonus(Level level, BlockPos pos) {
         bonusEMC = bonusEMC.add(getBonusToAddBigInteger());
         if (bonusEMC.compareTo(BigInteger.ONE) >= 0) {
             insertEmcBigInteger(bonusEMC, EmcAction.EXECUTE);

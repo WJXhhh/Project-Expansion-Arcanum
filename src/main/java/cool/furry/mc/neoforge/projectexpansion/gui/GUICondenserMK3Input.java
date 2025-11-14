@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 
 public class GUICondenserMK3Input extends PEContainerScreen<ContainerCondenserMK3Input> {
     public GUICondenserMK3Input(ContainerCondenserMK3Input container, Inventory playerInventory, Component title) {
@@ -26,7 +25,7 @@ public class GUICondenserMK3Input extends PEContainerScreen<ContainerCondenserMK
     }
 
     @Override
-    protected void renderBg(@NotNull GuiGraphics graphics, float partialTicks, int x, int y) {
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getTexture());
@@ -38,7 +37,7 @@ public class GUICondenserMK3Input extends PEContainerScreen<ContainerCondenserMK
     }
 
     @Override
-    protected void renderLabels(@NotNull GuiGraphics graphics, int x, int y) {
+    protected void renderLabels(GuiGraphics graphics, int x, int y) {
         //Don't render title or inventory as we don't have space
         long toDisplay = Math.min(menu.displayEmc.get(), menu.requiredEmc.get());
         Component emc = TransmutationEMCFormatter.formatEMC(toDisplay);
@@ -46,7 +45,7 @@ public class GUICondenserMK3Input extends PEContainerScreen<ContainerCondenserMK
     }
 
     @Override
-    protected void renderTooltip(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
         long toDisplay = Math.min(menu.displayEmc.get(), menu.requiredEmc.get());
 
         if (toDisplay < 1e12) {

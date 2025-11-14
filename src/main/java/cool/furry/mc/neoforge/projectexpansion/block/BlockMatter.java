@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import org.jetbrains.annotations.NotNull;
 
 public class BlockMatter extends Block implements IHasMatter, IMatterBlock {
     private final Matter matter;
@@ -28,7 +27,7 @@ public class BlockMatter extends Block implements IHasMatter, IMatterBlock {
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         return matter;
     }
 

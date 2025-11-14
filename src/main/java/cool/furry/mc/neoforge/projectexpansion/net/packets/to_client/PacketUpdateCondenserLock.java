@@ -9,7 +9,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -23,7 +22,6 @@ public record PacketUpdateCondenserLock(short windowId, @Nullable ItemInfo lockI
             (windowId, lockInfo) -> new PacketUpdateCondenserLock(windowId, lockInfo.orElse(null))
     );
 
-    @NotNull
     @Override
     public CustomPacketPayload.Type<PacketUpdateCondenserLock> type() {
         return TYPE;

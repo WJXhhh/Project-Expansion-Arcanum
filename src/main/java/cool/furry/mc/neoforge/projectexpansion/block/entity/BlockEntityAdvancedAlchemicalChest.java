@@ -4,6 +4,7 @@ import cool.furry.mc.neoforge.projectexpansion.block.BlockAdvancedAlchemicalChes
 import cool.furry.mc.neoforge.projectexpansion.gui.container.ContainerAdvancedAlchemicalChest;
 import cool.furry.mc.neoforge.projectexpansion.registries.BlockEntityTypes;
 import cool.furry.mc.neoforge.projectexpansion.util.*;
+import moze_intel.projecte.api.capabilities.IAlchBagProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.gameObjs.items.AlchemicalBag;
 import net.minecraft.core.BlockPos;
@@ -26,10 +27,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable implements IChestLike, IHasColor, IItemHandler {
 	public static final ICapabilityProvider<BlockEntityAdvancedAlchemicalChest, @Nullable Direction, IItemHandler> ITEM_HANDLER_CAPABILITY = (be, side) -> be.getBagItemHandler();
@@ -70,7 +68,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		}
 
 		@Override
-		public @NotNull ItemStack getStackInSlot(int slot) {
+		public ItemStack getStackInSlot(int slot) {
 			IItemHandler bag = getBag();
 			if(bag != null) {
 				return bag.getStackInSlot(slot);
@@ -79,7 +77,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		}
 
 		@Override
-		public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 			IItemHandler bag = getBag();
 			if(bag != null) {
 				return bag.insertItem(slot, stack, simulate);
@@ -88,7 +86,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		}
 
 		@Override
-		public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+		public ItemStack extractItem(int slot, int amount, boolean simulate) {
 			IItemHandler bag = getBag();
 			if(bag != null) {
 				return bag.extractItem(slot, amount, simulate);
@@ -106,7 +104,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		}
 
 		@Override
-		public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+		public boolean isItemValid(int slot, ItemStack stack) {
 			IItemHandler bag = getBag();
 			if(bag != null) {
 				return bag.isItemValid(slot, stack);
@@ -128,7 +126,6 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		return new BagItemHandler();
 	}
 
-	@NotNull
 	@Override
 	public DyeColor getColor() {
 		BlockAdvancedAlchemicalChest block = (BlockAdvancedAlchemicalChest) getBlockState().getBlock();
@@ -144,11 +141,9 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 			return null;
 		}
 
-		try {
-			return Objects.requireNonNull(player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY)).getBag(getColor());
-		} catch (NullPointerException ignore) {
-			return null;
-		}
+        @Nullable IAlchBagProvider provider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
+        if (provider == null) return null;
+        return provider.getBag(color);
 	}
 
 	public ItemInteractionResult handleItemActivation(Player player, ItemStack stack) {
@@ -227,21 +222,18 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		return bag == null ? 0 : bag.getSlots();
 	}
 
-	@NotNull
 	@Override
 	public ItemStack getStackInSlot(int slot) {
 		@Nullable IItemHandler bag = getBag();
 		return bag == null ? ItemStack.EMPTY : bag.getStackInSlot(slot);
 	}
 
-	@NotNull
 	@Override
-	public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 		@Nullable IItemHandler bag = getBag();
 		return bag == null ? stack : bag.insertItem(slot, stack, simulate);
 	}
 
-	@NotNull
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
 		@Nullable IItemHandler bag = getBag();
@@ -255,7 +247,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 	}
 
 	@Override
-	public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+	public boolean isItemValid(int slot, ItemStack stack) {
 		@Nullable IItemHandler bag = getBag();
 		return bag != null && bag.isItemValid(slot, stack);
 	}

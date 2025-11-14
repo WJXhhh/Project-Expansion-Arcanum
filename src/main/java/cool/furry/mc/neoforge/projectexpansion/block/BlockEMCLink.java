@@ -34,7 +34,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -69,7 +68,7 @@ public class BlockEMCLink extends Block implements IHasMatter, EntityBlock, IMat
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         return matter;
     }
 

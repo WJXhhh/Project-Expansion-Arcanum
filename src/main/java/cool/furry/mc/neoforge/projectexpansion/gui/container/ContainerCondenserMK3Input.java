@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -100,7 +99,7 @@ public class ContainerCondenserMK3Input extends ContainerBase {
     }
 
     @Override
-    public void clicked(int slot, int button, @NotNull ClickType flag, @NotNull Player player) {
+    public void clicked(int slot, int button, ClickType flag, Player player) {
         if (slot == 0) {
             if (handler.attemptCondenserSet(player)) {
                 this.broadcastChanges();

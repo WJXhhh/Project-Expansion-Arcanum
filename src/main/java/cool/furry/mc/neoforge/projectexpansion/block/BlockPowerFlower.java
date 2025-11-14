@@ -36,7 +36,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.math.BigInteger;
@@ -80,7 +79,7 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, 
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         return matter;
     }
 
@@ -95,7 +94,6 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, 
         return new BlockEntityPowerFlower(pos, state);
     }
 
-    @NotNull
     @Override
     @Deprecated
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {

@@ -36,7 +36,6 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -89,14 +88,12 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     public BlockEntityCollector(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.COLLECTOR.get(), pos, state);
         this.automationInput = new WrappedItemHandler(input, WrappedItemHandler.WriteMode.IN) {
-            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
                 return SlotPredicates.COLLECTOR_INV.test(stack) ? super.insertItem(slot, stack, simulate) : stack;
             }
         };
         this.automationAuxSlots = new WrappedItemHandler(auxSlots, WrappedItemHandler.WriteMode.OUT) {
-            @NotNull
             @Override
             public ItemStack extractItem(int slot, int count, boolean simulate) {
                 return slot == UPGRADE_SLOT ? super.extractItem(slot, count, simulate) : ItemStack.EMPTY;
@@ -118,7 +115,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
 
     @Override
     protected boolean canAcceptEmc() {
-        //Collector accepts EMC from providers if it has fuel/chargeable. Otherwise it sends it to providers
+        //Collector accepts EMC from providers if it has fuel/chargeable. Otherwise, it sends it to providers
         return hasFuel || hasChargeableItem;
     }
 
@@ -172,7 +169,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
         updateComparators(level, pos);
     }
 
-    private void updateEmc(@NotNull Level level, @NotNull BlockPos pos) {
+    private void updateEmc(Level level, BlockPos pos) {
         BigDecimal gen = getMatter().getCollectorOutputForTicks(Config.server.enableCollectorOptimizations.get() ? 20 : 1);
         if(hasSunBonus() && getSunBonus() != null) {
             gen = gen.multiply(BigDecimal.valueOf(getSunBonus()));
@@ -314,7 +311,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         input.deserializeNBT(registries, tag.getCompound(TagNames.INPUT));
         auxSlots.deserializeNBT(registries, tag.getCompound(TagNames.AUX_SLOTS));
@@ -322,14 +319,14 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put(TagNames.INPUT, input.serializeNBT(registries));
         tag.put(TagNames.AUX_SLOTS, auxSlots.serializeNBT(registries));
         tag.putString(TagNames.UNPROCESSED_EMC, unprocessedEMC.toString());
     }
 
-    private void sendRelayBonus(@NotNull Level level, @NotNull BlockPos pos) {
+    private void sendRelayBonus(Level level, BlockPos pos) {
         for (Direction dir : DIRECTIONS) {
             BlockEntity blockEntity = level.getBlockEntity(worldPosition.relative(dir));
             if (blockEntity instanceof IRelay be) {
@@ -375,7 +372,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         BlockCollector block = (BlockCollector) getBlockState().getBlock();
         if (block.getMatter() != matter) {
             this.matter = block.getMatter();

@@ -14,9 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.math.BigInteger;
 import java.util.Objects;
 
@@ -29,13 +27,13 @@ public class BlockEntityPowerFlower extends BlockEntityOwnable implements IHasMa
 
     @Override
     @SuppressWarnings("unused")
-    public void loadAdditional(@Nonnull CompoundTag tag, HolderLookup.Provider registries) {
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         if (tag.contains(TagNames.STORED_EMC, Tag.TAG_STRING)) emc = new BigInteger(tag.getString((TagNames.STORED_EMC)));
     }
 
     @Override
-    public void saveAdditional(@Nonnull CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putString(TagNames.STORED_EMC, emc.toString());
     }
@@ -63,7 +61,7 @@ public class BlockEntityPowerFlower extends BlockEntityOwnable implements IHasMa
     }
 
     @Override
-    public @NotNull Matter getMatter() {
+    public Matter getMatter() {
         return ((BlockPowerFlower) getBlockState().getBlock()).getMatter();
     }
 

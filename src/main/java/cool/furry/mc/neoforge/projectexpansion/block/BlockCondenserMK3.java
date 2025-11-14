@@ -46,7 +46,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -94,13 +93,13 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
     }
     @Override
     @Deprecated
-    public RenderShape getRenderShape(@NotNull BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
     @Deprecated
-    protected InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult rtr) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult rtr) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
@@ -115,20 +114,20 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     @Deprecated
-    public boolean triggerEvent(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, int id, int param) {
+    public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
         super.triggerEvent(state, level, pos, id, param);
         return triggerBlockEntityEvent(state, level, pos, id, param);
     }
 
     @SuppressWarnings("unused")
-    public boolean triggerBlockEntityEvent(@NotNull BlockState state, Level level, BlockPos pos, int id, int param) {
+    public boolean triggerBlockEntityEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
         BlockEntity blockEntity = WorldHelper.getBlockEntity(BlockEntityCondenserMK3.class, level, pos);
         return blockEntity != null && blockEntity.triggerEvent(id, param);
     }
 
     @Override
     @Deprecated
-    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         EmcChestBlockEntity chest = WorldHelper.getBlockEntity(EmcChestBlockEntity.class, level, pos);
         if (chest != null) {
             chest.recheckOpen();
@@ -137,28 +136,25 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     @Deprecated
-    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
     @Deprecated
-    public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return ItemHandlerHelper.calcRedstoneFromInventory(WorldHelper.getCapability(level, Capabilities.ItemHandler.BLOCK, pos, state, null, null));
     }
 
-    @NotNull
     @Override
     @Deprecated
     public FluidState getFluidState(BlockState state) {
         return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
-    @NotNull
     @Override
     @Deprecated
-    public BlockState updateShape(@NotNull BlockState state, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor level,
-                                  @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
+    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
         if (state.getValue(BlockStateProperties.WATERLOGGED)) {
             level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
@@ -167,7 +163,7 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     @Deprecated
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             for (Direction direction : Direction.values()) {
                 IItemHandler handler = WorldHelper.getCapability(level, Capabilities.ItemHandler.BLOCK, pos, state, null, direction);
@@ -179,7 +175,7 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     @Deprecated
-    public void attack(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player) {
+    public void attack(BlockState state, Level level, BlockPos pos, Player player) {
         if (!level.isClientSide) {
             ItemStack stack = player.getMainHandItem();
             if (!stack.isEmpty() && stack.is(PEItems.PHILOSOPHERS_STONE)) {

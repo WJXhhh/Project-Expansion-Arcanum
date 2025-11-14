@@ -136,6 +136,7 @@ public class CommandEMC {
                         value = null;
                     }
                 }
+                default -> throw new IllegalArgumentException();
             }
         } catch (NumberFormatException ignore) {}
         if(value == null) {
@@ -206,6 +207,7 @@ public class CommandEMC {
                     }
                 }
             }
+            default -> throw new IllegalArgumentException();
         }
         if(response == 1 && action != ActionType.TEST) {
             provider.setEmc(newEMC);

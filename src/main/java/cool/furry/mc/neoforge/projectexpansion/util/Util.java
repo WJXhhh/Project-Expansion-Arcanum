@@ -174,7 +174,6 @@ public class Util {
         if (emc.equals(BigInteger.ZERO) || storageList.isEmpty()) return emc;
         List<IEmcStorage> notAccepting = new ArrayList<>();
         Supplier<List<IEmcStorage>> getStorages = () -> storageList.stream().filter(storage -> !notAccepting.contains(storage)).toList();
-        BigInteger original = emc;
         while (emc.compareTo(BigInteger.ZERO) > 0) {
             List<IEmcStorage> acceptingStorages = getStorages.get();
             if (acceptingStorages.isEmpty()) break;

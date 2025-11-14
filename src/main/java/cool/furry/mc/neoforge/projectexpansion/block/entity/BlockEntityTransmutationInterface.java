@@ -20,7 +20,6 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.math.BigInteger;
 
 @SuppressWarnings("unused")
@@ -81,7 +80,6 @@ public class BlockEntityTransmutationInterface extends BlockEntityNBTFilterable 
             return fetchKnowledge().length + 1;
         }
 
-        @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
             if (owner == null || Util.getPlayer(owner) == null) return ItemStack.EMPTY;
@@ -96,9 +94,8 @@ public class BlockEntityTransmutationInterface extends BlockEntityNBTFilterable 
             return item;
         }
 
-        @Nonnull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
             if (slot != 0 || owner == null || !isItemValid(slot, stack) || stack.isEmpty() || Util.getPlayer(owner) == null) return stack;
 
             ItemInfo info = ItemInfo.fromStack(stack);
@@ -125,7 +122,6 @@ public class BlockEntityTransmutationInterface extends BlockEntityNBTFilterable 
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot <= 0 || owner == null || fetchKnowledge().length < slot || Util.getPlayer(owner) == null) return ItemStack.EMPTY;
@@ -155,7 +151,7 @@ public class BlockEntityTransmutationInterface extends BlockEntityNBTFilterable 
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, ItemStack stack) {
             return slot == 0 && IEMCProxy.INSTANCE.hasValue(stack);
         }
     }

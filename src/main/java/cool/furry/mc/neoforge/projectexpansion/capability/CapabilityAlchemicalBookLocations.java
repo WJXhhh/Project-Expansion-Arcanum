@@ -403,7 +403,8 @@ public record CapabilityAlchemicalBookLocations(ItemAlchemicalBook.Mode mode, @N
     }
 
     private void setLocations(List<TeleportLocation> locations) {
-        getData().setLocations(locations);
+        AlchemicalBookLocationData data = getData().setLocations(locations);
+        markDirty(data);
     }
 
     private static final String BACK_KEY = "@back";

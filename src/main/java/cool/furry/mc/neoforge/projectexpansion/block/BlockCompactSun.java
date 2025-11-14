@@ -25,7 +25,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -75,11 +74,11 @@ public class BlockCompactSun extends Block implements IMatterBlock {
     }
 
     @SuppressWarnings("unused")
-    public static boolean adjacent(@Nullable BlockGetter level, @NotNull BlockPos pos) {
+    public static boolean adjacent(@Nullable BlockGetter level, BlockPos pos) {
         return adjacent(level, pos, null);
     }
 
-    public static boolean adjacent(@Nullable BlockGetter level, @NotNull BlockPos pos, @Nullable Direction filterDirection) {
+    public static boolean adjacent(@Nullable BlockGetter level, BlockPos pos, @Nullable Direction filterDirection) {
         if (level == null) {
             return false;
         }

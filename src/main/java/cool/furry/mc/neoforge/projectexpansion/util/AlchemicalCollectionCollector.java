@@ -9,10 +9,7 @@ import net.minecraft.sounds.SoundSource;
 
 import javax.annotation.Nullable;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class AlchemicalCollectionCollector {
     public static final HashMap<UUID, Collected> saved = new HashMap<>();
@@ -55,10 +52,9 @@ public class AlchemicalCollectionCollector {
 
     public static void process() {
         List<UUID> toRemove = new ArrayList<>();
-        for (UUID uuid : saved.keySet()) {
-            Collected collected = saved.get(uuid);
-            if (!collected.inCooldown() && collected.process()) {
-                toRemove.add(uuid);
+        for (Map.Entry<UUID, Collected> entry : saved.entrySet()) {
+            if (!entry.getValue().inCooldown() && entry.getValue().process()) {
+                toRemove.add(entry.getKey());
             }
         }
         for (UUID uuid : toRemove) {
