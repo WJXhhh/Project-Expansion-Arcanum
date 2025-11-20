@@ -114,7 +114,7 @@ public class ServerEvents {
             timers.removeAll(toRemove);
             if (applyEffects) {
                 int fireTime = getFireTime(player);
-                player.setRemainingFireTicks(fireTime);
+                if (fireTime != 0) player.setRemainingFireTicks(fireTime);
             }
         }
     }
