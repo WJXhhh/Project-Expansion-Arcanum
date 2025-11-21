@@ -10,9 +10,9 @@ import java.text.NumberFormat;
 
 // This mixin changes ProjectE's formatting to ours
 @SuppressWarnings("unused")
-@Mixin(EMCHelper.class)
+@Mixin(value = EMCHelper.class, remap = false)
 public class EMCFormatterMixin {
     @Final
-    @Shadow(remap = false)
+    @Shadow
     private static final NumberFormat EMC_FORMATTER = EMCFormat.INSTANCE;
 }

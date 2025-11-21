@@ -22,6 +22,12 @@ if [[ -n "$1" ]]; then
     echo "Removing signed/$1"
     rm "signed/$1"
   fi
+
+  for file in signed/*.jar; do
+    if [ $file == "signed/*.jar" ]; then break; fi
+    echo "Removing $1"
+    rm -f $file
+  done
   signJar "$1"
 else
   rm -f signed/*.jar

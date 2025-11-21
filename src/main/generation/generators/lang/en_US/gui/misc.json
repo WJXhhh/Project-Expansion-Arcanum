@@ -1,4 +1,6 @@
 {
+  "gui.projectexpansion.previous": "Previous",
+  "gui.projectexpansion.next": "Next",
   "gui.projectexpansion.advanced_alchemical_chest.title": "Advanced Alchemical Chest",
   "gui.projectexpansion.alchemical_book": "Alchemical Chest",
   "gui.projectexpansion.alchemical_book.close": "Close",
@@ -9,6 +11,22 @@
   "gui.projectexpansion.alchemical_book.dimension": "Dimension: %s",
   "gui.projectexpansion.alchemical_book.cost": "Cost: %s",
   "gui.projectexpansion.alchemical_book.no_back_location": "No Back Location",
-  "gui.projectexpansion.alchemical_book.prev": "Prev Page",
-  "gui.projectexpansion.alchemical_book.next": "Next Page"
+  "gui.projectexpansion.arcane_transmutation_tablet": "Arcane Transmutation Tablet",
+  "gui.projectexpansion.arcane_transmutation_tablet.lock": "Lock",
+  "gui.projectexpansion.arcane_transmutation_tablet.consume": "Consume",
+  "gui.projectexpansion.arcane_transmutation_tablet.unlearn": "Unlearn",
+  "gui.projectexpansion.arcane_transmutation_tablet.learned": "Learned",
+  "gui.projectexpansion.arcane_transmutation_tablet.unlearned": "Unlearned",
+  "gui.projectexpansion.arcane_transmutation_tablet.rotate": "Rotate",
+  "gui.projectexpansion.arcane_transmutation_tablet.rotate.clockwise": "Clockwise",
+  "gui.projectexpansion.arcane_transmutation_tablet.rotate.counter_clockwise": "Counter Clockwise",
+  "gui.projectexpansion.arcane_transmutation_tablet.balance": "Balance",
+  "gui.projectexpansion.arcane_transmutation_tablet.spread": "Spread",
+  "gui.projectexpansion.arcane_transmutation_tablet.search_type": "Search Type",
+  "gui.projectexpansion.arcane_transmutation_tablet.search_type.normal": "Normal",
+  "gui.projectexpansion.arcane_transmutation_tablet.search_type.autoselected": "Autoselected",
+  "gui.projectexpansion.arcane_transmutation_tablet.search_type.normal_jei": "Normal (JEI Sync)",
+  "gui.projectexpansion.arcane_transmutation_tablet.search_type.autoselected_jei": "Autoselected (JEI Sync)",
+  "gui.projectexpansion.arcane_transmutation_tablet.clear": "Clear",
+  "gui.projectexpansion.arcane_transmutation_tablet.clear.force": "Force!"
 }

@@ -2,6 +2,7 @@ package cool.furry.mc.neoforge.projectexpansion.events;
 
 import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.client.Keybinds;
+import cool.furry.mc.neoforge.projectexpansion.gui.GUIArcaneTransmutationTablet;
 import cool.furry.mc.neoforge.projectexpansion.gui.GUICollector;
 import cool.furry.mc.neoforge.projectexpansion.gui.GUICondenserMK3Input;
 import cool.furry.mc.neoforge.projectexpansion.gui.GUICondenserMK3Output;
@@ -26,6 +27,7 @@ public class ClientEvents {
             event.register(MenuTypes.COLLECTOR_TIER_3.get(), GUICollector.Tier3::new);
             event.register(MenuTypes.CONDENSER_MK3_INPUT.get(), GUICondenserMK3Input::new);
             event.register(MenuTypes.CONDENSER_MK3_OUTPUT.get(), GUICondenserMK3Output::new);
+            event.register(MenuTypes.ARCANE_TRANSMUTATION_TABLET.get(), GUIArcaneTransmutationTablet::new);
         }
 
         @SubscribeEvent

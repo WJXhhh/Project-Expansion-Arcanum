@@ -17,9 +17,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // This mixin enables the Philosophers Stone to toggle NBT filters
-@Mixin(PhilosophersStone.class)
+@Mixin(value = PhilosophersStone.class, remap = false)
 public class PhilosophersStoneMixin {
-    @Inject(at = @At("HEAD"), method = "onItemUseFirst(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;", cancellable = true, remap = false)
+    @Inject(at = @At("HEAD"), method = "onItemUseFirst(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;", cancellable = true)
     public void onItemUseFirst(ItemStack stack, UseOnContext ctx, CallbackInfoReturnable<InteractionResult> cir) {
         BlockPos pos = ctx.getClickedPos();
         Player player = ctx.getPlayer();
@@ -35,7 +35,7 @@ public class PhilosophersStoneMixin {
         }
     }
 
-    @Shadow(remap = false)
+    @Shadow
     public BlockHitResult getHitBlock(Level level, Player player, boolean isSneaking) {
         throw new IllegalStateException("Mixin failed to shadow getHitBlock()");
     }

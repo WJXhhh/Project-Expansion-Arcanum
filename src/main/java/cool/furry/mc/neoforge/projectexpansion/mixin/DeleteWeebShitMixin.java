@@ -15,14 +15,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.UUID;
 
 // this removes the "yue" from players that aren't sin or their gf when in development (because it's always shown in development, thanks for that sin)
-@Mixin(LayerYue.class)
+@Mixin(value = LayerYue.class,remap = false)
 @SuppressWarnings("unused")
 public class DeleteWeebShitMixin {
-    @Inject(at = @At("HEAD"), method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/player/AbstractClientPlayer;FFFFFF)V", remap = false, cancellable = true)
+    @Inject(at = @At("HEAD"), method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/player/AbstractClientPlayer;FFFFFF)V", cancellable = true)
     public void render(PoseStack matrix, MultiBufferSource renderer, int light, AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
         if(!FMLEnvironment.production && !player.getUUID().equals(SIN_UUID) && !player.getUUID().equals(CLAR_UUID)) ci.cancel();
     }
 
-    @Shadow(remap = false) @Final private static UUID SIN_UUID;
-    @Shadow(remap = false) @Final private static UUID CLAR_UUID;
+    @Shadow @Final private static UUID SIN_UUID;
+    @Shadow @Final private static UUID CLAR_UUID;
 }

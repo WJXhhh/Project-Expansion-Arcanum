@@ -1,7 +1,9 @@
 package cool.furry.mc.neoforge.projectexpansion.mixin;
 
 import cool.furry.mc.neoforge.projectexpansion.registries.Enchantments;
-import cool.furry.mc.neoforge.projectexpansion.util.*;
+import cool.furry.mc.neoforge.projectexpansion.util.AlchemicalCollectionCollector;
+import cool.furry.mc.neoforge.projectexpansion.util.AtomicBigInteger;
+import cool.furry.mc.neoforge.projectexpansion.util.Util;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -32,9 +34,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 // This mixin enables converting mined items with EMC into EMC and knowledge
-@Mixin(Block.class)
+@Mixin(value = Block.class, remap = false)
 public abstract class AlchemicalCollectionMixin {
-    @Inject(at = @At("RETURN"), method = "getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;", cancellable = true, remap = false)
+    @Inject(at = @At("RETURN"), method = "getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;", cancellable = true)
     private static void getDrops(BlockState state, ServerLevel level, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfoReturnable<List<ItemStack>> cir) {
         if (!(entity instanceof ServerPlayer player)) return;
         @Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(player);

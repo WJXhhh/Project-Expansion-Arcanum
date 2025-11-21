@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 // This mixin dips into ProjectE's extra function capability to toggle the Alchemical Collection enchantment
 // I would much rather this actually make use of the capability properly, but we cannot access tags during capability registration,
 // and we cannot trust all items to extend DiggerItem, or that we will not override other capabilities.
-@Mixin(KeyPressPKT.class)
+@Mixin(value = KeyPressPKT.class, remap = false)
 public class AlchemicalCollectionToggleMixin {
-    @Inject(at = @At("TAIL"), method = "handle(Lnet/neoforged/neoforge/network/handling/IPayloadContext;)V", cancellable = true, remap = false)
+    @Inject(at = @At("TAIL"), method = "handle(Lnet/neoforged/neoforge/network/handling/IPayloadContext;)V", cancellable = true)
     public void handle(IPayloadContext context, CallbackInfo ci) {
         Player player = context.player();
         if (key == PEKeybind.EXTRA_FUNCTION) {
@@ -37,6 +37,6 @@ public class AlchemicalCollectionToggleMixin {
     }
 
     @Final
-    @Shadow(remap = false)
+    @Shadow
     private PEKeybind key;
 }

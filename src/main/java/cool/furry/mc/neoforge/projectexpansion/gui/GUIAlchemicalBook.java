@@ -53,7 +53,7 @@ public class GUIAlchemicalBook extends Screen {
     private int page = 1;
     private int maxPages = 1;
     public GUIAlchemicalBook(LocalPlayer player, InteractionHand hand, List<CapabilityAlchemicalBookLocations.TeleportLocation> locations, boolean canEdit) {
-        super(Lang.ALCHEMICAL_BOOK.translate());
+        super(Lang.GUI.ALCHEMICAL_BOOK.translate());
         this.player = player;
         this.hand = hand;
         this.locations.addAll(locations);
@@ -93,7 +93,7 @@ public class GUIAlchemicalBook extends Screen {
     protected void init() {
         addRenderableWidget(buttonCreate = new ButtonCreate(this.width / 2 - w, 20, w, h));
         addRenderableWidget(buttonClose = new ButtonClose(this.width / 2 - w - 50, 20));
-        createName = new EditBox(font, buttonCreate.getX() + buttonCreate.getWidth() + 10, buttonCreate.getY(), w, h, Lang.ALCHEMICAL_BOOK_CREATE.translate());
+        createName = new EditBox(font, buttonCreate.getX() + buttonCreate.getWidth() + 10, buttonCreate.getY(), w, h, Lang.GUI.ALCHEMICAL_BOOK_CREATE.translate());
         createName.setMaxLength(20);
         createName.setFocused(true);
         if(!canEdit) {
@@ -217,14 +217,14 @@ public class GUIAlchemicalBook extends Screen {
 
     private class ButtonClose extends Button {
         public ButtonClose(int x, int y) {
-            super(Button.builder(Lang.ALCHEMICAL_BOOK_CLOSE.translate(), (button) -> player.closeContainer()).pos(x, y).size(40, 20));
+            super(Button.builder(Lang.GUI.ALCHEMICAL_BOOK_CLOSE.translate(), (button) -> player.closeContainer()).pos(x, y).size(40, 20));
         }
     }
 
     private class ButtonCreate extends Button {
         String name;
         public ButtonCreate(int x, int y, int w, int h) {
-            super(Button.builder(Lang.ALCHEMICAL_BOOK_CREATE.translate(), (button) -> {}).pos(x, y).size(w, h));
+            super(Button.builder(Lang.GUI.ALCHEMICAL_BOOK_CREATE.translate(), (button) -> {}).pos(x, y).size(w, h));
         }
 
         @Override
@@ -274,14 +274,14 @@ public class GUIAlchemicalBook extends Screen {
         private @Nullable CapabilityAlchemicalBookLocations.TeleportLocation location;
         private boolean canTeleport;
         public ButtonBack(int x, int y, int w, int h) {
-            super(Button.builder(Lang.ALCHEMICAL_BOOK_BACK.translate(), (button) -> PacketDistributor.sendToServer(new PacketTeleportBack(player, hand))).pos(x, y).size(w, h));
+            super(Button.builder(Lang.GUI.ALCHEMICAL_BOOK_BACK.translate(), (button) -> PacketDistributor.sendToServer(new PacketTeleportBack(player, hand))).pos(x, y).size(w, h));
         }
 
         @Override
         protected void renderWidget(GuiGraphics graphics, int pMouseX, int pMouseY, float unknown) {
             if(isHoveredOrFocused()) {
                 if(location == null) {
-                    setTooltipForNextRenderPass(Lang.ALCHEMICAL_BOOK_NO_BACK_LOCATION.translate());
+                    setTooltipForNextRenderPass(Lang.GUI.ALCHEMICAL_BOOK_NO_BACK_LOCATION.translate());
                     super.renderWidget(graphics, pMouseX, pMouseY, unknown);
                     return;
                 }
@@ -305,14 +305,14 @@ public class GUIAlchemicalBook extends Screen {
 
     private class ButtonPrev extends Button {
         public ButtonPrev(int x, int y, int w, int h, boolean active) {
-            super(Button.builder(Lang.ALCHEMICAL_BOOK_PREV.translate(), (button) -> GUIAlchemicalBook.this.previousPage()).pos(x, y).size(w, h));
+            super(Button.builder(Lang.PREVIOUS.translate(), (button) -> GUIAlchemicalBook.this.previousPage()).pos(x, y).size(w, h));
             this.active = active;
         }
     }
 
     private class ButtonNext extends Button {
         public ButtonNext(int x, int y, int w, int h, boolean active) {
-            super(Button.builder(Lang.ALCHEMICAL_BOOK_NEXT.translate(), (button) -> GUIAlchemicalBook.this.nextPage()).pos(x, y).size(w, h));
+            super(Button.builder(Lang.NEXT.translate(), (button) -> GUIAlchemicalBook.this.nextPage()).pos(x, y).size(w, h));
             this.active = active;
         }
     }
@@ -323,14 +323,14 @@ public class GUIAlchemicalBook extends Screen {
             tooltips.add(Component.literal(String.format("%d, %d, %d", location.x(), location.y(), location.z())));
             int distance = (int) location.distanceFrom(player.getOnPos());
             if(distance > 0) {
-                tooltips.add(Lang.ALCHEMICAL_BOOK_DISTANCE.translate(distance));
+                tooltips.add(Lang.GUI.ALCHEMICAL_BOOK_DISTANCE.translate(distance));
             }
             int cost = location.getCost(getItemStack(), player);
             if (cost > 0) {
-                tooltips.add(Lang.ALCHEMICAL_BOOK_COST.translate(EMCFormat.getComponent(cost).withStyle(ChatFormatting.YELLOW)));
+                tooltips.add(Lang.GUI.ALCHEMICAL_BOOK_COST.translate(EMCFormat.getComponent(cost).withStyle(ChatFormatting.YELLOW)));
             }
         } else {
-            tooltips.add(Lang.ALCHEMICAL_BOOK_DIMENSION.translate(Component.translatable(location.dimension().location().toString())));
+            tooltips.add(Lang.GUI.ALCHEMICAL_BOOK_DIMENSION.translate(Component.translatable(location.dimension().location().toString())));
         }
 
         MutableComponent tooltip = Component.empty();

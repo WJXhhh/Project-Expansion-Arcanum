@@ -1,0 +1,82 @@
+package cool.furry.mc.neoforge.projectexpansion.gui.container.slots;
+
+import cool.furry.mc.neoforge.projectexpansion.gui.container.ContainerArcaneTransmutationTablet;
+import cool.furry.mc.neoforge.projectexpansion.util.Util;
+import moze_intel.projecte.api.proxy.IEMCProxy;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.inventory.ResultSlot;
+import net.minecraft.world.item.ItemStack;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class PXResultSlot extends ResultSlot {
+    private final CraftingContainer craftSlots;
+    private final Player player;
+    private final ContainerArcaneTransmutationTablet tablet;
+    public PXResultSlot(Player player, CraftingContainer craftSlots, ResultContainer container, ContainerArcaneTransmutationTablet tablet, int slot, int xPosition, int yPosition) {
+        super(player, craftSlots, container, slot, xPosition, yPosition);
+        this.craftSlots = craftSlots;
+        this.player = player;
+        this.tablet = tablet;
+    }
+
+    @Override
+    public void onTake(Player player, ItemStack stack) {
+        learnResult(stack);
+        List<ItemStack> previousItems = craftSlots.getItems().stream().map(ItemStack::copy).collect(Collectors.toCollection(ArrayList::new));
+        super.onTake(player, stack);
+        refillAfterTake(previousItems);
+    }
+
+    @Override
+    protected void onQuickCraft(ItemStack stack, int amount) {
+        learnResult(stack);
+        super.onQuickCraft(stack, amount);
+    }
+
+    protected void learnResult(ItemStack stack) {
+        if (player instanceof ServerPlayer && IEMCProxy.INSTANCE.hasValue(stack)) {
+            tablet.transmutationInventory.handleKnowledge(stack);
+        }
+    }
+
+    protected void refillAfterTake(List<ItemStack> items) {
+        if (player.level().isClientSide || tablet.skipRefill) return;
+        List<ItemStack> currentItems = craftSlots.getItems().stream().map(ItemStack::copy).collect(Collectors.toCollection(ArrayList::new));
+
+        for (int i = 0; i < currentItems.size(); i++) {
+            ItemStack stack = currentItems.get(i);
+            // if empty or same as was originally present, skip
+            if (stack.isEmpty() || items.get(i).equals(stack)) continue;
+            // if it has a value, move to tablet
+            if (IEMCProxy.INSTANCE.hasValue(stack)) {
+                tablet.transmutationInventory.handleKnowledge(stack);
+                long value = IEMCProxy.INSTANCE.getValue(stack);
+                tablet.transmutationInventory.addEmc(BigInteger.valueOf(value));
+                currentItems.set(i, ItemStack.EMPTY);
+                craftSlots.setItem(i, ItemStack.EMPTY);
+                continue;
+            }
+            // else, attempt to insert into the inventory
+            ItemStack result = Util.returnToInventory(tablet.getPlayer().getInventory(), player, stack, false);
+            // if we still have leftovers, just leave it in the slot. We'll skip over the slot later
+            currentItems.set(i, result);
+            craftSlots.setItem(i, result);
+        }
+
+        List<List<ItemStack>> recipe = items.stream().map(List::of).map(ArrayList::new).collect(Collectors.toList());
+        tablet.fillCraftingSlots(recipe, false);
+    }
+
+    @Override
+    public void set(ItemStack stack) {
+        super.set(stack);
+        tablet.isCrafting = !stack.isEmpty(); // used for the arrow
+    }
+}

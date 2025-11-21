@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 // Makes the Tome of Knowledge have the enchantment glint, because I want it to dammit
 @SuppressWarnings("unused")
-@Mixin(Tome.class)
+@Mixin(value = Tome.class, remap = false)
 public class TomeMixin {
     @SuppressWarnings("SameReturnValue")
     @Unique

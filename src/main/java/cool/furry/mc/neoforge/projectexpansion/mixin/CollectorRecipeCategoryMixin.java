@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 // This mixin formats the EMC value shown for collectors in JEI
 @SuppressWarnings("unused")
-@Mixin(CollectorRecipeCategory.class)
+@Mixin(value = CollectorRecipeCategory.class, remap = false)
 public class CollectorRecipeCategoryMixin {
     @Shadow(remap = false)
     public int getWidth() {
@@ -22,7 +22,7 @@ public class CollectorRecipeCategoryMixin {
     }
 
     // I hate replacing the entire method, but I spent far too long trying to figure out how @ModifyVariable works
-    @Inject(method = "createRecipeExtras(Lmezz/jei/api/gui/widgets/IRecipeExtrasBuilder;Lmoze_intel/projecte/integration/recipe_viewer/FuelUpgradeRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V", at = @At("HEAD"), remap = false, cancellable = true)
+    @Inject(method = "createRecipeExtras(Lmezz/jei/api/gui/widgets/IRecipeExtrasBuilder;Lmoze_intel/projecte/integration/recipe_viewer/FuelUpgradeRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V", at = @At("HEAD"), cancellable = true)
     private void draw(IRecipeExtrasBuilder builder, FuelUpgradeRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
         builder.addRecipeArrow().setPosition(27, 16);
         builder.addText(EMCFormat.getComponent(recipe.upgradeEMC()), getWidth() - 10, 11)

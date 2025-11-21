@@ -45,17 +45,8 @@ public enum Lang implements ILangEntry {
 
     // Misc
     ADVANCED_ALCHEMICAL_CHEST_TITLE("gui", "advanced_alchemical_chest", "title"),
-    ALCHEMICAL_BOOK("gui", "alchemical_book"),
-    ALCHEMICAL_BOOK_CLOSE("gui", "alchemical_book", "close"),
-    ALCHEMICAL_BOOK_DELETE("gui", "alchemical_book", "delete"),
-    ALCHEMICAL_BOOK_CREATE("gui", "alchemical_book", "create"),
-    ALCHEMICAL_BOOK_BACK("gui", "alchemical_book", "back"),
-    ALCHEMICAL_BOOK_COST("gui", "alchemical_book", "cost"),
-    ALCHEMICAL_BOOK_DISTANCE("gui", "alchemical_book", "distance"),
-    ALCHEMICAL_BOOK_DIMENSION("gui", "alchemical_book", "dimension"),
-    ALCHEMICAL_BOOK_NO_BACK_LOCATION("gui", "alchemical_book", "no_back_location"),
-    ALCHEMICAL_BOOK_PREV("gui", "alchemical_book", "prev"),
-    ALCHEMICAL_BOOK_NEXT("gui", "alchemical_book", "next"),
+    PREVIOUS("gui", "previous"),
+    NEXT("gui", "next"),
     ITEMGROUP("itemGroup.projectexpansion"),
     ;
 
@@ -341,12 +332,75 @@ public enum Lang implements ILangEntry {
         ALCHEMICAL_BOOK_NOW_BOUND("alchemical_book", "now_bound"),
         ALCHEMICAL_BOOK_CORRUPTED("alchemical_book", "corrupted"),
         ALCHEMICAL_BOOK_NOT_ENOUGH_EMC("alchemical_book", "not_enough_emc"),
+
+        ARCANE_TRANSMUTATION_TABLET_TOOLTIP("arcane_transmutation_tablet", "tooltip"),
         ;
 
         private String key;
 
         Items(String... path) {
             this.key = net.minecraft.Util.makeDescriptionId("item", Main.rl(String.join(".", path)));
+        }
+
+        @Override
+        public String getTranslationKey() {
+            return key;
+        }
+
+        public MutableComponent extend(String extension, Object... args) {
+            String originalKey = this.key;
+            this.key += "." + extension;
+            MutableComponent component = translate(args);
+            this.key = originalKey;
+            return component;
+        }
+
+        public MutableComponent extendColored(String extension, ChatFormatting color, Object... args) {
+            String originalKey = this.key;
+            this.key += "." + extension;
+            MutableComponent component = translateColored(color, args);
+            this.key = originalKey;
+            return component;
+        }
+    }
+
+    public enum GUI implements ILangEntry {
+        // Alchemical Book
+        ALCHEMICAL_BOOK("alchemical_book"),
+        ALCHEMICAL_BOOK_CLOSE("alchemical_book", "close"),
+        ALCHEMICAL_BOOK_DELETE("alchemical_book", "delete"),
+        ALCHEMICAL_BOOK_CREATE("alchemical_book", "create"),
+        ALCHEMICAL_BOOK_BACK("alchemical_book", "back"),
+        ALCHEMICAL_BOOK_COST("alchemical_book", "cost"),
+        ALCHEMICAL_BOOK_DISTANCE("alchemical_book", "distance"),
+        ALCHEMICAL_BOOK_DIMENSION("alchemical_book", "dimension"),
+        ALCHEMICAL_BOOK_NO_BACK_LOCATION("alchemical_book", "no_back_location"),
+
+        // Arcane Transmutation Tablet
+        ARCANE_TRANSMUTATION_TABLET("arcane_transmutation_tablet"),
+        ARCANE_TRANSMUTATION_TABLET_LOCK("arcane_transmutation_tablet", "lock"),
+        ARCANE_TRANSMUTATION_TABLET_CONSUME("arcane_transmutation_tablet", "consume"),
+        ARCANE_TRANSMUTATION_TABLET_UNLEARN("arcane_transmutation_tablet", "unlearn"),
+        ARCANE_TRANSMUTATION_TABLET_LEARNED("arcane_transmutation_tablet", "learned"),
+        ARCANE_TRANSMUTATION_TABLET_UNLEARNED("arcane_transmutation_tablet", "unlearned"),
+        ARCANE_TRANSMUTATION_TABLET_ROTATE("arcane_transmutation_tablet", "rotate"),
+        ARCANE_TRANSMUTATION_TABLET_ROTATE_CLOCKWISE("arcane_transmutation_tablet", "rotate", "clockwise"),
+        ARCANE_TRANSMUTATION_TABLET_ROTATE_COUNTER_CLOCKWISE("arcane_transmutation_tablet", "rotate", "counter_clockwise"),
+        ARCANE_TRANSMUTATION_TABLET_BALANCE("arcane_transmutation_tablet", "balance"),
+        ARCANE_TRANSMUTATION_TABLET_SPREAD("arcane_transmutation_tablet", "spread"),
+        ARCANE_TRANSMUTATION_TABLET_SEARCH_TYPE("arcane_transmutation_tablet", "search_type"),
+        ARCANE_TRANSMUTATION_TABLET_SEARCH_TYPE_NORMAL("arcane_transmutation_tablet", "search_type", "normal"),
+        ARCANE_TRANSMUTATION_TABLET_SEARCH_TYPE_AUTOSELECTED("arcane_transmutation_tablet", "search_type", "autoselected"),
+        ARCANE_TRANSMUTATION_TABLET_SEARCH_TYPE_NORMAL_JEI("arcane_transmutation_tablet", "search_type", "normal_jei"),
+        ARCANE_TRANSMUTATION_TABLET_SEARCH_TYPE_AUTOSELECTED_JEI("arcane_transmutation_tablet", "search_type", "autoselected_jei"),
+        ARCANE_TRANSMUTATION_TABLET_CLEAR("arcane_transmutation_tablet", "clear"),
+        ARCANE_TRANSMUTATION_TABLET_CLEAR_FORCE("arcane_transmutation_tablet", "clear", "force"),
+        ;
+
+        private String key;
+
+        GUI(String... path) {
+            this.key = net.minecraft.Util.makeDescriptionId("gui", Main.rl(String.join(".", path)));
         }
 
         @Override

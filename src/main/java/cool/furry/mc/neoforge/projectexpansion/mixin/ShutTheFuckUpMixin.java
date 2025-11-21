@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 // shuts up ProjectE's "** RECEIVED TRANSMUTATION EMC DATA CLIENTSIDE **" spam
-@Mixin(PECore.class)
+@Mixin(value = PECore.class, remap = false)
 public class ShutTheFuckUpMixin {
-    @Inject(at = @At("HEAD"), method = "debugLog(Ljava/lang/String;[Ljava/lang/Object;)V", cancellable = true, remap = false)
+    @Inject(at = @At("HEAD"), method = "debugLog(Ljava/lang/String;[Ljava/lang/Object;)V", cancellable = true)
     private static void debugLog(String msg, Object[] args, CallbackInfo ci) {
         if(FMLEnvironment.production) return;
         if(msg.equals("** RECEIVED TRANSMUTATION EMC DATA CLIENTSIDE **")) {

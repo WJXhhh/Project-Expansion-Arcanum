@@ -3,6 +3,7 @@ package cool.furry.mc.neoforge.projectexpansion.net.packets.to_server;
 import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.integrations.curios.CuriosIntegration;
 import cool.furry.mc.neoforge.projectexpansion.net.packets.IPacket;
+import cool.furry.mc.neoforge.projectexpansion.util.ITransmutationTablet;
 import cool.furry.mc.neoforge.projectexpansion.util.Util;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -31,7 +33,12 @@ public class PacketOpenTransmutationTablet implements IPacket {
             IItemHandlerModifiable curios = curiosInv.get();
             for (int i = 0; i < curios.getSlots(); i++) {
                 ItemStack stack = curios.getStackInSlot(i);
-                if (stack.getItem() == PEItems.TRANSMUTATION_TABLET.get()) {
+                Item item = stack.getItem();
+                if (item instanceof ITransmutationTablet tablet) {
+                    tablet.openContainer(player);
+                    break;
+                // legacy
+                } else if (item == PEItems.TRANSMUTATION_TABLET.get()) {
                     Util.openTransmutationTable(player);
                     break;
                 }

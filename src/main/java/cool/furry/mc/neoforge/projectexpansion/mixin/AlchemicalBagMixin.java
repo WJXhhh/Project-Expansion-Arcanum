@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // This mixin enables shift clicking on an Advanced Alchemical Chest to set the color
-@Mixin(AlchemicalBag.class)
+@Mixin(value = AlchemicalBag.class, remap = false)
 public class AlchemicalBagMixin {
-	@Inject(at = @At("HEAD"), method = "use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;", cancellable = true, remap = false)
+	@Inject(at = @At("HEAD"), method = "use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;", cancellable = true)
 	public void use(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
 		if(!level.isClientSide) {
 			@Nullable BlockEntity blockEntity = getLookingAt(player);

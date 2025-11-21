@@ -31,5 +31,7 @@
   "item.projectexpansion.alchemical_book.error.name_not_found": "Destination with name \"%s\" was not found.",
   "item.projectexpansion.alchemical_book.now_bound": "This book is now bound to you. Its teleportation locations will be stored with your player, and not the book.",
   "item.projectexpansion.alchemical_book.no_longer_bound": "This book is no longer bound to you. It now has its own set of teleportation locations. If you lose the book, its locations will also be lost.",
-  "item.projectexpansion.alchemical_book.corrupted": "The locations in this book seem to be corrupted. Check the logs for more information."
+  "item.projectexpansion.alchemical_book.corrupted": "The locations in this book seem to be corrupted. Check the logs for more information.",
+  "item.projectexpansion.arcane_transmutation_tablet": "Arcane Transmutation Tablet",
+  "item.projectexpansion.arcane_transmutation_tablet.tooltip": "An upgraded transmutation tablet with a built in crafting table."
 }

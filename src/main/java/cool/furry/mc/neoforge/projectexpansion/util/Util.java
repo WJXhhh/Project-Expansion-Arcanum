@@ -14,14 +14,17 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.items.IFireProtector;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -32,6 +35,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -81,6 +85,14 @@ public class Util {
         ItemStack stackCopy = stack.copyWithCount(1);
         if (stackCopy.isDamageableItem()) stackCopy.setDamageValue(0);
         return IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(stackCopy)).createStack();
+    }
+
+    public static AddKnowledgeResult addKnowledge(Player player, IKnowledgeProvider provider, ItemStack rawStack) {
+        return addKnowledge(player, provider, ItemInfo.fromStack(rawStack), ItemInfo.fromStack(cleanStack(rawStack)));
+    }
+
+    public static AddKnowledgeResult addKnowledge(Player player, IKnowledgeProvider provider, ItemInfo rawInfo) {
+        return addKnowledge(player, provider, rawInfo, rawInfo);
     }
 
     public static AddKnowledgeResult addKnowledge(Player player, IKnowledgeProvider provider, Item rawItem, Item cleanItem) {
@@ -232,7 +244,11 @@ public class Util {
     public enum AddKnowledgeResult {
         FAIL,
         UNKNOWN,
-        SUCCESS,
+        SUCCESS;
+
+        public boolean fail() { return this == FAIL; }
+        public boolean unknown() { return this == UNKNOWN; }
+        public boolean success() { return this == SUCCESS; }
     }
 
     public static @Nullable ServerLevel getDimension(ResourceKey<Level> dimension) {
@@ -351,5 +367,78 @@ public class Util {
             buf.writeEnum(hand);
             buf.writeByte(player.getInventory().selected);
         });
+    }
+
+    public static boolean areStacksEqual(RegistryAccess registryAccess, ItemStack stack1, ItemStack stack2) {
+        if (stack1.getItem() != stack2.getItem()) return false;
+        if (stack1.isEmpty() && stack2.isEmpty()) return true;
+        if (stack1.isEmpty() || stack2.isEmpty()) return false;
+
+        CompoundTag stack1NBT = (CompoundTag) stack1.save(registryAccess, new CompoundTag());
+        CompoundTag stack2NBT = (CompoundTag) stack2.save(registryAccess, new CompoundTag());
+        stack1NBT.remove("count");
+        stack2NBT.remove("count");
+
+        return stack1NBT.toString().equals(stack2NBT.toString());
+    }
+
+    public static ItemStack returnToInventoryOrTransmutation(Inventory playerInv, Player player, IKnowledgeProvider provider, ItemStack stack) {
+        return returnToInventoryOrTransmutation(playerInv, player, provider, stack, false, false);
+    }
+
+    public static ItemStack returnToInventoryOrTransmutation(Inventory playerInv, Player player, IKnowledgeProvider provider, ItemStack stack, boolean ignoreNBT) {
+        return returnToInventoryOrTransmutation(playerInv, player, provider, stack, ignoreNBT, false);
+    }
+
+    public static ItemStack returnToInventoryOrTransmutation(Inventory playerInv, Player player, IKnowledgeProvider provider, ItemStack stack, boolean ignoreNBT, boolean force) {
+        if (!IEMCProxy.INSTANCE.hasValue(stack) || (!ignoreNBT && !areStacksEqual(player.registryAccess(), stack, cleanStack(stack)))) return returnToInventory(playerInv, player, stack, force);
+        addKnowledge(player, provider, stack);
+        long value = IEMCProxy.INSTANCE.getValue(stack);
+        BigInteger emc = provider.getEmc().add(BigInteger.valueOf(value));
+        provider.setEmc(emc);
+        if (player instanceof ServerPlayer serverPlayer) provider.syncEmc(serverPlayer);
+        return ItemStack.EMPTY;
+    }
+
+    public static ItemStack returnToInventory(Inventory playerInv, Player player, ItemStack stack) {
+        return returnToInventory(playerInv, player, stack, false);
+    }
+
+    public static ItemStack returnToInventory(Inventory playerInv, Player player, ItemStack stack, boolean force) {
+        stack = stack.copy();
+        while (true) { // placeItemBackInInventory drops excess items
+            if (stack.isEmpty()) break;
+
+            int slot = playerInv.getSlotWithRemainingSpace(stack);
+            if (slot == -1) slot = playerInv.getFreeSlot();
+
+            if (slot != -1) {
+                int canMove = Math.min(stack.getCount(), stack.getMaxStackSize() - playerInv.getItem(slot).getCount());
+
+                if (canMove > 0) {
+                    ItemStack moved = stack.split(canMove);
+                    playerInv.add(slot, moved);
+
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(
+                                ClientboundContainerSetSlotPacket.PLAYER_INVENTORY, 0,
+                                slot, playerInv.getItem(slot)
+                        ));
+                    }
+
+                    continue;
+                }
+            }
+
+            if (force) {
+                player.drop(stack, false);
+                stack = ItemStack.EMPTY;
+                continue;
+            }
+
+            break;
+        }
+
+        return stack;
     }
 }

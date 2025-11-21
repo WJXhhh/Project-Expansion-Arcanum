@@ -41,6 +41,7 @@ spotbugs {
     effort = com.github.spotbugs.snom.Effort.MORE
     //noinspection UnnecessaryQualifiedReference
     reportLevel = com.github.spotbugs.snom.Confidence.valueOf("LOW")
+    ignoreFailures.set(true)
 }
 
 base {

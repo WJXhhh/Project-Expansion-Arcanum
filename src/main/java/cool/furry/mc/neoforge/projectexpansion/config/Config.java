@@ -2,6 +2,7 @@ package cool.furry.mc.neoforge.projectexpansion.config;
 
 import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.gui.EMCDisplay.EmcDisplayPosition;
+import cool.furry.mc.neoforge.projectexpansion.util.SearchType;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -18,6 +19,7 @@ public final class Config {
         public final ModConfigSpec.ConfigValue<EmcDisplayPosition> emcDisplayPosition = Builder.comment("The Position of the emc display.").defineEnum("emcDisplayPosition", EmcDisplayPosition.TOP_LEFT);
         public final ModConfigSpec.ConfigValue<Boolean> enableLearnedTooltip = Builder.comment("If a tooltip should be shown on items which can be learned, denoting if the item has been learned or not. Note: ProjectE's client.shiftEmcToolTips applies to this.").define("enableLearnedTooltip", true);
         public final ModConfigSpec.ConfigValue<Boolean> alchemicalCollectionSound = Builder.comment("If a sound should be played when something is collected with Alchemical Collection.").define("alchemicalCollectionSound", true);
+        public final ModConfigSpec.ConfigValue<SearchType> searchType = Builder.defineEnum("searchType", SearchType.NORMAL);
         private Client() { Spec = Builder.build(); }
     }
     public static final class Server {

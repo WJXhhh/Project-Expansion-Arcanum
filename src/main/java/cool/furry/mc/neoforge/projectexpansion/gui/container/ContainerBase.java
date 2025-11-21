@@ -40,10 +40,12 @@ public abstract class ContainerBase extends AbstractContainerMenu {
     protected final List<BoxedLong> longFields = new ArrayList<>();
     protected final List<BoxedBigInteger> bigIntegerFields = new ArrayList<>();
     protected final Inventory playerInv;
+    protected final Player player;
 
     public ContainerBase(MenuType<?> type, int windowId, Inventory playerInv) {
         super(type, windowId);
         this.playerInv = playerInv;
+        this.player = playerInv.player;
     }
 
     protected void addPlayerInventory(int xStart, int yStart) {
