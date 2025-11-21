@@ -226,20 +226,24 @@ tasks.named("jar", Jar) {
     finalizedBy(signJar)
 }
 
+tasks.register("signJar", SignJar) {
+    dependsOn(jar)
+    setGroup("build")
+}
+
 tasks.register("releaseJar") {
     dependsOn(jar)
+    finalizedBy(updateJSON)
     setGroup("publishing")
 }
 
-tasks.register("signJar", SignJar)
-signJar.setGroup("build")
+tasks.register("updateJSON", UpdateJson) {
+    setGroup("publishing")
+}
 
-tasks.register("updateJSON", UpdateJson)
-updateJSON.setGroup("publishing")
-releaseJar.finalizedBy(updateJSON)
-
-tasks.register("data", Data)
-data.setGroup("build")
+tasks.register("data", Data) {
+    setGroup("build")
+}
 processResources.dependsOn(data)
 
 tasks.register("publish", Publish) {
