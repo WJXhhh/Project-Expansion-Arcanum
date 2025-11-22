@@ -190,7 +190,9 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
             if (hasChargeableItem) {
                 IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
                 if (emcHolder != null) {
-                    BigInteger remaining = Util.stepBigInteger((getStoredEmcBigInteger().min(generated.toBigInteger())), (val) -> emcHolder.insertEmc(upgrading, val, EmcAction.EXECUTE));
+                    BigInteger toAdd = getStoredEmcBigInteger().min(generated.toBigInteger());
+                    if (toAdd.compareTo(BigInteger.ZERO) < 1) return;
+                    BigInteger remaining = Util.stepBigInteger(toAdd, (val) -> emcHolder.insertEmc(upgrading, val, EmcAction.EXECUTE));
                     BigInteger v = getStoredEmcBigInteger().subtract(remaining);
                     forceExtractEmcBigInteger(v, EmcAction.EXECUTE);
                 }
