@@ -16,10 +16,10 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'furry.cool.mc.forge'
-version = getProperty("mcVersion") + "-" + getProperty("localVersion")
+version = getProperty("minecraft_version") + "-" + getProperty("mod_version")
 
 java {
-    archivesBaseName = 'ProjectExpansion'
+    archivesBaseName = 'projectexpansion'
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
@@ -99,16 +99,16 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${getProperty("mcVersion")}-${getProperty("forgeVersion")}"
+    minecraft "net.minecraftforge:forge:${getProperty("minecraft_version")}-${getProperty("forgeVersion")}"
     implementation fg.deobf("curse.maven:projecte-226410:${getProperty("projecteVersion")}")
     implementation "com.mojang:brigadier:1.0.18"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}")
     runtimeOnly fg.deobf("curse.maven:no-chat-reports-634062:${getProperty("ncrVersion")}")
-    compileOnly fg.deobf("mezz.jei:jei-${getProperty("mcVersion")}-common-api:${getProperty("jeiVersion")}")
-    compileOnly fg.deobf("mezz.jei:jei-${getProperty("mcVersion")}-forge-api:${getProperty("jeiVersion")}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${getProperty("mcVersion")}-forge:${getProperty("jeiVersion")}")
+    compileOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-common-api:${getProperty("jeiVersion")}")
+    compileOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-forge-api:${getProperty("jeiVersion")}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-forge:${getProperty("jeiVersion")}")
     runtimeOnly fg.deobf("curse.maven:pipez-443900:${getProperty("pipezVersion")}")
     runtimeOnly fg.deobf("curse.maven:ae2-223794:${getProperty("ae2Version")}")
     runtimeOnly fg.deobf("curse.maven:itank-256991:${getProperty("itankVersion")}")
