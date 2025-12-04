@@ -6,7 +6,12 @@
   "refmap": "projectexpansion.refmap.json",
   "client": [
     "DeleteWeebShitMixin",
-    "EMCFormatterMixin"
+    "EMCFormatterMixin",
+    "KnowledgeSyncChangePKTMixin",
+    "KnowledgeSyncEmcPKTMixin",
+    "KnowledgeSyncInputsAndLocksPKTMixin",
+    "KnowledgeSyncPKTMixin",
+    "SearchUpdatePKTMixin"
   ],
   "mixins": [
     "AlchemicalBagMixin",
@@ -14,13 +19,8 @@
     "AlchemicalCollectionToggleMixin",
     "CollectorRecipeCategoryMixin",
     "EnchantmentProcessorMixin",
-    "KnowledgeSyncChangePKTMixin",
-    "KnowledgeSyncEmcPKTMixin",
-    "KnowledgeSyncInputsAndLocksPKTMixin",
-    "KnowledgeSyncPKTMixin",
     "PacketHandlerMixin",
     "PhilosophersStoneMixin",
-    "SearchUpdatePKTMixin",
     "ShutTheFuckUpMixin",
     "TomeMixin"
   ],
