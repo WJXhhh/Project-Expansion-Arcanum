@@ -25,7 +25,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @EventBusSubscriber(modid = Main.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
@@ -84,7 +83,7 @@ public class ItemTooltipEvents {
 
         boolean hasEnch = EnchantmentHelper.getTagEnchantmentLevel(event.getEntity().registryAccess().holderOrThrow(Enchantments.ALCHEMICAL_COLLECTION), stack) > 0;
         if(hasEnch) {
-            boolean enabled = Objects.requireNonNull(stack.get(PEDataComponentTypes.ACTIVE));
+            boolean enabled = stack.getOrDefault(PEDataComponentTypes.ACTIVE, true);
             event.getToolTip().add(Lang.ALCHEMICAL_COLLECTION.translate(enabled ? Lang.ENABLED.translateColored(ChatFormatting.GREEN) : Lang.DISABLED.translateColored(ChatFormatting.RED)));
         }
 
