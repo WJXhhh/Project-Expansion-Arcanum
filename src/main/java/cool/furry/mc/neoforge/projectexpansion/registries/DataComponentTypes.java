@@ -6,6 +6,7 @@ import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.capability.CapabilityAlchemicalBookLocations;
 import cool.furry.mc.neoforge.projectexpansion.util.BasicDataComponentTypes;
 import cool.furry.mc.neoforge.projectexpansion.util.TagNames;
+import cool.furry.mc.neoforge.projectexpansion.util.Util;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -25,6 +26,10 @@ public class DataComponentTypes {
                 instance.group(UUIDUtil.CODEC.fieldOf(TagNames.OWNER).forGetter(OwnerData::uuid), Codec.STRING.fieldOf(TagNames.OWNER_NAME).forGetter(OwnerData::name)).apply(instance, OwnerData::new)
         );
         public static final StreamCodec<ByteBuf, OwnerData> STREAM_CODEC = StreamCodec.composite(UUIDUtil.STREAM_CODEC, OwnerData::uuid, ByteBufCodecs.STRING_UTF8, OwnerData::name, OwnerData::new);
+
+        public boolean isNone() {
+            return uuid == Util.DUMMY_UUID;
+        }
     }
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<OwnerData>> OWNER = Registry.registerComponentType("uuid", (builder) -> builder.persistent(OwnerData.CODEC).networkSynchronized(OwnerData.STREAM_CODEC));

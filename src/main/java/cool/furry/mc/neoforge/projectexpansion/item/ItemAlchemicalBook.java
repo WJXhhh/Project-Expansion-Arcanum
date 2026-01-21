@@ -27,7 +27,6 @@ import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 
 public class ItemAlchemicalBook extends Item {
     private final Tier tier;
@@ -60,14 +59,16 @@ public class ItemAlchemicalBook extends Item {
         }
         if(getMode(stack) == Mode.PLAYER) {
             Player player = getPlayer(stack);
-            list.add(Lang.Items.ALCHEMICAL_BOOK_BOUND_TO.translateColored(ChatFormatting.RED, player == null ? Component.literal(Objects.requireNonNull(stack.get(DataComponentTypes.OWNER)).name()).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
+            list.add(Lang.Items.ALCHEMICAL_BOOK_BOUND_TO.translateColored(ChatFormatting.RED, player == null ? Component.literal(Util.getOwner(stack).name()).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
         }
         list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
     }
 
     public @Nullable ServerPlayer getPlayer(ItemStack stack) {
-        if(stack.getItem() instanceof ItemAlchemicalBook book && book.getMode(stack) == Mode.STACK) return null;
-        return Util.getPlayer(Objects.requireNonNull(stack.get(DataComponentTypes.OWNER)).uuid());
+        if (stack.getItem() instanceof ItemAlchemicalBook book && book.getMode(stack) == Mode.STACK) return null;
+        DataComponentTypes.OwnerData owner = Util.getOwner(stack);
+        if (owner.isNone()) return null;
+        return Util.getPlayer(owner.uuid());
     }
 
     public enum Mode {
@@ -143,7 +144,7 @@ public class ItemAlchemicalBook extends Item {
         if(!level.isClientSide) {
             if(player.isCrouching() && getTier().canBindToPlayer()) {
                 DataComponentTypes.OwnerData data = stack.get(DataComponentTypes.OWNER);
-                if(getMode(stack) == Mode.PLAYER && data != null) {
+                if (getMode(stack) == Mode.PLAYER && data != null) {
                     if(!data.uuid().equals(player.getUUID())) {
                         player.sendSystemMessage(Lang.NOT_OWNER.translateColored(ChatFormatting.RED, Component.literal(data.name()).withStyle(ChatFormatting.DARK_AQUA)));
                         return InteractionResultHolder.fail(stack);

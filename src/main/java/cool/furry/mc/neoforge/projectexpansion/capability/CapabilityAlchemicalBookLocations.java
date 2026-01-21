@@ -68,8 +68,7 @@ public record CapabilityAlchemicalBookLocations(ItemAlchemicalBook.Mode mode, @N
         if (book.getMode(stack) == ItemAlchemicalBook.Mode.PLAYER) {
             ServerPlayer owner = book.getPlayer(stack);
             if (owner == null) {
-                DataComponentTypes.OwnerData ownerData = stack.get(DataComponentTypes.OWNER);
-                throw new BookError.OwnerOfflineError(ownerData == null ? "None" : ownerData.name());
+                throw new BookError.OwnerOfflineError(Util.getOwner(stack).name());
             }
             return fromPlayer(owner);
         } else {

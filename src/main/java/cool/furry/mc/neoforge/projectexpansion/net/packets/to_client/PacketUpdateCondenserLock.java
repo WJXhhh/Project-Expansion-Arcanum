@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public record PacketUpdateCondenserLock(short windowId, @Nullable ItemInfo lockInfo) implements IPacket {
-
     public static final CustomPacketPayload.Type<PacketUpdateCondenserLock> TYPE = new CustomPacketPayload.Type<>(Main.rl("update_condenser_lock"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PacketUpdateCondenserLock> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.SHORT, PacketUpdateCondenserLock::windowId,
