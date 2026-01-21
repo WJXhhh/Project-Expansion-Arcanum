@@ -1,6 +1,7 @@
 package cool.furry.mc.neoforge.projectexpansion.item;
 
 import cool.furry.mc.neoforge.projectexpansion.gui.container.ContainerArcaneTransmutationTablet;
+import cool.furry.mc.neoforge.projectexpansion.util.ContainerData;
 import cool.furry.mc.neoforge.projectexpansion.util.ITransmutationTablet;
 import cool.furry.mc.neoforge.projectexpansion.util.Lang;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
@@ -48,18 +49,12 @@ public class ItemArcaneTransmutationTablet extends Item implements ITransmutatio
 
     @Override
     public void openContainer(Player player, InteractionHand hand, int selected) {
-        player.openMenu(new Provider(hand), (buf) -> {
-            buf.writeBoolean(true);
-            buf.writeEnum(hand);
-            buf.writeInt(selected);
-        });
+        player.openMenu(new Provider(hand), (buf) -> ContainerData.inHand(buf, hand, selected));
     }
 
     @Override
     public void openContainer(Player player) {
-        player.openMenu(new Provider(null), (buf) -> {
-            buf.writeBoolean(false);
-        });
+        player.openMenu(new Provider(null), ContainerData::noHand);
     }
 
     private record Provider(@Nullable InteractionHand hand) implements MenuProvider {

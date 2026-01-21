@@ -10,6 +10,7 @@ import cool.furry.mc.neoforge.projectexpansion.gui.container.slots.PXOutputSlot;
 import cool.furry.mc.neoforge.projectexpansion.gui.container.slots.PXResultSlot;
 import cool.furry.mc.neoforge.projectexpansion.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
 import cool.furry.mc.neoforge.projectexpansion.registries.MenuTypes;
+import cool.furry.mc.neoforge.projectexpansion.util.ContainerData;
 import cool.furry.mc.neoforge.projectexpansion.util.Util;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
@@ -75,11 +76,8 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     public static ContainerArcaneTransmutationTablet fromNetwork(int windowId, Inventory playerInv, FriendlyByteBuf buf) {
         @Nullable IKnowledgeProvider provider = playerInv.player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
         if (provider == null) throw new NullPointerException("provider is null");
-        if (buf.readBoolean()) {
-            return new ContainerArcaneTransmutationTablet(windowId, playerInv, provider, buf.readEnum(InteractionHand.class), buf.readInt());
-        } else {
-            return new ContainerArcaneTransmutationTablet(windowId, playerInv, provider);
-        }
+        ContainerData data = ContainerData.decode(buf);
+        return new ContainerArcaneTransmutationTablet(windowId, playerInv, provider, data.hand().orElse(null), data.selected());
     }
 
     public ContainerArcaneTransmutationTablet(int windowId, Inventory playerInv, IKnowledgeProvider provider) {
