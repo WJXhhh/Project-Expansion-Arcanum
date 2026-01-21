@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import cool.furry.mc.neoforge.projectexpansion.Main;
 import cool.furry.mc.neoforge.projectexpansion.config.Config;
 import cool.furry.mc.neoforge.projectexpansion.registries.Blocks;
+import cool.furry.mc.neoforge.projectexpansion.registries.DataComponentTypes;
 import io.netty.buffer.ByteBuf;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
@@ -440,5 +441,9 @@ public class Util {
         }
 
         return stack;
+    }
+
+    public static DataComponentTypes.OwnerData getOwner(ItemStack stack) {
+        return stack.getOrDefault(DataComponentTypes.OWNER, new DataComponentTypes.OwnerData(Util.DUMMY_UUID, "None"));
     }
 }

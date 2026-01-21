@@ -13,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -84,27 +85,27 @@ public class ItemKnowledgeSharingBook extends Item {
                         if(learned > 100) {
                             player.sendSystemMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_LEARNED_OVER_100.translateColored(ChatFormatting.GREEN, learned - 100));
                         }
-                        player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_LEARNED_TOTAL.translateColored(ChatFormatting.GREEN, learned, Component.literal(Objects.requireNonNull(stack.get(DataComponentTypes.OWNER)).name()).setStyle(ColorStyle.AQUA)), true);
+                        player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_LEARNED_TOTAL.translateColored(ChatFormatting.GREEN, learned, Component.literal(Util.getOwner(stack).name()).setStyle(ColorStyle.AQUA)), true);
                         level.playSound(null, player.position().x, player.position().y, player.position().z, SoundEvents.KNOWLEDGE_SHARING_BOOK_USE.get(), SoundSource.PLAYERS, 0.8F, 0.8F + level.random.nextFloat() * 0.4F);
                     } else {
                         player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_NO_NEW_KNOWLEDGE.translateColored(ChatFormatting.RED), true);
                         level.playSound(null, player.position().x, player.position().y, player.position().z, SoundEvents.KNOWLEDGE_SHARING_BOOK_USE_NONE.get(), SoundSource.PLAYERS, 0.8F, 0.8F + level.random.nextFloat() * 0.4F);
                     }
-                } else {
-                    long gained = Objects.requireNonNull(stack.get(DataComponentTypes.KNOWLEDGE_GAINED)).value();
-                    for(int i = 0; i < 5; i++) {
+
+                    ServerLevel serverLevel = (ServerLevel) level;
+                    for (int i = 0; i < 5; i++) {
                         Vec3 v1 = new Vec3(((double) level.random.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D)
-                            .xRot(-player.getRotationVector().x * 0.017453292F)
-                            .yRot(-player.getRotationVector().y * 0.017453292F);
+                                .xRot(-player.getRotationVector().x * 0.017453292F)
+                                .yRot(-player.getRotationVector().y * 0.017453292F);
                         Vec3 v2 = new Vec3(((double) level.random.nextFloat() - 0.5D) * 0.3D, (double) (-level.random.nextFloat()) * 0.6D - 0.3D, 0.6D)
-                            .xRot(-player.getRotationVector().x * 0.017453292F)
-                            .yRot(-player.getRotationVector().y * 0.017453292F)
-                            .add(player.position().x, player.position().y + (double) player.getEyeHeight(), player.position().z);
-                        level.addParticle(gained > 0 ? new ItemParticleOption(ParticleTypes.ITEM, stack) : ParticleTypes.SMOKE, v2.x, v2.y, v2.z, v1.x, v1.y + 0.05D, v1.z);
+                                .xRot(-player.getRotationVector().x * 0.017453292F)
+                                .yRot(-player.getRotationVector().y * 0.017453292F)
+                                .add(player.position().x, player.position().y + (double) player.getEyeHeight(), player.position().z);
+                        serverLevel.sendParticles(learned > 0 ? new ItemParticleOption(ParticleTypes.ITEM, stack) : ParticleTypes.SMOKE, v2.x, v2.y, v2.z, 1, v1.x, v1.y + 0.05D, v1.z, 0.0D);
                     }
                 }
 
-                stack.shrink(1);
+                 stack.shrink(1);
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
             } else {
                 player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_NO_OWNER.translateColored(ChatFormatting.RED), true);
