@@ -10,8 +10,7 @@
     "KnowledgeSyncChangePKTMixin",
     "KnowledgeSyncEmcPKTMixin",
     "KnowledgeSyncInputsAndLocksPKTMixin",
-    "KnowledgeSyncPKTMixin",
-    "SearchUpdatePKTMixin"
+    "KnowledgeSyncPKTMixin"
   ],
   "mixins": [
     "AlchemicalBagMixin",
@@ -21,6 +20,7 @@
     "EnchantmentProcessorMixin",
     "PacketHandlerMixin",
     "PhilosophersStoneMixin",
+    "SearchUpdatePKTMixin",
     "ShutTheFuckUpMixin",
     "TomeMixin"
   ],
