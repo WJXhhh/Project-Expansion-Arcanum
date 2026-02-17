@@ -143,7 +143,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 
         @Nullable IAlchBagProvider provider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
         if (provider == null) return null;
-        return provider.getBag(color);
+        return provider.getBag(getColor());
 	}
 
 	public ItemInteractionResult handleItemActivation(Player player, ItemStack stack) {
