@@ -10,6 +10,7 @@ import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketTeleport
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketArcaneTransmutationTabletOutputUpdate;
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
+import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketStoneTableAction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -42,6 +43,7 @@ public class PacketHandler {
         registerClientToServer(PacketArcaneTransmutationTabletSmallButton.class, PacketArcaneTransmutationTabletSmallButton::decode);
         registerClientToServer(PacketArcaneTransmutationTabletRecipeTransfer.class, PacketArcaneTransmutationTabletRecipeTransfer::decode);
         registerClientToServer(PacketArcaneTransmutationTabletOutputUpdate.class, PacketArcaneTransmutationTabletOutputUpdate::decode);
+        registerClientToServer(PacketStoneTableAction.class, PacketStoneTableAction::decode);
         registerServerToClient(PacketOpenAlchemicalBookGUI.class, PacketOpenAlchemicalBookGUI::decode);
         registerServerToClient(PacketSyncAlchemicalBookLocations.class, PacketSyncAlchemicalBookLocations::decode);
         registerServerToClient(PacketUpdateWindowLong.class, PacketUpdateWindowLong::decode);

@@ -1,0 +1,17 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_stone_table": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {"items": ["projectexa:stone_table"]}
+        ]
+      }
+    }
+  },
+  "requirements": [["has_stone_table"]],
+  "rewards": {
+    "recipes": ["projectexa:stone_table"]
+  }
+}

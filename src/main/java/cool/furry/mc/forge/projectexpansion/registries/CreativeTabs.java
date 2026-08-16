@@ -29,6 +29,7 @@ public class CreativeTabs {
                         output.accept(Items.INFINITE_FUEL.get());
                         output.accept(Items.INFINITE_STEAK.get());
                         output.accept(Items.TRANSMUTATION_INTERFACE.get());
+                        output.accept(Items.STONE_TABLE.get());
                         output.accept(Items.KNOWLEDGE_SHARING_BOOK.get());
                         output.accept(Items.BASIC_ALCHEMICAL_BOOK.get());
                         output.accept(Items.ADVANCED_ALCHEMICAL_BOOK.get());

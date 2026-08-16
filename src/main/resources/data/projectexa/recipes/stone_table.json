@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "projectexa:stone_table",
+  "pattern": [
+    "SSS",
+    "STS",
+    "SSS"
+  ],
+  "key": {
+    "S": [
+      {"item": "minecraft:stone_bricks"},
+      {"item": "minecraft:mossy_stone_bricks"},
+      {"item": "minecraft:cracked_stone_bricks"},
+      {"item": "minecraft:chiseled_stone_bricks"}
+    ],
+    "T": [
+      {"item": "projecte:transmutation_table"},
+      {"item": "projecte:philosophers_stone"}
+    ]
+  },
+  "result": {
+    "item": "projectexa:stone_table",
+    "count": 1
+  }
+}

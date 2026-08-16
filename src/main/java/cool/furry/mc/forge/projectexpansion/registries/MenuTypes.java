@@ -4,6 +4,7 @@ import cool.furry.mc.forge.projectexpansion.Main;
 import cool.furry.mc.forge.projectexpansion.block.entity.BlockEntityCollector;
 import cool.furry.mc.forge.projectexpansion.gui.container.ContainerCollector;
 import cool.furry.mc.forge.projectexpansion.gui.container.ContainerArcaneTransmutationTablet;
+import cool.furry.mc.forge.projectexpansion.gui.container.ContainerStoneTable;
 import moze_intel.projecte.gameObjs.registration.impl.ContainerTypeDeferredRegister;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,7 @@ public class MenuTypes {
     public static final RegistryObject<MenuType<ContainerCollector>> COLLECTOR_TIER_2 = register("collector_tier_2", BlockEntityCollector.class, ContainerCollector.Tier2::new);
     public static final RegistryObject<MenuType<ContainerCollector>> COLLECTOR_TIER_3 = register("collector_tier_3", BlockEntityCollector.class, ContainerCollector.Tier3::new);
     public static final RegistryObject<MenuType<ContainerArcaneTransmutationTablet>> ARCANE_TRANSMUTATION_TABLET = Registry.register("arcane_transmutation_tablet", () -> IForgeMenuType.create(ContainerArcaneTransmutationTablet::fromNetwork));
+    public static final RegistryObject<MenuType<ContainerStoneTable>> STONE_TABLE = Registry.register("stone_table", () -> IForgeMenuType.create((id, inv, buf) -> new ContainerStoneTable(id, inv, buf.readBlockPos())));
 
     public static <CONTAINER extends AbstractContainerMenu, BE extends BlockEntity> RegistryObject<MenuType<CONTAINER>> register(String name,
                                                                                                                           Class<BE> blockEntityClass, ContainerTypeDeferredRegister.IBlockEntityContainerFactory<CONTAINER, BE> factory) {

@@ -597,5 +597,14 @@
 	"gui.projectexa.arcane_transmutation_tablet.clear": "Clear Crafting Grid",
 	"gui.projectexa.arcane_transmutation_tablet.clear_force": "Force Return",
 	"advancements.projectexa.arcane_transmutation_tablet": "Arcane Transmutation Tablet",
-	"advancements.projectexa.arcane_transmutation_tablet.description": "Craft a transmutation tablet with a built-in crafting table."
+	"advancements.projectexa.arcane_transmutation_tablet.description": "Craft a transmutation tablet with a built-in crafting table.",
+	"block.projectexa.stone_table": "Stone Transmutation Table",
+	"block.projectexa.stone_table.tooltip": "Transmute items using personal knowledge and EMC.",
+	"item.projectexa.stone_table": "Stone Transmutation Table",
+	"gui.projectexa.stone_table": "Stone Transmutation Table",
+	"gui.projectexa.stone_table.learn": "Learn the item in your hand",
+	"gui.projectexa.stone_table.unlearn": "Unlearn the item in your hand",
+	"gui.projectexa.stone_table.burn": "Burn the item in your hand for EMC",
+	"gui.projectexa.stone_table.burn_emc_holder": "Shift: transfer EMC",
+	"gui.projectexa.stone_table.cant_use": "This item is not allowed by the current whitelist."
 }

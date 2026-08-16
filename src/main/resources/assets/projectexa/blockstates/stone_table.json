@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=down": {"model": "projectexa:block/stone_table"},
+    "facing=up": {"model": "projectexa:block/stone_table", "x": 180},
+    "facing=north": {"model": "projectexa:block/stone_table", "x": 90, "y": 180},
+    "facing=south": {"model": "projectexa:block/stone_table", "x": 90},
+    "facing=west": {"model": "projectexa:block/stone_table", "x": 90, "y": 90},
+    "facing=east": {"model": "projectexa:block/stone_table", "x": 90, "y": 270}
+  }
+}
