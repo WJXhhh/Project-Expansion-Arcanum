@@ -398,7 +398,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
             if (stack.isEmpty()) continue;
 
             if (ProjectEConfig.server.difficulty.covalenceLoss.get() >= 1D && IEMCProxy.INSTANCE.hasValue(stack)) {
-                if (Util.addKnowledge(player, provider, stack) != Util.AddKnowledgeResult.FAIL) {
+                if (learnForTransmutation(stack)) {
                     BigInteger value = BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(stack))
                             .multiply(BigInteger.valueOf(stack.getCount()));
                     provider.setEmc(provider.getEmc().add(value));
@@ -413,6 +413,14 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         if (emcChanged && player instanceof ServerPlayer serverPlayer) provider.syncEmc(serverPlayer);
         slotsChanged(craftSlots);
         craftSlots.setChanged();
+    }
+
+    private boolean learnForTransmutation(ItemStack stack) {
+        ItemStack cleanStack = Util.cleanStack(stack);
+        if (!provider.hasKnowledge(cleanStack)) {
+            transmutationInventory.handleKnowledge(stack);
+        }
+        return provider.hasKnowledge(cleanStack);
     }
 
     public void rotateCrafting(boolean clockwise) {
