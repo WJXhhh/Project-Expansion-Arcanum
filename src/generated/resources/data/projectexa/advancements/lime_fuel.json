@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:green_fuel",
+  "criteria": {
+    "lime_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:lime_fuel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.lime_fuel.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:lime_fuel"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.lime_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "lime_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

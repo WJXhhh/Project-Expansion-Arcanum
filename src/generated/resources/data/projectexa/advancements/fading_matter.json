@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:white_matter",
+  "criteria": {
+    "fading_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:fading_matter"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.fading_matter.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:fading_matter"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.fading_matter"
+    }
+  },
+  "requirements": [
+    [
+      "fading_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

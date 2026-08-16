@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:star",
+  "ingredients": [
+    {
+      "item": "projectexa:magnum_star_vier"
+    },
+    {
+      "item": "projectexa:magnum_star_vier"
+    },
+    {
+      "item": "projectexa:magnum_star_vier"
+    },
+    {
+      "item": "projectexa:magnum_star_vier"
+    }
+  ],
+  "result": {
+    "item": "projectexa:magnum_star_sphere"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/white",
+  "pattern": [
+    "FMF",
+    "FMF",
+    "FMF"
+  ],
+  "key": {
+    "F": {
+      "item": "projectexa:orange_fuel"
+    },
+    "M": {
+      "item": "projectexa:orange_matter"
+    }
+  },
+  "result": {
+    "item": "projectexa:white_matter"
+  }
+}

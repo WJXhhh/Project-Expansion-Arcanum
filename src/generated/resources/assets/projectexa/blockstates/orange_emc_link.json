@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filter=true": {
+      "model": "projectexa:block/emc_link/orange"
+    },
+    "filter=false": {
+      "model": "projectexa:block/emc_link/orange_nofilter"
+    }
+  }
+}

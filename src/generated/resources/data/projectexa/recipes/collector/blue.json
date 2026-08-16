@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:matter/blue",
+  "ingredients": [
+    {
+      "item": "projectexa:violet_collector"
+    },
+    {
+      "item": "projectexa:blue_matter"
+    }
+  ],
+  "result": {
+    "item": "projectexa:blue_collector"
+  }
+}

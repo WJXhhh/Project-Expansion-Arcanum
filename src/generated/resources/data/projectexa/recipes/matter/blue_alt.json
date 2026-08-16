@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/$TIER",
+  "pattern": [
+    "FFF",
+    "MMM",
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "item": "projectexa:violet_fuel"
+    },
+    "M": {
+      "item": "projectexa:violet_matter"
+    }
+  },
+  "result": {
+    "item": "projectexa:blue_matter"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:cyan_fuel",
+  "criteria": {
+    "green_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:green_fuel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.green_fuel.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:green_fuel"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.green_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "green_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

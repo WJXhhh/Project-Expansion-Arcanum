@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/yellow",
+  "ingredients": [
+    {
+      "item": "projecte:philosophers_stone"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    }
+  ],
+  "result": {
+    "item": "projectexa:yellow_fuel"
+  }
+}

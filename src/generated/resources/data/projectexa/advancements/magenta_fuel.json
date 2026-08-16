@@ -1,0 +1,38 @@
+{
+  "parent": "projecte:aeternalis_fuel",
+  "criteria": {
+    "magenta_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:magenta_fuel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.magenta_fuel.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:magenta_fuel"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.magenta_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "magenta_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/cyan",
+  "ingredients": [
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    },
+    {
+      "item": "projectexa:cyan_fuel"
+    }
+  ],
+  "result": {
+    "item": "projectexa:cyan_fuel_block"
+  }
+}

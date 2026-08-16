@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/magenta",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projectexa:magenta_collector"
+    }
+  },
+  "result": {
+    "item": "projectexa:magenta_compressed_collector"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/orange",
+  "ingredients": [
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    },
+    {
+      "item": "projectexa:orange_fuel"
+    }
+  ],
+  "result": {
+    "item": "projectexa:orange_fuel_block"
+  }
+}

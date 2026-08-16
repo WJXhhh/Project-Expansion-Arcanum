@@ -54,7 +54,7 @@ public enum Lang implements ILangEntry {
     ALCHEMICAL_BOOK_NO_BACK_LOCATION("gui", "alchemical_book", "no_back_location"),
     ALCHEMICAL_BOOK_PREV("gui", "alchemical_book", "prev"),
     ALCHEMICAL_BOOK_NEXT("gui", "alchemical_book", "next"),
-    ITEMGROUP("itemGroup.projectexpansion"),
+    ITEMGROUP("itemGroup.projectexa"),
     ;
 
     private String key;

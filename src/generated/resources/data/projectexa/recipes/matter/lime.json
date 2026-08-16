@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/lime",
+  "pattern": [
+    "FMF",
+    "FMF",
+    "FMF"
+  ],
+  "key": {
+    "F": {
+      "item": "projectexa:green_fuel"
+    },
+    "M": {
+      "item": "projectexa:green_matter"
+    }
+  },
+  "result": {
+    "item": "projectexa:lime_matter"
+  }
+}

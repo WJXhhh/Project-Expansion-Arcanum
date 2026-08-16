@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:magenta_fuel",
+  "criteria": {
+    "pink_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:pink_fuel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.pink_fuel.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:pink_fuel"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.pink_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "pink_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/cyan",
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "L": {
+      "item": "projectexa:cyan_emc_link"
+    },
+    "C": {
+      "item": "projectexa:cyan_compressed_collector"
+    },
+    "R": {
+      "item": "projectexa:cyan_relay"
+    }
+  },
+  "result": {
+    "item": "projectexa:cyan_power_flower"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:star",
+  "ingredients": [
+    {
+      "item": "projectexa:gargantuan_star_zwei"
+    },
+    {
+      "item": "projectexa:gargantuan_star_zwei"
+    },
+    {
+      "item": "projectexa:gargantuan_star_zwei"
+    },
+    {
+      "item": "projectexa:gargantuan_star_zwei"
+    }
+  ],
+  "result": {
+    "item": "projectexa:gargantuan_star_drei"
+  }
+}

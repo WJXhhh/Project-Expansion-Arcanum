@@ -2,7 +2,7 @@ modLoader="javafml"
 loaderVersion="[47,)"
 license="MIT"
 [[mods]]
-modId="projectexpansion"
+modId="projectexa"
 version="${file.jarVersion}"
 displayName="Project Expansion: Arcanum"
 updateJSONURL="https://raw.githubusercontent.com/WJXhhh/Project-Expansion-Arcanum/1.20.1/updates.json"
@@ -13,34 +13,35 @@ credits="sinkillerj for ProjectE; Project Expansion by Donovan_DMC; Arcanum is a
 authors="Donovan_DMC, Arcanum maintainers"
 description='''
 A maintained Minecraft 1.20.1 fork of Project Expansion.
-Runtime identity and existing content are preserved for compatibility with
-Project Expansion 1.1.3 worlds.
+The independent `projectexa` runtime namespace avoids collisions with other
+translations and forks. Official Project Expansion 1.1.3 worlds are migrated
+to the new namespace when loaded.
 '''
-[[dependencies.projectexpansion]]
+[[dependencies.projectexa]]
 modId="forge"
 mandatory=true
 versionRange="[47,)"
 ordering="NONE"
 side="BOTH"
-[[dependencies.projectexpansion]]
+[[dependencies.projectexa]]
 modId="minecraft"
 mandatory=true
 versionRange="[1.20.1]"
 ordering="NONE"
 side="BOTH"
-[[dependencies.projectexpansion]]
+[[dependencies.projectexa]]
 modId="projecte"
 mandatory=true
 versionRange="*"
 ordering="AFTER"
 side="BOTH"
-[[dependencies.projectexpansion]]
+[[dependencies.projectexa]]
 modId = "catalogue"
 mandatory = false
 versionRange = "*"
 ordering = "AFTER"
 side = "BOTH"
-[[dependencies.projectexpansion]]
+[[dependencies.projectexa]]
 modId = "curios"
 mandatory = false
 versionRange = "*"

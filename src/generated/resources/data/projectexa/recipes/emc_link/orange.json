@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/orange",
+  "pattern": [
+    "LMH",
+    "TCT",
+    "HML"
+  ],
+  "key": {
+    "L": {
+      "item": "projecte:low_covalence_dust"
+    },
+    "M": {
+      "item": "projecte:medium_covalence_dust"
+    },
+    "H": {
+      "item": "projecte:high_covalence_dust"
+    },
+    "T": {
+      "item": "projectexa:orange_matter"
+    },
+    "C": {
+      "item": "projectexa:yellow_emc_link"
+    }
+  },
+  "result": {
+    "item": "projectexa:orange_emc_link"
+  }
+}

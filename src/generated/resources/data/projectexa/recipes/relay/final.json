@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:matter/final",
+  "ingredients": [
+    {
+      "item": "projectexa:fading_relay"
+    },
+    {
+      "item": "projectexa:final_star_shard"
+    }
+  ],
+  "result": {
+    "item": "projectexa:final_relay"
+  }
+}

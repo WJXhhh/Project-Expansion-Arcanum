@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/red",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projectexa:red_collector"
+    }
+  },
+  "result": {
+    "item": "projectexa:red_compressed_collector"
+  }
+}

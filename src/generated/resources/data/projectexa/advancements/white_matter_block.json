@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:white_matter",
+  "criteria": {
+    "white_matter_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:white_matter_block"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.white_matter_block.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:white_matter_block"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.white_matter_block"
+    }
+  },
+  "requirements": [
+    [
+      "white_matter_block"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

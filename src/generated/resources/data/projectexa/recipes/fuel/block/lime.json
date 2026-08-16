@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/lime",
+  "ingredients": [
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    },
+    {
+      "item": "projectexa:lime_fuel"
+    }
+  ],
+  "result": {
+    "item": "projectexa:lime_fuel_block"
+  }
+}

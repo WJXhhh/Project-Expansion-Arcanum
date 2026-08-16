@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:matter/pink",
+  "ingredients": [
+    {
+      "item": "projectexa:magenta_relay"
+    },
+    {
+      "item": "projectexa:pink_matter"
+    }
+  ],
+  "result": {
+    "item": "projectexa:pink_relay"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "parent": "projecte:collector",
+  "criteria": {
+    "collector": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "projectexa:collector"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.collector.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:basic_collector"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.collector"
+    }
+  },
+  "requirements": [
+    [
+      "collector"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

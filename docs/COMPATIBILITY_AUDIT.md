@@ -1,25 +1,23 @@
 # Compatibility Audit
 
-Audited on 2026-08-16. The source diff is limited to the Collector precision
-fix; the remaining changes are project metadata, documentation, and build
-infrastructure.
+Audited on 2026-08-16. The Arcanum runtime namespace migration is intentional
+and is separate from the Collector precision fix.
 
 ## Runtime identity
 
-The following identifiers were checked and intentionally preserved:
+The following implementation identifiers remain stable:
 
-- `modId = projectexpansion`
-- `projectexpansion` registry/resource namespace
 - Java package `cool.furry.mc.forge.projectexpansion`
-- existing registry declarations and generated resource paths
 - configuration file keys in `Config.java`
 - NBT key constants in `TagNames` and existing BlockEntity serialization
-- packet channel `projectexpansion:primary`
 - packet protocol version `1` and registration order
-- `projectexpansion.mixins.json` and `projectexpansion.refmap.json`
 
-No registry IDs, NBT keys, SavedData keys, config keys, language keys, recipe
-IDs, or network identifiers were renamed.
+The runtime Mod ID, registry/resource namespace, language keys, datapack
+namespace, packet channel, and Mixin/refmap filenames now use `projectexa`.
+The old `projectexpansion` namespace is handled by Forge missing mappings for
+registered Forge objects. A small Mixin also rewrites the legacy block-entity
+ID stored inside chunk NBT before vanilla resolves it. The old Java package is
+intentionally retained.
 
 ## Numeric boundary review
 
@@ -38,12 +36,14 @@ overflow failure.
 
 The production artifact contains both the Mixin configuration and refmap. A
 development `runServer` bootstrap emitted the known refmap warning because the
-dev run does not resolve the production refmap location; it reached the EULA
-gate without a Mixin failure. A client and an EULA-enabled dedicated-server
-run are still required for release acceptance.
+dev run does not resolve the production refmap location; it reached `Done`
+without a Mixin failure. The client smoke test and EULA-enabled dedicated-server
+test both reached a responsive/ready state.
 
 ## Compatibility status
 
-No breaking data-format change was made. The official 1.1.3 world migration,
-reverse migration, Forge 47.4.10/47.4.22 matrix, client smoke tests, and
-optional-integration matrix remain manual release-gate work.
+The namespace change is a breaking identifier change for new commands and
+resource lookups, with an explicit official 1.1.3 world migration path. The
+official 1.1.3 world migration and reverse migration have been exercised with
+representative block entities and item NBT. Forge 47.4.10/47.4.22 matrix and
+the optional-integration matrix remain release-gate work.

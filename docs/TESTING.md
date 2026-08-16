@@ -12,8 +12,7 @@ gradlew.bat clean build
 ```
 
 The build must produce a JAR whose filename starts with
-`projectexpansion-arcanum-` and must not modify generated resources or runtime
-identifiers unexpectedly.
+`projectexa-arcanum-` and must expose the `projectexa` runtime namespace.
 
 ## Collector fractional EMC regression
 
@@ -47,8 +46,8 @@ nothing.
 5. Check for missing mappings, missing registry entries, vanished blocks/items,
    lost BlockEntity data, lost EMC, and lost configuration.
 
-Expected result: all existing Project Expansion content remains present under
-the original `projectexpansion` namespace.
+Expected result: all existing Project Expansion content remains present after
+the old `projectexpansion` IDs are remapped to equivalent `projectexa` IDs.
 
 ## Runtime matrix still requiring manual observation
 
@@ -62,8 +61,7 @@ the original `projectexpansion` namespace.
 ## Observed local server bootstrap
 
 The local Java 17 `runServer --nogui` task was executed with Forge 47.2.0,
-47.4.10, and 47.4.22, ProjectE PE1.0.1, and the Arcanum source set. In all
-three runs, mod discovery, Mixin loading, and server bootstrap reached the
-Minecraft EULA gate without a mod-load exception. The process stopped because
-`run/eula.txt` was not accepted in this worktree. An operator must accept the
-EULA before treating this as a full dedicated-server startup test.
+47.4.10, and 47.4.22, ProjectE PE1.0.1, and the Arcanum source set. The
+EULA-enabled dedicated-server test reached `Done`, loaded the new source
+namespace, and stopped normally. The client smoke run also reached a
+responsive `Minecraft Forge 1.20.1` window.

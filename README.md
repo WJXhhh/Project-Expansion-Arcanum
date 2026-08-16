@@ -8,14 +8,14 @@ Current maintainer identity: **to be confirmed before the first release**.
 
 ## Compatibility and migration
 
-Arcanum keeps the runtime mod ID, registry namespace, existing registry IDs, NBT keys, configuration keys, network identifiers, and resource namespace as `projectexpansion`. Its compatibility target is a drop-in migration from official Project Expansion `1.1.3` worlds.
+Arcanum uses the independent runtime mod ID and registry/resource namespace `projectexa` to avoid collisions with other translations and forks. Existing official Project Expansion `1.1.3` worlds use the legacy `projectexpansion` namespace; Forge missing-mapping handlers plus a block-entity NBT migration hook remap matching blocks, items, block entities, menus, enchantments, and sounds to the new namespace during load.
 
 Before migrating, make a backup and stop Minecraft:
 
 1. Remove the official `projectexpansion-1.20.1-1.1.3.jar`.
 2. Install the Arcanum JAR.
 3. Do not keep both JARs installed at the same time.
-4. Load the backed-up world and verify machines, items, EMC, player data, and configuration.
+4. Load the backed-up world and verify machines, items, EMC, player data, and configuration. The migrated content will be registered under `projectexa` after the remap.
 
 The migration and runtime checks are release-gate tests. Arcanum is not affiliated with or officially supported by ProjectE, and ProjectE issues should be reported to the ProjectE project rather than here.
 
@@ -42,7 +42,7 @@ On Linux or macOS:
 ./gradlew clean build
 ```
 
-The release JAR is written to `build/libs/` and includes `arcanum` in its filename. The project uses the Gradle Wrapper and a minimal GitHub Actions build workflow.
+The release JAR is written to `build/libs/` and includes `projectexa` and `arcanum` in its filename. The project uses the Gradle Wrapper and a minimal GitHub Actions build workflow.
 
 ## Links
 

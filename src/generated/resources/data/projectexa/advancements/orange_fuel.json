@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:yellow_fuel",
+  "criteria": {
+    "orange_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:orange_fuel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.orange_fuel.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:orange_fuel"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.orange_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "orange_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

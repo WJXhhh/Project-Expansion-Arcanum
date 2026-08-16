@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/purple",
+  "pattern": [
+    "CLC",
+    "RPR",
+    "RRR"
+  ],
+  "key": {
+    "L": {
+      "item": "projectexa:purple_emc_link"
+    },
+    "C": {
+      "item": "projectexa:purple_compressed_collector"
+    },
+    "R": {
+      "item": "projectexa:purple_relay"
+    },
+    "P": {
+      "item": "projectexa:pink_power_flower"
+    }
+  },
+  "result": {
+    "item": "projectexa:purple_power_flower"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:emc_link",
+  "criteria": {
+    "final_emc_link": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:final_emc_link"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.final_emc_link.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:final_emc_link"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.final_emc_link"
+    }
+  },
+  "requirements": [
+    [
+      "final_emc_link"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

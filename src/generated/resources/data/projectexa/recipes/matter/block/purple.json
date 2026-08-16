@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/purple",
+  "ingredients": [
+    {
+      "item": "projectexa:purple_matter"
+    },
+    {
+      "item": "projectexa:purple_matter"
+    },
+    {
+      "item": "projectexa:purple_matter"
+    },
+    {
+      "item": "projectexa:purple_matter"
+    }
+  ],
+  "result": {
+    "item": "projectexa:purple_matter_block"
+  }
+}

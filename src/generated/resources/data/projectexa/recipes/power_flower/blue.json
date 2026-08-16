@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/blue",
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "L": {
+      "item": "projectexa:blue_emc_link"
+    },
+    "C": {
+      "item": "projectexa:blue_compressed_collector"
+    },
+    "R": {
+      "item": "projectexa:blue_relay"
+    }
+  },
+  "result": {
+    "item": "projectexa:blue_power_flower"
+  }
+}

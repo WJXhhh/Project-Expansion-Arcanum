@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/red",
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "L": {
+      "item": "projectexa:red_emc_link"
+    },
+    "C": {
+      "item": "projectexa:red_compressed_collector"
+    },
+    "R": {
+      "item": "projectexa:red_relay"
+    }
+  },
+  "result": {
+    "item": "projectexa:red_power_flower"
+  }
+}

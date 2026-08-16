@@ -11,7 +11,8 @@
 
 ### Compatibility
 
-- Preserved the `projectexpansion` runtime mod ID and existing resource namespace.
+- Changed the runtime Mod ID and registry/resource namespace to `projectexa` to avoid namespace collisions.
+- Added Forge missing-mapping remaps for official `projectexpansion` blocks, items, menus, enchantments, and sounds, plus a block-entity NBT migration hook.
 - Kept the upstream Forge `47.2.0` and ProjectE `PE1.0.1` baseline while maintenance verification is in progress.
 
 ### Branding

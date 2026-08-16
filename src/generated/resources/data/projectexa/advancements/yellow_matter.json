@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:lime_matter",
+  "criteria": {
+    "yellow_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:yellow_matter"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.yellow_matter.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:yellow_matter"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.yellow_matter"
+    }
+  },
+  "requirements": [
+    [
+      "yellow_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

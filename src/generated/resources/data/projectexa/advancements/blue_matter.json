@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:violet_matter",
+  "criteria": {
+    "blue_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:blue_matter"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.blue_matter.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:blue_matter"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.blue_matter"
+    }
+  },
+  "requirements": [
+    [
+      "blue_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

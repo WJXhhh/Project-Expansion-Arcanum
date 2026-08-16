@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:star",
+  "ingredients": [
+    {
+      "item": "projectexa:colossal_star_vier"
+    },
+    {
+      "item": "projectexa:colossal_star_vier"
+    },
+    {
+      "item": "projectexa:colossal_star_vier"
+    },
+    {
+      "item": "projectexa:colossal_star_vier"
+    }
+  ],
+  "result": {
+    "item": "projectexa:colossal_star_sphere"
+  }
+}

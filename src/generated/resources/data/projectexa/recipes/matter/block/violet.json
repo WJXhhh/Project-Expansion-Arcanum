@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/violet",
+  "ingredients": [
+    {
+      "item": "projectexa:violet_matter"
+    },
+    {
+      "item": "projectexa:violet_matter"
+    },
+    {
+      "item": "projectexa:violet_matter"
+    },
+    {
+      "item": "projectexa:violet_matter"
+    }
+  ],
+  "result": {
+    "item": "projectexa:violet_matter_block"
+  }
+}

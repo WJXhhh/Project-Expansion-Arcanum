@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/fading",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projectexa:fading_collector"
+    }
+  },
+  "result": {
+    "item": "projectexa:fading_compressed_collector"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/fading",
+  "ingredients": [
+    {
+      "item": "projectexa:fading_matter_block"
+    }
+  ],
+  "result": {
+    "item": "projectexa:fading_matter",
+    "count": 4
+  }
+}

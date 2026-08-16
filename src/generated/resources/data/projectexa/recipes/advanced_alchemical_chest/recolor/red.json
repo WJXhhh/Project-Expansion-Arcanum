@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:advanced_alchemical_chest/red",
+  "ingredients": [
+    {
+      "tag": "projectexa:advanced_alchemical_chest"
+    },
+    {
+      "item": "minecraft:red_dye"
+    }
+  ],
+  "result": {
+    "item": "projectexa:red_advanced_alchemical_chest"
+  }
+}

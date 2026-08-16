@@ -19,7 +19,7 @@ group = 'furry.cool.mc.forge'
 version = getProperty("minecraft_version") + "-" + getProperty("mod_version")
 
 java {
-    archivesBaseName = 'projectexpansion-arcanum'
+    archivesBaseName = 'projectexa-arcanum'
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
@@ -38,7 +38,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                projectexpansion {
+                projectexa {
                     source sourceSets.main
                 }
             }
@@ -51,7 +51,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                projectexpansion {
+                projectexa {
                     source sourceSets.main
                 }
             }
@@ -63,10 +63,10 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'projectexpansion', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'projectexa', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                projectexpansion {
+                projectexa {
                     source sourceSets.main
                 }
             }
@@ -75,8 +75,8 @@ minecraft {
 }
 
 mixin {
-    add sourceSets.main, "projectexpansion.refmap.json"
-    config "projectexpansion.mixins.json"
+    add sourceSets.main, "projectexa.refmap.json"
+    config "projectexa.mixins.json"
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }

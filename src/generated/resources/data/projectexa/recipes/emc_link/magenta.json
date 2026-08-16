@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/magenta",
+  "pattern": [
+    "LMH",
+    "TCT",
+    "HML"
+  ],
+  "key": {
+    "L": {
+      "item": "projecte:low_covalence_dust"
+    },
+    "M": {
+      "item": "projecte:medium_covalence_dust"
+    },
+    "H": {
+      "item": "projecte:high_covalence_dust"
+    },
+    "T": {
+      "item": "projectexa:magenta_matter"
+    },
+    "C": {
+      "item": "projectexa:red_emc_link"
+    }
+  },
+  "result": {
+    "item": "projectexa:magenta_emc_link"
+  }
+}

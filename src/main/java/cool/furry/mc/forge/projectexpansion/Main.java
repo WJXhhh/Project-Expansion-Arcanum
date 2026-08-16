@@ -24,7 +24,7 @@ import java.util.Objects;
 @Mod(Main.MOD_ID)
 public class Main {
 
-    public static final String MOD_ID = "projectexpansion";
+    public static final String MOD_ID = "projectexa";
     @SuppressWarnings("unused")
     public static final org.apache.logging.log4j.Logger Logger = LogManager.getLogger();
 

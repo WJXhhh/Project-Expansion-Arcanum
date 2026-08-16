@@ -1,0 +1,20 @@
+{
+	"values": [
+		"projectexa:basic_collector",
+		"projectexa:dark_collector",
+		"projectexa:red_collector",
+		"projectexa:magenta_collector",
+		"projectexa:pink_collector",
+		"projectexa:purple_collector",
+		"projectexa:violet_collector",
+		"projectexa:blue_collector",
+		"projectexa:cyan_collector",
+		"projectexa:green_collector",
+		"projectexa:lime_collector",
+		"projectexa:yellow_collector",
+		"projectexa:orange_collector",
+		"projectexa:white_collector",
+		"projectexa:fading_collector",
+		"projectexa:final_collector"
+	]
+}

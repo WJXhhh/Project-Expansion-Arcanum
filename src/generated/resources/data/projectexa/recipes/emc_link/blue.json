@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/blue",
+  "pattern": [
+    "LMH",
+    "TCT",
+    "HML"
+  ],
+  "key": {
+    "L": {
+      "item": "projecte:low_covalence_dust"
+    },
+    "M": {
+      "item": "projecte:medium_covalence_dust"
+    },
+    "H": {
+      "item": "projecte:high_covalence_dust"
+    },
+    "T": {
+      "item": "projectexa:blue_matter"
+    },
+    "C": {
+      "item": "projectexa:violet_emc_link"
+    }
+  },
+  "result": {
+    "item": "projectexa:blue_emc_link"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/orange",
+  "ingredients": [
+    {
+      "item": "projectexa:orange_fuel_block"
+    }
+  ],
+  "result": {
+    "item": "projectexa:orange_fuel",
+    "count": 9
+  }
+}

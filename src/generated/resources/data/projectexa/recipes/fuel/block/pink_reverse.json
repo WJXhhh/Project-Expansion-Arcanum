@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/pink",
+  "ingredients": [
+    {
+      "item": "projectexa:pink_fuel_block"
+    }
+  ],
+  "result": {
+    "item": "projectexa:pink_fuel",
+    "count": 9
+  }
+}

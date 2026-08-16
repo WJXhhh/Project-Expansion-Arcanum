@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/blue",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projectexa:blue_collector"
+    }
+  },
+  "result": {
+    "item": "projectexa:blue_compressed_collector"
+  }
+}

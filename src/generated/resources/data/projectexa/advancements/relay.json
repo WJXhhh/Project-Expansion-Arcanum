@@ -1,0 +1,36 @@
+{
+  "parent": "projecte:relay",
+  "criteria": {
+    "relay": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "projectexa:relay"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.relay.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:basic_relay"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.relay"
+    }
+  },
+  "requirements": [
+    [
+      "relay"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

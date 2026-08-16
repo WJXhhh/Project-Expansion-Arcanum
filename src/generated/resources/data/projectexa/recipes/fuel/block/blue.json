@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projectexa:fuel/blue",
+  "ingredients": [
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    },
+    {
+      "item": "projectexa:blue_fuel"
+    }
+  ],
+  "result": {
+    "item": "projectexa:blue_fuel_block"
+  }
+}

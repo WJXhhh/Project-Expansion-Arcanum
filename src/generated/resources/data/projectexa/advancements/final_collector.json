@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:collector",
+  "criteria": {
+    "final_collector": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:final_collector"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.final_collector.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:final_collector"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.final_collector"
+    }
+  },
+  "requirements": [
+    [
+      "final_collector"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

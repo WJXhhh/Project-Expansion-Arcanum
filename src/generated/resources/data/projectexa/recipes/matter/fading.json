@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/fading",
+  "pattern": [
+    "FMF",
+    "FMF",
+    "FMF"
+  ],
+  "key": {
+    "F": {
+      "item": "projectexa:white_fuel"
+    },
+    "M": {
+      "item": "projectexa:white_matter"
+    }
+  },
+  "result": {
+    "item": "projectexa:fading_matter"
+  }
+}
