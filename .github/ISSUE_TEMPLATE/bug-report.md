@@ -7,25 +7,48 @@ assignees: ''
 
 ---
 
-**Description**
-<!-- A clear and concise description of what the bug is. -->
+## Environment
 
 **Minecraft Version**
-<!-- 1.18.2 -->
 
-**ProjectExpansion Version**
-<!-- 1.0.0 -->
+**Arcanum Version**
 
 **Forge Version**
-<!-- 42.0.0 -->
 
-**Reproduction Steps**
-<!-- 1. Place down an EMC Link -->
-<!-- 2. Import items -->
-<!-- 3. Die -->
+**ProjectE Version**
 
-**Crash Report/Logs**
-<!-- If applicable, attach the associated crash report and logs. If you'd like to make our lives easier, you can attach a manually generated debug crash if you do not have a crash report (Hold F3 + C for 10 seconds) -->
+**Java Version**
 
 **Other Mods**
-<!-- Any other mods you had enabled when you noticed the issue. Please try to reproduce the issue with as few mods as possible so we can test/reproduce the issue easier. You can skip this step if you've attached a crash report. -->
+
+<!-- Include the full mod list and versions. -->
+
+## Reproduction
+
+**Reproduction Steps**
+
+1.
+2.
+3.
+
+**Can it be reproduced with ProjectE + Arcanum only?**
+
+- [ ] Yes
+- [ ] No
+- [ ] Not tested
+
+**Was this world migrated from official Project Expansion 1.1.3?**
+
+- [ ] Yes
+- [ ] No
+- [ ] Not applicable
+
+## Logs and reports
+
+**`latest.log`**
+
+<!-- Attach the complete latest.log or a relevant excerpt. -->
+
+**Crash report**
+
+<!-- Attach the crash report when applicable. -->
