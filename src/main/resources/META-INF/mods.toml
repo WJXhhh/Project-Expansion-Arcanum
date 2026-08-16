@@ -4,15 +4,17 @@ license="MIT"
 [[mods]]
 modId="projectexpansion"
 version="${file.jarVersion}"
-displayName="Project Expansion"
-updateJSONURL="https://raw.githubusercontent.com/DonovanDMC/ProjectExpansion/1.20.1/updates.json"
-displayURL="https://github.com/DonovanDMC/ProjectExpansion"
+displayName="Project Expansion: Arcanum"
+updateJSONURL="https://raw.githubusercontent.com/WJXhhh/Project-Expansion-Arcanum/1.20.1/updates.json"
+displayURL="https://github.com/WJXhhh/Project-Expansion-Arcanum"
 logoFile="icon.png"
 itemIcon = "minecraft:anvil"
-credits="sinkillerj for ProjectE"
-authors="Donovan_DMC"
+credits="sinkillerj for ProjectE; Project Expansion by Donovan_DMC; Arcanum is an independent maintenance fork"
+authors="Donovan_DMC, Arcanum maintainers"
 description='''
-An unofficial expansion of ProjectE.
+A maintained Minecraft 1.20.1 fork of Project Expansion.
+Runtime identity and existing content are preserved for compatibility with
+Project Expansion 1.1.3 worlds.
 '''
 [[dependencies.projectexpansion]]
 modId="forge"
