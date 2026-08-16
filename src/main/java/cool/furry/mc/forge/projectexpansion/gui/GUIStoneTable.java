@@ -154,6 +154,7 @@ public class GUIStoneTable extends PEContainerScreen<ContainerStoneTable> {
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+        renderOutputHover(graphics, mouseX, mouseY);
         if (filterBox != null) filterBox.render(graphics, mouseX, mouseY, partialTick);
 
         renderIfHovered(graphics, mouseX, mouseY, previous, 196, 0);
@@ -184,8 +185,8 @@ public class GUIStoneTable extends PEContainerScreen<ContainerStoneTable> {
             int itemIndex = first + i;
             if (itemIndex >= visibleItems.size()) continue;
             ItemStack stack = visibleItems.get(itemIndex);
-            int x = OUTPUT_POSITIONS[i][0] + 1;
-            int y = OUTPUT_POSITIONS[i][1] + 1;
+            int x = OUTPUT_POSITIONS[i][0];
+            int y = OUTPUT_POSITIONS[i][1];
             graphics.renderItem(stack, x, y);
 
             long value = IEMCProxy.INSTANCE.getValue(stack);
@@ -197,6 +198,16 @@ public class GUIStoneTable extends PEContainerScreen<ContainerStoneTable> {
             pose.scale(0.5F, 0.5F, 1F);
             graphics.drawString(font, countText, -font.width(countText), 0, 0xFFFFFF, true);
             pose.popPose();
+        }
+    }
+
+    private void renderOutputHover(GuiGraphics graphics, int mouseX, int mouseY) {
+        if (targetAtScreen(mouseX, mouseY).isEmpty()) {
+            return;
+        }
+        Rect2i area = outputAreaAtScreen(mouseX, mouseY);
+        if (area != null) {
+            graphics.fill(area.getX(), area.getY(), area.getX() + 16, area.getY() + 16, 0x80FFFFFF);
         }
     }
 

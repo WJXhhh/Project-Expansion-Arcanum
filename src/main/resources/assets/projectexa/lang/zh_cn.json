@@ -602,9 +602,9 @@
   "block.projectexa.stone_table.tooltip": "使用个人知识和 EMC 进行物品转化。",
   "item.projectexa.stone_table": "石质转化桌",
   "gui.projectexa.stone_table": "石质转化桌",
-  "gui.projectexa.stone_table.learn": "学习手中的物品",
-  "gui.projectexa.stone_table.unlearn": "忘却手中的物品",
-  "gui.projectexa.stone_table.burn": "将手中的物品转化为 EMC",
+  "gui.projectexa.stone_table.learn": "学习物品",
+  "gui.projectexa.stone_table.unlearn": "忘却物品",
+  "gui.projectexa.stone_table.burn": "转化为EMC",
   "gui.projectexa.stone_table.burn_emc_holder": "Shift：转移 EMC",
   "gui.projectexa.stone_table.cant_use": "当前白名单不允许使用此物品。"
 }

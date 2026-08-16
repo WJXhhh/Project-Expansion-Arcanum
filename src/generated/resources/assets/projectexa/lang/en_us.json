@@ -602,9 +602,9 @@
 	"block.projectexa.stone_table.tooltip": "Transmute items using personal knowledge and EMC.",
 	"item.projectexa.stone_table": "Stone Transmutation Table",
 	"gui.projectexa.stone_table": "Stone Transmutation Table",
-	"gui.projectexa.stone_table.learn": "Learn the item in your hand",
-	"gui.projectexa.stone_table.unlearn": "Unlearn the item in your hand",
-	"gui.projectexa.stone_table.burn": "Burn the item in your hand for EMC",
+	"gui.projectexa.stone_table.learn": "Learn Item",
+	"gui.projectexa.stone_table.unlearn": "Unlearn Item",
+	"gui.projectexa.stone_table.burn": "Convert to EMC",
 	"gui.projectexa.stone_table.burn_emc_holder": "Shift: transfer EMC",
 	"gui.projectexa.stone_table.cant_use": "This item is not allowed by the current whitelist."
 }
