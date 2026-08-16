@@ -20,7 +20,6 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -166,8 +165,11 @@ public enum Matter {
     }
 
     public BigDecimal getCollectorOutputForTicks(int ticks) {
-        if (ticks == 20) return new BigDecimal(getCollectorOutput());
-        BigDecimal div20 = new BigDecimal(getCollectorOutput()).divide(BigDecimal.valueOf(20), 3, RoundingMode.UP);
+        // Keep the fractional output here so unprocessedEMC can accumulate
+        // low-rate generation instead of truncating it to zero first.
+        BigDecimal output = collectorOutputBase.multiply(BigDecimal.valueOf(Config.collectorMultiplier.get()));
+        if (ticks == 20) return output;
+        BigDecimal div20 = output.divide(BigDecimal.valueOf(20));
         return div20.multiply(BigDecimal.valueOf(ticks));
     }
 

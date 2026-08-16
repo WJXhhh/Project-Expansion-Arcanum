@@ -147,6 +147,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
             gen = gen.multiply(BigDecimal.valueOf(getSunBonus()));
         }
         final BigDecimal generated = gen; // Thanks Java
+        final BigInteger generatedTransferLimit = getGeneratedTransferLimit(generated);
         if (!this.hasMaxedEmc()) {
             unprocessedEMC = unprocessedEMC.add(generated.multiply(BigDecimal.valueOf(getSunLevel() / 16.0f)));
             if (unprocessedEMC.compareTo(BigDecimal.ONE) >= 0) {
@@ -161,7 +162,7 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
             ItemStack upgrading = getUpgrading();
             if (hasChargeableItem) {
                 upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY).ifPresent(emcHolder -> {
-                    BigInteger toAdd = getStoredEmcBigInteger().min(generated.toBigInteger());
+                    BigInteger toAdd = getStoredEmcBigInteger().min(generatedTransferLimit);
                     if (toAdd.compareTo(BigInteger.ZERO) < 1) return;
                     BigInteger remaining = Util.stepBigInteger(toAdd, (val) -> emcHolder.insertEmc(upgrading, val, EmcAction.EXECUTE));
                     BigInteger v = getStoredEmcBigInteger().subtract(remaining);
@@ -192,11 +193,24 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
                 }
             } else {
                 // Only send EMC when we are not upgrading fuel or charging an item
-                BigInteger toSend = getStoredEmcBigInteger().compareTo(generated.toBigInteger()) < 0 ? getStoredEmcBigInteger() : generated.toBigInteger();
+                BigInteger toSend = getStoredEmcBigInteger().compareTo(generatedTransferLimit) < 0 ? getStoredEmcBigInteger() : generatedTransferLimit;
                 sendToAllAcceptors(toSend);
                 sendRelayBonus();
             }
         }
+    }
+
+    /**
+     * ProjectE's EMC capability uses whole EMC values. Keep a positive
+     * fractional generation rate transferable once the collector has
+     * accumulated one whole EMC; unprocessedEMC retains the fractional
+     * remainder and prevents the rate from being rounded away.
+     */
+    private static BigInteger getGeneratedTransferLimit(BigDecimal generated) {
+        if (generated.signum() <= 0) {
+            return BigInteger.ZERO;
+        }
+        return generated.toBigInteger().max(BigInteger.ONE);
     }
 
     @Override
