@@ -7,7 +7,7 @@ and is separate from the Collector precision fix.
 
 The following implementation identifiers remain stable:
 
-- Java package `cool.furry.mc.forge.projectexpansion`
+- Java package `com.wjx.forge.projectexa`
 - configuration file keys in `Config.java`
 - NBT key constants in `TagNames` and existing BlockEntity serialization
 - packet protocol version `1` and registration order
@@ -16,8 +16,8 @@ The runtime Mod ID, registry/resource namespace, language keys, datapack
 namespace, packet channel, and Mixin/refmap filenames now use `projectexa`.
 The old `projectexpansion` namespace is handled by Forge missing mappings for
 registered Forge objects. A small Mixin also rewrites the legacy block-entity
-ID stored inside chunk NBT before vanilla resolves it. The old Java package is
-intentionally retained.
+ID stored inside chunk NBT before vanilla resolves it. The previous Java
+package is no longer used.
 
 ## Numeric boundary review
 

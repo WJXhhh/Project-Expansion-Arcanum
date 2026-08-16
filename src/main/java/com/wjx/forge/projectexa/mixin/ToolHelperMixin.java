@@ -1,0 +1,22 @@
+package com.wjx.forge.projectexa.mixin;
+
+import com.wjx.forge.projectexa.block.BlockCompactSun;
+import com.wjx.forge.projectexa.block.BlockMatter;
+import moze_intel.projecte.gameObjs.EnumMatterType;
+import moze_intel.projecte.utils.ToolHelper;
+import net.minecraft.world.level.block.Block;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+// This mixin enables red matter tools to mine our matter blocks & the compact sun
+@Mixin(ToolHelper.class)
+public class ToolHelperMixin {
+    @Inject(at = @At("HEAD"), method = "canMatterMine(Lmoze_intel/projecte/gameObjs/EnumMatterType;Lnet/minecraft/world/level/block/Block;)Z", cancellable = true, remap = false)
+    private static void canMatterMine(EnumMatterType matterType, Block block, CallbackInfoReturnable<Boolean> cir) {
+        if ((block instanceof BlockMatter || block instanceof BlockCompactSun) && matterType.equals(EnumMatterType.RED_MATTER)) {
+            cir.setReturnValue(true);
+        }
+    }
+}

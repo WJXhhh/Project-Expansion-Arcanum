@@ -1,6 +1,6 @@
 {
 	"projectexa:plugin": {
-		"initializer": "cool.furry.mc.forge.projectexpansion.integrations.wthit.WTHITPlugin",
+		"initializer": "com.wjx.forge.projectexa.integrations.wthit.WTHITPlugin",
 		"required": ["projecte"]
 	}
 }
