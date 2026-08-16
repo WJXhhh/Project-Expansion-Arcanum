@@ -82,7 +82,6 @@ public class BlockAdvancedAlchemicalChest extends HorizontalDirectionalBlock imp
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> list, TooltipFlag flag) {
 		super.appendHoverText(stack, level, list, flag);
 		list.add(Lang.Blocks.ADVANCED_ALCHEMICAL_CHEST_TOOLTIP.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Override

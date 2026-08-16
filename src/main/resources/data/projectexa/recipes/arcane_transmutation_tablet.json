@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "projectexa:arcane_transmutation_tablet",
+  "pattern": [
+    "TWT",
+    "MSM",
+    "TCT"
+  ],
+  "key": {
+    "T": {
+      "item": "projecte:transmutation_tablet"
+    },
+    "M": {
+      "item": "projectexa:magenta_matter"
+    },
+    "W": {
+      "item": "minecraft:crafting_table"
+    },
+    "C": {
+      "tag": "forge:chests"
+    },
+    "S": {
+      "item": "projectexa:magnum_star_ein"
+    }
+  },
+  "result": {
+    "item": "projectexa:arcane_transmutation_tablet",
+    "count": 1
+  }
+}

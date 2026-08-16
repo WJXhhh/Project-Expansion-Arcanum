@@ -7,6 +7,9 @@ import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketCreateTe
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketDeleteTeleportDestination;
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketTeleportBack;
 import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketTeleportToDestination;
+import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketArcaneTransmutationTabletOutputUpdate;
+import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
+import cool.furry.mc.forge.projectexpansion.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -36,6 +39,9 @@ public class PacketHandler {
         registerClientToServer(PacketDeleteTeleportDestination.class, PacketDeleteTeleportDestination::decode);
         registerClientToServer(PacketTeleportBack.class, PacketTeleportBack::decode);
         registerClientToServer(PacketTeleportToDestination.class, PacketTeleportToDestination::decode);
+        registerClientToServer(PacketArcaneTransmutationTabletSmallButton.class, PacketArcaneTransmutationTabletSmallButton::decode);
+        registerClientToServer(PacketArcaneTransmutationTabletRecipeTransfer.class, PacketArcaneTransmutationTabletRecipeTransfer::decode);
+        registerClientToServer(PacketArcaneTransmutationTabletOutputUpdate.class, PacketArcaneTransmutationTabletOutputUpdate::decode);
         registerServerToClient(PacketOpenAlchemicalBookGUI.class, PacketOpenAlchemicalBookGUI::decode);
         registerServerToClient(PacketSyncAlchemicalBookLocations.class, PacketSyncAlchemicalBookLocations::decode);
         registerServerToClient(PacketUpdateWindowLong.class, PacketUpdateWindowLong::decode);

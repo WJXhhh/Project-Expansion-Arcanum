@@ -7,7 +7,13 @@
 	"client": [
 		"DeleteWeebShitMixin",
 		"EMCFormatterMixin",
-		"ShutTheFuckUpMixin"
+		"ShutTheFuckUpMixin",
+		"KnowledgeSyncPKTMixin",
+		"KnowledgeSyncChangePKTMixin",
+		"KnowledgeSyncEmcPKTMixin",
+		"KnowledgeSyncInputsAndLocksPKTMixin",
+		"KnowledgeClearPKTMixin",
+		"UpdateTransmutationTargetsPktMixin"
 	],
 	"mixins": [
 		"AlchemicalBagMixin",

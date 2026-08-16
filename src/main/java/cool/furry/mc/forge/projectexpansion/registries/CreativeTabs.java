@@ -34,6 +34,7 @@ public class CreativeTabs {
                         output.accept(Items.ADVANCED_ALCHEMICAL_BOOK.get());
                         output.accept(Items.MASTER_ALCHEMICAL_BOOK.get());
                         output.accept(Items.ARCANE_ALCHEMICAL_BOOK.get());
+                        output.accept(Items.ARCANE_TRANSMUTATION_TABLET.get());
                         output.accept(Items.COMPACT_SUN.get());
                     })
                     .build()

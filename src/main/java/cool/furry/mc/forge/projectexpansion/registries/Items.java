@@ -25,4 +25,5 @@ public class Items {
     public static final RegistryObject<Item> ADVANCED_ALCHEMICAL_BOOK = Registry.register("advanced_alchemical_book", () -> new ItemAlchemicalBook(ItemAlchemicalBook.Tier.ADVANCED));
     public static final RegistryObject<Item> MASTER_ALCHEMICAL_BOOK = Registry.register("master_alchemical_book", () -> new ItemAlchemicalBook(ItemAlchemicalBook.Tier.MASTER));
     public static final RegistryObject<Item> ARCANE_ALCHEMICAL_BOOK = Registry.register("arcane_alchemical_book", () -> new ItemAlchemicalBook(ItemAlchemicalBook.Tier.ARCANE));
+    public static final RegistryObject<ItemArcaneTransmutationTablet> ARCANE_TRANSMUTATION_TABLET = Registry.register("arcane_transmutation_tablet", ItemArcaneTransmutationTablet::new);
 }

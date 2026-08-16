@@ -12,16 +12,19 @@ import moze_intel.projecte.emc.nbt.NBTManager;
 import moze_intel.projecte.gameObjs.items.IFireProtector;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -72,6 +75,10 @@ public class Util {
         return addKnowledge(player, provider, ItemInfo.fromItem(rawItem), ItemInfo.fromItem(cleanItem));
     }
 
+    public static AddKnowledgeResult addKnowledge(Player player, IKnowledgeProvider provider, ItemStack rawStack) {
+        return addKnowledge(player, provider, rawStack, cleanStack(rawStack));
+    }
+
     public static AddKnowledgeResult addKnowledge(Player player, IKnowledgeProvider provider, ItemStack rawStack, ItemStack cleanStack) {
         return addKnowledge(player, provider, ItemInfo.fromStack(rawStack), ItemInfo.fromStack(cleanStack));
     }
@@ -88,6 +95,62 @@ public class Util {
         }
 
         return AddKnowledgeResult.UNKNOWN;
+    }
+
+    public static boolean areStacksEqual(RegistryAccess registryAccess, ItemStack first, ItemStack second) {
+        if (first.isEmpty() || second.isEmpty()) return first.isEmpty() && second.isEmpty();
+        return ItemStack.isSameItemSameTags(first, second);
+    }
+
+    public static ItemStack returnToInventoryOrTransmutation(Inventory playerInv, Player player, IKnowledgeProvider provider,
+                                                              ItemStack stack, boolean ignoreNbt, boolean force) {
+        if (stack.isEmpty()) return ItemStack.EMPTY;
+        if (IEMCProxy.INSTANCE.hasValue(stack) && (ignoreNbt || areStacksEqual(player.level().registryAccess(), stack, cleanStack(stack)))) {
+            AddKnowledgeResult result = addKnowledge(player, provider, stack);
+            if (result != AddKnowledgeResult.FAIL) {
+                BigInteger value = BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(stack));
+                provider.setEmc(provider.getEmc().add(value.multiply(BigInteger.valueOf(stack.getCount()))));
+                if (player instanceof ServerPlayer serverPlayer) provider.syncEmc(serverPlayer);
+                return ItemStack.EMPTY;
+            }
+        }
+        return returnToInventory(playerInv, player, stack, force);
+    }
+
+    public static ItemStack returnToInventory(Inventory playerInv, Player player, ItemStack stack, boolean force) {
+        ItemStack remaining = stack.copy();
+        while (!remaining.isEmpty()) {
+            int slot = playerInv.getSlotWithRemainingSpace(remaining);
+            if (slot == -1) slot = playerInv.getFreeSlot();
+            if (slot == -1) {
+                if (force) {
+                    player.drop(remaining, false);
+                    remaining = ItemStack.EMPTY;
+                }
+                break;
+            }
+
+            ItemStack existing = playerInv.getItem(slot);
+            int limit = Math.min(remaining.getMaxStackSize(), playerInv.getMaxStackSize());
+            int canMove = Math.min(remaining.getCount(), existing.isEmpty() ? limit : limit - existing.getCount());
+            if (canMove <= 0) {
+                if (force) {
+                    player.drop(remaining, false);
+                    remaining = ItemStack.EMPTY;
+                }
+                break;
+            }
+
+            ItemStack moved = remaining.split(canMove);
+            if (existing.isEmpty()) playerInv.setItem(slot, moved);
+            else existing.grow(canMove);
+
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(ClientboundContainerSetSlotPacket.PLAYER_INVENTORY,
+                        0, slot, playerInv.getItem(slot)));
+            }
+        }
+        return remaining;
     }
 
     public static int safeIntValue(BigInteger val) {

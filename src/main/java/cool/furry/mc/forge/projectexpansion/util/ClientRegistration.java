@@ -2,6 +2,7 @@ package cool.furry.mc.forge.projectexpansion.util;
 
 import cool.furry.mc.forge.projectexpansion.Main;
 import cool.furry.mc.forge.projectexpansion.gui.GUICollector;
+import cool.furry.mc.forge.projectexpansion.gui.GUIArcaneTransmutationTablet;
 import cool.furry.mc.forge.projectexpansion.registries.MenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,6 +26,7 @@ public class ClientRegistration {
             registerScreen(MenuTypes.COLLECTOR_TIER_1, GUICollector.Tier1::new);
             registerScreen(MenuTypes.COLLECTOR_TIER_2, GUICollector.Tier2::new);
             registerScreen(MenuTypes.COLLECTOR_TIER_3, GUICollector.Tier3::new);
+            registerScreen(MenuTypes.ARCANE_TRANSMUTATION_TABLET, GUIArcaneTransmutationTablet::new);
         });
     }
 

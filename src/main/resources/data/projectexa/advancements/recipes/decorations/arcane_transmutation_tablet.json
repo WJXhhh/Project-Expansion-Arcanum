@@ -1,0 +1,38 @@
+{
+  "parent": "projecte:recipes/decorations/transmutation_tablet",
+  "criteria": {
+    "arcane_transmutation_tablet": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:arcane_transmutation_tablet"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.arcane_transmutation_tablet.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:arcane_transmutation_tablet"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.arcane_transmutation_tablet"
+    }
+  },
+  "requirements": [
+    [
+      "arcane_transmutation_tablet"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

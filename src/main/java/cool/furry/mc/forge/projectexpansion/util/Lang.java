@@ -10,7 +10,6 @@ public enum Lang implements ILangEntry {
     // Text
     WIP("text", "wip"),
     PROVIDER_ERROR("text", "provider_error"),
-    SEE_WIKI("text", "see_wiki"),
     COST("text", "cost"),
     NOT_OWNER("text", "not_owner"),
     NBT_FILTER_DISABLED("text", "nbt_filter", "disabled"),

@@ -36,7 +36,6 @@ public class BlockCompactSun extends Block {
         super.appendHoverText(stack, level, list, flag);
         list.add(Lang.Blocks.COMPACT_SUN_TOOLTIP.translateColored(ChatFormatting.GRAY));
         list.add(Lang.Blocks.COMPACT_SUN_TOOLTIP2.translateColored(ChatFormatting.GRAY, Util.getSunBonus()));
-        list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
     }
 
     @Override
