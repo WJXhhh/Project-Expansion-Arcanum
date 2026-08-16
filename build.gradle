@@ -19,8 +19,12 @@ group = 'furry.cool.mc.forge'
 version = getProperty("minecraft_version") + "-" + getProperty("mod_version")
 
 java {
-    archivesBaseName = 'projectexpansion'
+    archivesBaseName = 'projectexpansion-arcanum'
     toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 minecraft {
@@ -134,12 +138,12 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "Project Expansion",
-                "Specification-Vendor"    : "Donovan_DMC",
+                "Specification-Title"     : "Project Expansion: Arcanum",
+                "Specification-Vendor"    : "Donovan_DMC; Arcanum maintainers",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
+                "Implementation-Title"    : "Project Expansion: Arcanum",
                 "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "Donovan_DMC",
+                "Implementation-Vendor"   : "Donovan_DMC; Arcanum maintainers",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
