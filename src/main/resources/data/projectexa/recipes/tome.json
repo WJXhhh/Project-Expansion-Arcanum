@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "projectexa:tome",
+  "pattern": [
+    "BBB",
+    "BSB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "projectexa:knowledge_sharing_book"
+    },
+    "S": {
+      "item": "projectexa:final_star_shard"
+    }
+  },
+  "result": {
+    "item": "projecte:tome",
+    "count": 1
+  }
+}
