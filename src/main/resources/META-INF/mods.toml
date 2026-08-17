@@ -10,7 +10,7 @@ displayURL="https://github.com/WJXhhh/Project-Expansion-Arcanum"
 logoFile="icon.png"
 itemIcon = "minecraft:anvil"
 credits="sinkillerj for ProjectE; Project Expansion by Donovan_DMC; Arcanum is an independent maintenance fork"
-authors="Donovan_DMC, Arcanum maintainers"
+authors="JDJades"
 description='''
 A maintained Minecraft 1.20.1 fork of Project Expansion.
 The independent `projectexa` runtime namespace avoids collisions with other

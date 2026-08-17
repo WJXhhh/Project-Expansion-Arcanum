@@ -6,7 +6,7 @@ Project Expansion: Arcanum is an independent maintained fork of
 - Original project: Project Expansion
 - Original author: Donovan_DMC
 - Arcanum repository: https://github.com/WJXhhh/Project-Expansion-Arcanum
-- Arcanum maintainer identity: to be confirmed before the first release
+- Arcanum maintainer identity: JDJades
 
 Arcanum is not affiliated with, endorsed by, or officially supported by
 Donovan_DMC or ProjectE unless a future written statement says otherwise.

@@ -4,7 +4,7 @@
 
 Arcanum is an independent maintenance fork of [Project Expansion](https://github.com/DonovanDMC/ProjectExpansion), originally created by **Donovan_DMC**. The first Arcanum release is limited to maintenance, compatibility, engineering cleanup, and verified bug fixes. It does not add new blocks, items, machines, recipes, mechanics, GUI features, or gameplay.
 
-Current maintainer identity: **to be confirmed before the first release**.
+Current maintainer identity: **JDJades**.
 
 ## Compatibility and migration
 

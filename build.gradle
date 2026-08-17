@@ -19,8 +19,15 @@ group = 'furry.cool.mc.forge'
 version = getProperty("minecraft_version") + "-" + getProperty("mod_version")
 
 java {
-    archivesBaseName = 'projectexa-arcanum'
+    archivesBaseName = 'projectex-arcanum'
     toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+def releaseArchiveVersion = getProperty("mod_version").replaceFirst(/-arcanum\.\d+$/, "")
+def releaseArchiveFileName = "projectex-arcanum-${getProperty("minecraft_version")}-${releaseArchiveVersion}.jar"
+
+tasks.withType(org.gradle.api.tasks.bundling.Jar).configureEach {
+    archiveFileName = releaseArchiveFileName
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -139,11 +146,11 @@ jar {
     manifest {
         attributes([
                 "Specification-Title"     : "Project Expansion: Arcanum",
-                "Specification-Vendor"    : "Donovan_DMC; Arcanum maintainers",
+                "Specification-Vendor"    : "JDJades",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : "Project Expansion: Arcanum",
                 "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "Donovan_DMC; Arcanum maintainers",
+                "Implementation-Vendor"   : "JDJades",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

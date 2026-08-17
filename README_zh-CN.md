@@ -4,7 +4,7 @@
 
 Arcanum 是 [Project Expansion](https://github.com/DonovanDMC/ProjectExpansion) 的独立维护分支，原项目由 **Donovan_DMC** 创建。Arcanum 的首个版本仅专注于维护、兼容性、工程清理和已验证的错误修复，不新增方块、物品、机器、配方、机制、GUI 功能或玩法内容。
 
-当前维护者身份：**首个正式版本发布前确认**。
+当前维护者身份：**JDJades**。
 
 ## 兼容性与迁移
 
