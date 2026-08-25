@@ -194,6 +194,8 @@ public enum Lang implements ILangEntry {
         EMC_TEST_SUCCESS_SELF("emc", "test", "success_self"),
         EMC_TEST_FAIL("emc", "test", "fail"),
         EMC_TEST_FAIL_SELF("emc", "test", "fail_self"),
+        RELOAD_EMC_SUCCESS("reload_emc", "success"),
+        RELOAD_EMC_FAIL("reload_emc", "fail"),
 
         // Knowledge
         KNOWLEDGE_INVALID("knowledge", "invalid"),

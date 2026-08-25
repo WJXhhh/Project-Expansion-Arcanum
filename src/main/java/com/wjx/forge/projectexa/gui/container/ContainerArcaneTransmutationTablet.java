@@ -244,7 +244,10 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         if (!remainder.isEmpty() && transmutationInventory.isServer()) {
             transmutationInventory.addEmc(unitCost.multiply(BigInteger.valueOf(remainder.getCount())));
         }
-        return output;
+        // Output slots are virtual and stay populated after a transfer. Returning the
+        // generated stack here makes AbstractContainerMenu repeat QUICK_MOVE until the
+        // inventory is full; an empty result correctly limits this click to one stack.
+        return ItemStack.EMPTY;
     }
 
     private ItemStack quickMovePlayerItem(Player player, Slot slot) {

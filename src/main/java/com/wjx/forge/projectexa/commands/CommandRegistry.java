@@ -22,6 +22,7 @@ public class CommandRegistry {
                 .then(CommandBook.getArguments())
                 .then(CommandEMC.getArguments())
                 .then(CommandKnowledge.getArguments(buildContext))
+                .then(CommandReloadEMC.getArguments())
         );
         dispatcher.register(Commands.literal("projectexa").redirect(baseNode));
         dispatcher.register(Commands.literal("projectexpansion").redirect(baseNode));

@@ -10,6 +10,7 @@ import com.wjx.forge.projectexa.net.packets.to_server.PacketTeleportToDestinatio
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletOutputUpdate;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketStoneTableAction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,6 +44,7 @@ public class PacketHandler {
         registerClientToServer(PacketArcaneTransmutationTabletSmallButton.class, PacketArcaneTransmutationTabletSmallButton::decode);
         registerClientToServer(PacketArcaneTransmutationTabletRecipeTransfer.class, PacketArcaneTransmutationTabletRecipeTransfer::decode);
         registerClientToServer(PacketArcaneTransmutationTabletOutputUpdate.class, PacketArcaneTransmutationTabletOutputUpdate::decode);
+        registerClientToServer(PacketOpenArcaneTransmutationTablet.class, PacketOpenArcaneTransmutationTablet::decode);
         registerClientToServer(PacketStoneTableAction.class, PacketStoneTableAction::decode);
         registerServerToClient(PacketOpenAlchemicalBookGUI.class, PacketOpenAlchemicalBookGUI::decode);
         registerServerToClient(PacketSyncAlchemicalBookLocations.class, PacketSyncAlchemicalBookLocations::decode);

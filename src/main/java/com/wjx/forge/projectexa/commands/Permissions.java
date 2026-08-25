@@ -26,6 +26,7 @@ public class Permissions {
     public static final CommandPermissionNode EMC_REMOVE = nodeOpCommand("emc.remove");
     public static final CommandPermissionNode EMC_SET = nodeOpCommand("emc.set");
     public static final CommandPermissionNode EMC_TEST = nodeOpCommand("emc.test");
+    public static final CommandPermissionNode RELOAD_EMC = nodeOpCommand("reload_emc");
     public static final CommandPermissionNode KNOWLEDGE = nodeOpCommand("knowledge");
     public static final CommandPermissionNode KNOWLEDGE_CLEAR = nodeOpCommand("knowledge.clear");
     public static final CommandPermissionNode KNOWLEDGE_LEARN = nodeOpCommand("knowledge.learn");

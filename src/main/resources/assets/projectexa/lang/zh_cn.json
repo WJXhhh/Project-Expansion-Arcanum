@@ -583,6 +583,8 @@
   "sounds.projectexa.alchemical_collection.collect": "炼金收集：转化方块",
   "item.projectexa.arcane_transmutation_tablet": "奥术转化桌",
   "item.projectexa.arcane_transmutation_tablet.tooltip": "内置3×3合成的高级转化桌。",
+  "key.categories.projectexa": "Project Expansion: Arcanum",
+  "key.projectexa.open_arcane_transmutation_table": "打开奥术转化桌",
   "gui.projectexa.arcane_transmutation_tablet": "奥术转化桌",
   "gui.projectexa.arcane_transmutation_tablet.lock": "锁定输入",
   "gui.projectexa.arcane_transmutation_tablet.consume": "转化为 EMC",
@@ -606,5 +608,7 @@
   "gui.projectexa.stone_table.unlearn": "忘却物品",
   "gui.projectexa.stone_table.burn": "转化为EMC",
   "gui.projectexa.stone_table.burn_emc_holder": "Shift：转移 EMC",
-  "gui.projectexa.stone_table.cant_use": "当前白名单不允许使用此物品。"
+  "gui.projectexa.stone_table.cant_use": "当前白名单不允许使用此物品。",
+  "command.projectexa.reload_emc.success": "EMC重载完成，共注册%s个EMC值，耗时%s毫秒。",
+  "command.projectexa.reload_emc.fail": "EMC重载失败，请查看服务端日志。"
 }
