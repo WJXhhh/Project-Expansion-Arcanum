@@ -11,7 +11,9 @@ import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationT
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTabletWithRecipe;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketStoneTableAction;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketTaczTransmutation;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -45,7 +47,9 @@ public class PacketHandler {
         registerClientToServer(PacketArcaneTransmutationTabletRecipeTransfer.class, PacketArcaneTransmutationTabletRecipeTransfer::decode);
         registerClientToServer(PacketArcaneTransmutationTabletOutputUpdate.class, PacketArcaneTransmutationTabletOutputUpdate::decode);
         registerClientToServer(PacketOpenArcaneTransmutationTablet.class, PacketOpenArcaneTransmutationTablet::decode);
+        registerClientToServer(PacketOpenArcaneTransmutationTabletWithRecipe.class, PacketOpenArcaneTransmutationTabletWithRecipe::decode);
         registerClientToServer(PacketStoneTableAction.class, PacketStoneTableAction::decode);
+        registerClientToServer(PacketTaczTransmutation.class, PacketTaczTransmutation::decode);
         registerServerToClient(PacketOpenAlchemicalBookGUI.class, PacketOpenAlchemicalBookGUI::decode);
         registerServerToClient(PacketSyncAlchemicalBookLocations.class, PacketSyncAlchemicalBookLocations::decode);
         registerServerToClient(PacketUpdateWindowLong.class, PacketUpdateWindowLong::decode);

@@ -47,3 +47,9 @@ mandatory = false
 versionRange = "*"
 ordering = "AFTER"
 side = "BOTH"
+[[dependencies.projectexa]]
+modId = "tacz"
+mandatory = false
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"

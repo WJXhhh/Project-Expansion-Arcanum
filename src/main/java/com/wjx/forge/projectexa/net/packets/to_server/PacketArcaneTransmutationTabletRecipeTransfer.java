@@ -21,7 +21,7 @@ public record PacketArcaneTransmutationTabletRecipeTransfer(List<List<ItemStack>
         }
     }
 
-    private static boolean validRecipe(List<List<ItemStack>> recipe) {
+    static boolean validRecipe(List<List<ItemStack>> recipe) {
         if (recipe == null || recipe.size() > 9) return false;
         for (List<ItemStack> possibilities : recipe) {
             if (possibilities == null || possibilities.size() > 64) return false;
@@ -34,16 +34,26 @@ public record PacketArcaneTransmutationTabletRecipeTransfer(List<List<ItemStack>
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(Math.min(recipe.size(), 9));
-        for (int i = 0; i < Math.min(recipe.size(), 9); i++) {
-            List<ItemStack> possibilities = recipe.get(i);
-            buffer.writeVarInt(Math.min(possibilities.size(), 64));
-            for (int j = 0; j < Math.min(possibilities.size(), 64); j++) buffer.writeItem(possibilities.get(j));
-        }
+        writeRecipe(buffer, recipe);
         buffer.writeBoolean(transferAll);
     }
 
     public static PacketArcaneTransmutationTabletRecipeTransfer decode(FriendlyByteBuf buffer) {
+        return new PacketArcaneTransmutationTabletRecipeTransfer(readRecipe(buffer), buffer.readBoolean());
+    }
+
+    static void writeRecipe(FriendlyByteBuf buffer, List<List<ItemStack>> recipe) {
+        int slots = recipe == null ? 0 : Math.min(recipe.size(), 9);
+        buffer.writeVarInt(slots);
+        for (int i = 0; i < slots; i++) {
+            List<ItemStack> possibilities = recipe.get(i);
+            int count = possibilities == null ? 0 : Math.min(possibilities.size(), 64);
+            buffer.writeVarInt(count);
+            for (int j = 0; j < count; j++) buffer.writeItem(possibilities.get(j));
+        }
+    }
+
+    static List<List<ItemStack>> readRecipe(FriendlyByteBuf buffer) {
         int slots = Math.max(0, Math.min(buffer.readVarInt(), 9));
         List<List<ItemStack>> recipe = new ArrayList<>(slots);
         for (int i = 0; i < slots; i++) {
@@ -52,6 +62,6 @@ public record PacketArcaneTransmutationTabletRecipeTransfer(List<List<ItemStack>
             for (int j = 0; j < possibilitiesCount; j++) possibilities.add(buffer.readItem());
             recipe.add(possibilities);
         }
-        return new PacketArcaneTransmutationTabletRecipeTransfer(recipe, buffer.readBoolean());
+        return recipe;
     }
 }

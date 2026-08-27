@@ -7,6 +7,7 @@ import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.integration.curios.CuriosIntegration;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
@@ -30,7 +31,8 @@ public record PacketOpenArcaneTransmutationTablet() implements IPacket {
         return new PacketOpenArcaneTransmutationTablet();
     }
 
-    private static boolean hasTablet(ServerPlayer player) {
+    public static boolean hasTablet(Player player) {
+        if (player == null) return false;
         Item tablet = Items.ARCANE_TRANSMUTATION_TABLET.get();
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             if (isTablet(player.getInventory().getItem(slot), tablet)) {

@@ -13,7 +13,9 @@
 		"KnowledgeSyncEmcPKTMixin",
 		"KnowledgeSyncInputsAndLocksPKTMixin",
 		"KnowledgeClearPKTMixin",
-		"UpdateTransmutationTargetsPktMixin"
+		"UpdateTransmutationTargetsPktMixin",
+		"JeiRecipeTransferManagerMixin",
+		"TaczGunSmithTableScreenMixin"
 	],
 	"mixins": [
 		"AlchemicalBagMixin",
@@ -24,7 +26,8 @@
 		"LegacyBlockEntityNbtMixin",
 		"PhilosophersStoneMixin",
 		"TomeMixin",
-		"ToolHelperMixin"
+		"ToolHelperMixin",
+		"TaczGunSmithTableMenuAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

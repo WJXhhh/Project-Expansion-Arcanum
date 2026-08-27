@@ -193,7 +193,11 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
     @Override
     public boolean mouseClicked(double x, double y, int mouseButton) {
         if (filterBox != null && filterBox.isMouseOver(x, y)) {
-            if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT) filterBox.setValue("");
+            if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                filterBox.setValue("");
+            } else if (!menu.getCarried().isEmpty()) {
+                filterBox.setValue(menu.getCarried().getHoverName().getString());
+            }
         } else if (filterBox != null && filterBox.isFocused()) {
             if (hoveredSlot == null || (!hoveredSlot.hasItem() && menu.getCarried().isEmpty())) filterBox.setFocused(false);
         }

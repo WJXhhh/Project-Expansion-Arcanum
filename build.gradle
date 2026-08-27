@@ -133,6 +133,9 @@ dependencies {
     // runtimeOnly fg.deobf("curse.maven:wthit-455982:${getProperty("wthitVersion")}")
     // runtimeOnly fg.deobf("curse.maven:bad-packets-615134:${getProperty("badPacketsVersion")}")
 
+    compileOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:${getProperty("taczVersion")}")
+    runtimeOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:${getProperty("taczVersion")}")
+
     // https://github.com/McJtyMods/TheOneProbe/issues/548
     compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${getProperty("topVersion")}:api") {
         transitive = false
