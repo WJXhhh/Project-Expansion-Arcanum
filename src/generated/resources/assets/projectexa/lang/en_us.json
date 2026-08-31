@@ -505,7 +505,7 @@
 	"item.projectexa.final_star_shard": "Final Star Shard",
 	"item.projectexa.final_star_shard.tooltip": "Crafting ingredient.",
 	"item.projectexa.final_star": "Final Star",
-	"item.projectexa.final_star.tooltip": "Currently exists only to show off, future usages are planned.",
+	"item.projectexa.final_star.tooltip": "Place it on an active pedestal and drop an item above it to copy the item into an adjacent container.",
 	"item.projectexa.infinite_fuel": "Infinite Fuel",
 	"item.projectexa.infinite_fuel.tooltip": "This item will not be consumed, fuel will be provided via your emc.",
 	"item.projectexa.infinite_fuel.not_enough_emc": "You do not have enough emc to use this, you need %s.",

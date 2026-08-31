@@ -35,6 +35,9 @@ public final class Config {
     public static final ForgeConfigSpec.ConfigValue<Boolean> enableStoneTableWhitelist = Builder.comment("If false, ignore the projectexa:stone_table_whitelist item tag. If true, only items in that tag can be placed in the Stone Table.").define("enableStoneTableWhitelist", false);
     public static final ForgeConfigSpec.ConfigValue<Integer> compactSunBonus = Builder.comment("The bonus (multiplicative) the compact sun block should give. Set to 0 to disable.").define("compactSunBonus", 10);
     public static final ForgeConfigSpec.ConfigValue<Boolean> sunMultiplierPriceCompensation = Builder.comment("Enable determining the sun bonus mutiplier via the difference in emc price between the final power flower and the compact sun block, rounded up to the next 10. In normal gameplay this is ~33x, so a 40x multiplier. If either block has no emc value or the multiplier is lower than compactSunBonus, that value will be used instead.").define("sunMultiplierPriceCompensation", true);
+    public static final ForgeConfigSpec.ConfigValue<Boolean> finalStarCopyAnyItem = Builder.comment("If false, the Final Star will only copy items with an EMC value.").define("finalStarCopyAnyItem", true);
+    public static final ForgeConfigSpec.ConfigValue<Boolean> finalStarCopyNBT = Builder.comment("If false, the Final Star will remove ordinary item NBT when copying items. ProjectE's NBT whitelist is preserved.").define("finalStarCopyNBT", false);
+    public static final ForgeConfigSpec.ConfigValue<Integer> finalStarUpdateInterval = Builder.comment("How often the Final Star checks for dropped items, in ticks. Set to 0 to disable item copying.").defineInRange("finalStarUpdateInterval", 20, 0, Integer.MAX_VALUE);
     static { Spec = Builder.build(); }
     public static AlchemicalBookEditLevel editOthersAlchemicalBooks() {
         try {

@@ -505,7 +505,7 @@
   "item.projectexa.final_star_shard": "终极之星碎片",
   "item.projectexa.final_star_shard.tooltip": "合成物品",
   "item.projectexa.final_star": "终极之星",
-  "item.projectexa.final_star.tooltip": "只能拿来炫耀，未来的用途还在计划中。",
+  "item.projectexa.final_star.tooltip": "放置在已激活的台座上，将物品丢在台座上方即可复制到旁边的容器中。",
   "item.projectexa.infinite_fuel": "“无限”燃料",
   "item.projectexa.infinite_fuel.tooltip": "此物品不会被消耗，燃料将消耗你的EMC进行烧练。",
   "item.projectexa.infinite_fuel.not_enough_emc": "没有足够的EMC来使用它，需要%s。",

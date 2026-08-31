@@ -51,7 +51,8 @@ public abstract class TaczGunSmithTableScreenMixin extends AbstractContainerScre
         super(null, null, Component.empty());
     }
 
-    @Inject(method = "init", at = @At("TAIL"), remap = false)
+    // TACZ's development and reobfuscated jars expose the inherited Screen methods under different names.
+    @Inject(method = {"init", "m_7856_"}, at = @At("TAIL"), remap = false)
     private void projectexa$addTransmuteButton(CallbackInfo callbackInfo) {
         AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) (Object) this;
         JeiStyleButton button = new JeiStyleButton(
@@ -64,7 +65,7 @@ public abstract class TaczGunSmithTableScreenMixin extends AbstractContainerScre
         projectexa$updateTransmuteButton();
     }
 
-    @Inject(method = "render", at = @At("HEAD"), remap = false)
+    @Inject(method = {"render", "m_88315_"}, at = @At("HEAD"), remap = false)
     private void projectexa$updateButtonVisibility(
             GuiGraphics graphics, int mouseX, int mouseY, float partialTick, CallbackInfo callbackInfo) {
         projectexa$updateTransmuteButton();

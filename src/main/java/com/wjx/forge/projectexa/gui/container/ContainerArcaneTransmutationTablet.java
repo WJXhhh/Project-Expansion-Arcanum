@@ -164,7 +164,10 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
             return;
         }
 
-        Util.returnToInventoryOrTransmutation(playerInv, player, provider, unlearnStack, false, true);
+        // SlotUnlearn already removed this item's knowledge when it was placed in
+        // the slot. Return it as-is; treating it as a transmutable stack here
+        // would learn it again and consume the physical item into EMC on close.
+        Util.returnToInventory(playerInv, player, unlearnStack, true);
         Util.returnToInventoryOrTransmutation(playerInv, player, provider, carriedStack, false, true);
         for (int i = 0; i < craftSlots.getContainerSize(); i++) {
             Util.returnToInventoryOrTransmutation(playerInv, player, provider, craftSlots.removeItemNoUpdate(i), false, true);
