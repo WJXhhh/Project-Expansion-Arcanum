@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "projectexa:personal_emc_warehouse",
+  "pattern": [
+    "SMS",
+    "MTM",
+    "SMS"
+  ],
+  "key": {
+    "S": {
+      "item": "projectexa:final_star_shard"
+    },
+    "M": {
+      "item": "projectexa:magenta_matter"
+    },
+    "T": {
+      "item": "projectexa:arcane_transmutation_tablet"
+    }
+  },
+  "result": {
+    "item": "projectexa:personal_emc_warehouse",
+    "count": 1
+  }
+}

@@ -611,5 +611,18 @@
 	"gui.projectexa.stone_table.unlearn": "Unlearn Item",
 	"gui.projectexa.stone_table.burn": "Convert to EMC",
 	"gui.projectexa.stone_table.burn_emc_holder": "Shift: transfer EMC",
-	"gui.projectexa.stone_table.cant_use": "This item is not allowed by the current whitelist."
+	"gui.projectexa.stone_table.cant_use": "This item is not allowed by the current whitelist.",
+	"item.projectexa.personal_emc_warehouse": "Personal EMC Warehouse",
+	"item.projectexa.personal_emc_warehouse.tooltip": "Uses the bound account's knowledge and EMC as an inventory for tools, guns, and other items.",
+	"item.projectexa.personal_emc_warehouse.tooltip.bind": "Right-click to open; sneak-right-click to bind or rebind it to yourself. Any holder can use it.",
+	"item.projectexa.personal_emc_warehouse.tooltip.maid": "Put it in a Touhou Little Maid inventory to supply ammo for TACZ guns.",
+	"item.projectexa.personal_emc_warehouse.unbound": "Unbound; right-click to bind it to yourself and open it",
+	"item.projectexa.personal_emc_warehouse.bound": "Warehouse is now bound to %s.",
+	"item.projectexa.personal_emc_warehouse.account": "Bound account: %s",
+	"item.projectexa.personal_emc_warehouse.emc": "Available personal EMC: %s",
+	"item.projectexa.personal_emc_warehouse.filters": "Bound items: %s/27",
+	"item.projectexa.personal_emc_warehouse.invalid_filter": "Only EMC-valued items learned by the bound account can be set; the account must be online.",
+	"gui.projectexa.personal_emc_warehouse": "Personal EMC Warehouse",
+	"advancements.projectexa.personal_emc_warehouse": "Everything, Everywhere",
+	"advancements.projectexa.personal_emc_warehouse.description": "Let any holder's tools draw items from the bound account's personal EMC."
 }

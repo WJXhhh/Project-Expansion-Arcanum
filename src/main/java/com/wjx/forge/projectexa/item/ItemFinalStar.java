@@ -12,6 +12,8 @@ import moze_intel.projecte.capability.EmcHolderItemCapabilityWrapper;
 import moze_intel.projecte.capability.PedestalItemCapabilityWrapper;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.items.ItemPE;
+import moze_intel.projecte.integration.IntegrationHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -30,6 +33,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class ItemFinalStar extends ItemPE implements IItemEmcHolder, IPedestalItem {
     private static final long REPORTED_EMC = 1_000_000_000_000_000L;
 
@@ -37,6 +42,7 @@ public class ItemFinalStar extends ItemPE implements IItemEmcHolder, IPedestalIt
         super(new Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant());
         addItemCapability(EmcHolderItemCapabilityWrapper::new);
         addItemCapability(PedestalItemCapabilityWrapper::new);
+        addItemCapability("curios", IntegrationHelper.CURIO_CAP_SUPPLIER);
     }
 
     /**
@@ -131,6 +137,13 @@ public class ItemFinalStar extends ItemPE implements IItemEmcHolder, IPedestalIt
     @Override
     public boolean isFoil(ItemStack stack) {
         return true;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+        tooltip.add(Lang.Items.FINAL_STAR_CURIO_TOOLTIP.translateColored(ChatFormatting.GRAY));
     }
 
     @OnlyIn(Dist.CLIENT)

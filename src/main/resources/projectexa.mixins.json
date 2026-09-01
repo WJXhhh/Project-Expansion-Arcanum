@@ -25,6 +25,8 @@
 		"EnchantmentProcessorMixin",
 		"LegacyBlockEntityNbtMixin",
 		"PhilosophersStoneMixin",
+		"PlayerEmcWarehouseMixin",
+		"TouhouLittleMaidEmcWarehouseMixin",
 		"TomeMixin",
 		"ToolHelperMixin",
 		"TaczGunSmithTableMenuAccessor"

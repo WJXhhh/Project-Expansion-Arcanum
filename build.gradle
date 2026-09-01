@@ -135,6 +135,7 @@ dependencies {
 
     compileOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:${getProperty("taczVersion")}")
     runtimeOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:${getProperty("taczVersion")}")
+    runtimeOnly fg.deobf("curse.maven:touhou-little-maid-355044:${getProperty("touhouLittleMaidVersion")}")
 
     // https://github.com/McJtyMods/TheOneProbe/issues/548
     compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${getProperty("topVersion")}:api") {

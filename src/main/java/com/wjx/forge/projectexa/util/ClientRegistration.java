@@ -4,6 +4,7 @@ import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.gui.GUICollector;
 import com.wjx.forge.projectexa.gui.GUIArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.gui.GUIStoneTable;
+import com.wjx.forge.projectexa.gui.GUIPersonalEmcWarehouse;
 import com.wjx.forge.projectexa.registries.MenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
@@ -29,6 +30,7 @@ public class ClientRegistration {
             registerScreen(MenuTypes.COLLECTOR_TIER_3, GUICollector.Tier3::new);
             registerScreen(MenuTypes.ARCANE_TRANSMUTATION_TABLET, GUIArcaneTransmutationTablet::new);
             registerScreen(MenuTypes.STONE_TABLE, GUIStoneTable::new);
+            registerScreen(MenuTypes.PERSONAL_EMC_WAREHOUSE, GUIPersonalEmcWarehouse::new);
         });
     }
 

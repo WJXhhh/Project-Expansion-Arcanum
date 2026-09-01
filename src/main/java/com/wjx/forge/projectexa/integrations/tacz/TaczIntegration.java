@@ -5,6 +5,7 @@ import com.wjx.forge.projectexa.util.Util;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
 import com.tacz.guns.crafting.GunSmithTableRecipe;
 import com.tacz.guns.inventory.GunSmithTableMenu;
+import com.tacz.guns.api.item.IAmmo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.container.inventory.TransmutationInventory;
@@ -20,6 +21,11 @@ public final class TaczIntegration {
     private static final int MAX_INPUTS = 64;
 
     private TaczIntegration() {
+    }
+
+    /** TACZ stores the concrete ammunition id in NBT on a shared ammo item. */
+    public static boolean isAmmo(ItemStack stack) {
+        return stack.getItem() instanceof IAmmo;
     }
 
     public static void transmute(ServerPlayer player, ResourceLocation recipeId,

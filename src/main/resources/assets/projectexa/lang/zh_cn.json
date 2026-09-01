@@ -506,6 +506,7 @@
   "item.projectexa.final_star_shard.tooltip": "合成物品",
   "item.projectexa.final_star": "终极之星",
   "item.projectexa.final_star.tooltip": "放置在已激活的台座上，将物品丢在台座上方即可复制到旁边的容器中。",
+  "item.projectexa.final_star.curio_tooltip": "装备在星体饰品槽时，可作为永不枯竭的EMC源。",
   "item.projectexa.infinite_fuel": "“无限”燃料",
   "item.projectexa.infinite_fuel.tooltip": "此物品不会被消耗，燃料将消耗你的EMC进行烧练。",
   "item.projectexa.infinite_fuel.not_enough_emc": "没有足够的EMC来使用它，需要%s。",
@@ -613,5 +614,18 @@
   "gui.projectexa.stone_table.burn_emc_holder": "Shift：转移 EMC",
   "gui.projectexa.stone_table.cant_use": "当前白名单不允许使用此物品。",
   "command.projectexa.reload_emc.success": "EMC重载完成，共注册%s个EMC值，耗时%s毫秒。",
-  "command.projectexa.reload_emc.fail": "EMC重载失败，请查看服务端日志。"
+  "command.projectexa.reload_emc.fail": "EMC重载失败，请查看服务端日志。",
+  "item.projectexa.personal_emc_warehouse": "个人 EMC 物品仓",
+  "item.projectexa.personal_emc_warehouse.tooltip": "以绑定账户的知识和 EMC 为库存，供工具、枪械与其他物品随时存取。",
+  "item.projectexa.personal_emc_warehouse.tooltip.bind": "普通右键打开；潜行右键可随时绑定或重新绑定至自己，任何持有者均可使用。",
+  "item.projectexa.personal_emc_warehouse.tooltip.maid": "放入车万女仆的可用背包后，女仆可用它为 TACZ 枪械装填。",
+  "item.projectexa.personal_emc_warehouse.unbound": "未绑定；右键将绑定至当前玩家并打开",
+  "item.projectexa.personal_emc_warehouse.bound": "物品仓现已绑定至 %s。",
+  "item.projectexa.personal_emc_warehouse.account": "绑定账户：%s",
+  "item.projectexa.personal_emc_warehouse.emc": "可用个人 EMC：%s",
+  "item.projectexa.personal_emc_warehouse.filters": "已绑定物品：%s/27",
+  "item.projectexa.personal_emc_warehouse.invalid_filter": "只能绑定该账户已学习且具有 EMC 值的物品；账户离线时无法修改。",
+  "gui.projectexa.personal_emc_warehouse": "个人 EMC 物品仓",
+  "advancements.projectexa.personal_emc_warehouse": "随身万物仓",
+  "advancements.projectexa.personal_emc_warehouse.description": "让任何持有者的工具从绑定账户的个人 EMC 中取用物品。"
 }

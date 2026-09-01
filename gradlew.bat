@@ -33,6 +33,19 @@ set APP_HOME=%DIRNAME%
 @rem Resolve any "." and ".." in APP_HOME to make it shorter.
 for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
 
+@rem Windows JDK 17+ uses an AF_UNIX socket under TEMP for NIO selector wakeups.
+@rem Some sandboxed terminals expose TEMP through a path that Windows cannot use
+@rem for that socket, causing Gradle workers to fail with "Unable to establish
+@rem loopback connection". Keep the path short and allow callers to override it.
+if not defined PROJECTEXA_GRADLE_TEMP set "PROJECTEXA_GRADLE_TEMP=%SystemDrive%\jtmp\%USERNAME%"
+if not exist "%PROJECTEXA_GRADLE_TEMP%" mkdir "%PROJECTEXA_GRADLE_TEMP%" >NUL 2>&1
+if not exist "%PROJECTEXA_GRADLE_TEMP%" (
+    echo ERROR: Unable to create Gradle temporary directory: %PROJECTEXA_GRADLE_TEMP%
+    goto fail
+)
+set "TEMP=%PROJECTEXA_GRADLE_TEMP%"
+set "TMP=%PROJECTEXA_GRADLE_TEMP%"
+
 @rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
 
