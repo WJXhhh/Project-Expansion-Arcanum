@@ -114,6 +114,13 @@ dependencies {
     implementation fg.deobf("curse.maven:projecte-226410:${getProperty("projecteVersion")}")
     implementation "com.mojang:brigadier:1.0.18"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+
+    runtimeOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
+    runtimeOnly fg.deobf("curse.maven:ars-nouveau-401955:${getProperty("arsNouveauVersion")}")
+    runtimeOnly fg.deobf("curse.maven:botania-225643:${getProperty("botaniaVersion")}")
+    runtimeOnly fg.deobf("curse.maven:create-328085:${getProperty("createVersion")}")
+    runtimeOnly fg.deobf("curse.maven:patchouli-306770:${getProperty("patchouliVersion")}")
+
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}")
     runtimeOnly fg.deobf("curse.maven:no-chat-reports-634062:${getProperty("ncrVersion")}")
