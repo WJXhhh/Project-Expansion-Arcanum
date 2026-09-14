@@ -18,6 +18,9 @@ public class EmcWarehouseInventoryHandler implements IItemHandler {
     }
 
     public static boolean hasWarehouse(IItemHandler physicalInventory) {
+        if (!ItemPersonalEmcWarehouse.ENABLED) {
+            return false;
+        }
         for (int slot = 0; slot < physicalInventory.getSlots(); slot++) {
             ItemStack stack = physicalInventory.getStackInSlot(slot);
             if (stack.getItem() instanceof ItemPersonalEmcWarehouse

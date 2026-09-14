@@ -32,19 +32,26 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ItemPersonalEmcWarehouse extends ItemPE {
+    /** Temporarily disabled until the personal EMC warehouse is complete. */
+    public static final boolean ENABLED = false;
     public static final int FILTER_SLOTS = 27;
     private static final String FILTERS = "Filters";
     private static final String WAREHOUSE_ID = "WarehouseId";
 
     public ItemPersonalEmcWarehouse() {
         super(new Properties().rarity(Rarity.EPIC).stacksTo(1).fireResistant());
-        addItemCapability(EmcWarehouseItemCapability::new);
+        if (ENABLED) {
+            addItemCapability(EmcWarehouseItemCapability::new);
+        }
         addItemCapability("curios", IntegrationHelper.CURIO_CAP_SUPPLIER);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (!ENABLED) {
+            return InteractionResultHolder.fail(stack);
+        }
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             boolean wasUnbound = getOwner(stack).isEmpty();
             if (wasUnbound || player.isShiftKeyDown()) {

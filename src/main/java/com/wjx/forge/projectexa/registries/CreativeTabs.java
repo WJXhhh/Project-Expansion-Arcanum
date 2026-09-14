@@ -1,6 +1,7 @@
 package com.wjx.forge.projectexa.registries;
 
 import com.wjx.forge.projectexa.Main;
+import com.wjx.forge.projectexa.item.ItemPersonalEmcWarehouse;
 import com.wjx.forge.projectexa.util.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
@@ -36,7 +37,9 @@ public class CreativeTabs {
                         output.accept(Items.MASTER_ALCHEMICAL_BOOK.get());
                         output.accept(Items.ARCANE_ALCHEMICAL_BOOK.get());
                         output.accept(Items.ARCANE_TRANSMUTATION_TABLET.get());
-                        output.accept(Items.PERSONAL_EMC_WAREHOUSE.get());
+                        if (ItemPersonalEmcWarehouse.ENABLED) {
+                            output.accept(Items.PERSONAL_EMC_WAREHOUSE.get());
+                        }
                         output.accept(Items.COMPACT_SUN.get());
                     })
                     .build()

@@ -1,6 +1,7 @@
 package com.wjx.forge.projectexa.mixin;
 
 import com.wjx.forge.projectexa.item.EmcWarehouseInventoryHandler;
+import com.wjx.forge.projectexa.item.ItemPersonalEmcWarehouse;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.Capability;
@@ -22,7 +23,8 @@ public class TouhouLittleMaidEmcWarehouseMixin {
             at = @At("RETURN"), cancellable = true, remap = false, require = 0)
     private <T> void projectexa$appendEmcWarehouse(Capability<T> capability, @Nullable Direction side,
                                                    CallbackInfoReturnable<LazyOptional<T>> cir) {
-        if (capability != ForgeCapabilities.ITEM_HANDLER || !cir.getReturnValue().isPresent()) {
+        if (!ItemPersonalEmcWarehouse.ENABLED || capability != ForgeCapabilities.ITEM_HANDLER
+                || !cir.getReturnValue().isPresent()) {
             return;
         }
         LivingEntity maid = (LivingEntity) (Object) this;
