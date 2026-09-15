@@ -53,3 +53,10 @@ mandatory = false
 versionRange = "*"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.projectexa]]
+modId = "goety"
+mandatory = false
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"

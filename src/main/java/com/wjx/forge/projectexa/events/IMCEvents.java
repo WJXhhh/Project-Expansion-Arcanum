@@ -1,6 +1,7 @@
 package com.wjx.forge.projectexa.events;
 
 import com.wjx.forge.projectexa.Main;
+import com.wjx.forge.projectexa.integrations.goety.GoetyIntegration;
 import com.wjx.forge.projectexa.integrations.top.TOPIntegration;
 import moze_intel.projecte.integration.IntegrationHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,6 +16,9 @@ public class IMCEvents {
         ModList modList = ModList.get();
         if (modList.isLoaded(IntegrationHelper.TOP_MODID)) {
             TOPIntegration.sendIMC(event);
+        }
+        if (modList.isLoaded(GoetyIntegration.MOD_ID)) {
+            GoetyIntegration.sendIMC(event);
         }
     }
 }
