@@ -1,6 +1,7 @@
 package com.wjx.forge.projectexa.mixin;
 
 import com.wjx.forge.projectexa.gui.ProjectExaTransferIcon;
+import com.wjx.forge.projectexa.integrations.jei.GoetyJeiRecipeTypes;
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
 import mezz.jei.api.gui.drawable.IDrawable;
 import net.minecraft.resources.ResourceLocation;
@@ -11,17 +12,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Uses the ProjectExA transfer icon for Goety ritual transfer buttons. */
+/** Uses the ProjectExA transfer icon for Goety JEI transfer buttons. */
 @Pseudo
 @Mixin(targets = "mezz.jei.gui.recipes.RecipeTransferButton", remap = false)
 public abstract class JeiRecipeTransferButtonMixin {
-    private static final ThreadLocal<Boolean> PROJECTEXA$GOETY_RITUAL = new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> PROJECTEXA$GOETY_RECIPE = new ThreadLocal<>();
 
     @Inject(method = "create", at = @At("HEAD"), remap = false)
     private static void projectexa$rememberRecipeCategory(
             IRecipeLayoutDrawable<?> recipeLayout, Runnable onClose,
             CallbackInfoReturnable<?> callbackInfo) {
-        PROJECTEXA$GOETY_RITUAL.set(isGoetyRitual(recipeLayout));
+        PROJECTEXA$GOETY_RECIPE.set(isGoetyRecipe(recipeLayout));
     }
 
     @ModifyArg(
@@ -37,7 +38,7 @@ public abstract class JeiRecipeTransferButtonMixin {
             remap = false
     )
     private static IDrawable projectexa$useGoetyTransferIcon(IDrawable original) {
-        return Boolean.TRUE.equals(PROJECTEXA$GOETY_RITUAL.get())
+        return Boolean.TRUE.equals(PROJECTEXA$GOETY_RECIPE.get())
                 ? ProjectExaTransferIcon.INSTANCE
                 : original;
     }
@@ -46,12 +47,11 @@ public abstract class JeiRecipeTransferButtonMixin {
     private static void projectexa$forgetRecipeCategory(
             IRecipeLayoutDrawable<?> recipeLayout, Runnable onClose,
             CallbackInfoReturnable<?> callbackInfo) {
-        PROJECTEXA$GOETY_RITUAL.remove();
+        PROJECTEXA$GOETY_RECIPE.remove();
     }
 
-    private static boolean isGoetyRitual(IRecipeLayoutDrawable<?> recipeLayout) {
+    private static boolean isGoetyRecipe(IRecipeLayoutDrawable<?> recipeLayout) {
         ResourceLocation uid = recipeLayout.getRecipeCategory().getRecipeType().getUid();
-        return "goety".equals(uid.getNamespace())
-                && ("ritual".equals(uid.getPath()) || uid.getPath().startsWith("ritual_"));
+        return GoetyJeiRecipeTypes.isSupported(uid);
     }
 }

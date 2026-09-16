@@ -1,6 +1,8 @@
 package com.wjx.forge.projectexa.mixin;
 
 import com.wjx.forge.projectexa.integrations.jei.UniversalArcaneCraftingRecipeTransferHandler;
+import com.wjx.forge.projectexa.integrations.jei.GoetyJeiRecipeTypes;
+import com.wjx.forge.projectexa.integrations.jei.GoetyRecipeTransferHandler;
 import com.wjx.forge.projectexa.integrations.jei.GoetyRitualTransferHandler;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.recipe.category.IRecipeCategory;
@@ -33,10 +35,10 @@ public class JeiRecipeTransferManagerMixin {
         }
 
         ResourceLocation recipeType = recipeCategory.getRecipeType().getUid();
-        if (ModList.get().isLoaded("goety")
-                && "goety".equals(recipeType.getNamespace())
-                && ("ritual".equals(recipeType.getPath()) || recipeType.getPath().startsWith("ritual_"))) {
+        if (ModList.get().isLoaded("goety") && GoetyJeiRecipeTypes.isRitual(recipeType)) {
             callback.setReturnValue(Optional.of(GoetyRitualTransferHandler.INSTANCE));
+        } else if (ModList.get().isLoaded("goety") && GoetyJeiRecipeTypes.isStaticRecipeType(recipeType)) {
+            callback.setReturnValue(Optional.of(GoetyRecipeTransferHandler.INSTANCE));
         }
     }
 }
