@@ -1,9 +1,12 @@
 package com.wjx.forge.projectexa.mixin;
 
 import com.wjx.forge.projectexa.integrations.jei.UniversalArcaneCraftingRecipeTransferHandler;
+import com.wjx.forge.projectexa.integrations.jei.GoetyRitualTransferHandler;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,11 +23,20 @@ public class JeiRecipeTransferManagerMixin {
     private void projectexa$addUniversalCraftingTransferHandler(
             AbstractContainerMenu container, IRecipeCategory<?> recipeCategory,
             CallbackInfoReturnable<Optional<?>> callback) {
-        if (callback.getReturnValue().isPresent()
-                || recipeCategory.getRecipeType() != RecipeTypes.CRAFTING) {
+        if (callback.getReturnValue().isPresent()) {
             return;
         }
 
-        callback.setReturnValue(Optional.of(UniversalArcaneCraftingRecipeTransferHandler.INSTANCE));
+        if (recipeCategory.getRecipeType() == RecipeTypes.CRAFTING) {
+            callback.setReturnValue(Optional.of(UniversalArcaneCraftingRecipeTransferHandler.INSTANCE));
+            return;
+        }
+
+        ResourceLocation recipeType = recipeCategory.getRecipeType().getUid();
+        if (ModList.get().isLoaded("goety")
+                && "goety".equals(recipeType.getNamespace())
+                && ("ritual".equals(recipeType.getPath()) || recipeType.getPath().startsWith("ritual_"))) {
+            callback.setReturnValue(Optional.of(GoetyRitualTransferHandler.INSTANCE));
+        }
     }
 }

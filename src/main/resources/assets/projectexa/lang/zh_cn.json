@@ -587,6 +587,7 @@
   "key.categories.projectexa": "Project Expansion: Arcanum",
   "key.projectexa.open_arcane_transmutation_table": "打开奥术转化桌（支持JEI大配方）",
   "jei.projectexa.transfer.to_arcane_transmutation_table": "转移到奥术转化桌合成",
+  "jei.projectexa.goety.transmute": "从奥术转化桌转化缺失的仪式材料",
   "gui.projectexa.tacz.transmute": "从奥术转化桌转化配方材料",
   "gui.projectexa.tacz.transmute.tooltip": "从奥术转化桌转化当前配方的材料",
   "gui.projectexa.arcane_transmutation_tablet": "奥术转化桌",

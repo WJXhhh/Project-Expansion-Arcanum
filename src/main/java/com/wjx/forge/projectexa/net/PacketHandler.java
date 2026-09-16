@@ -10,6 +10,7 @@ import com.wjx.forge.projectexa.net.packets.to_server.PacketTeleportToDestinatio
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletOutputUpdate;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketGoetyRitualTransmutation;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTabletWithRecipe;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketStoneTableAction;
@@ -50,6 +51,7 @@ public class PacketHandler {
         registerClientToServer(PacketOpenArcaneTransmutationTabletWithRecipe.class, PacketOpenArcaneTransmutationTabletWithRecipe::decode);
         registerClientToServer(PacketStoneTableAction.class, PacketStoneTableAction::decode);
         registerClientToServer(PacketTaczTransmutation.class, PacketTaczTransmutation::decode);
+        registerClientToServer(PacketGoetyRitualTransmutation.class, PacketGoetyRitualTransmutation::decode);
         registerServerToClient(PacketOpenAlchemicalBookGUI.class, PacketOpenAlchemicalBookGUI::decode);
         registerServerToClient(PacketSyncAlchemicalBookLocations.class, PacketSyncAlchemicalBookLocations::decode);
         registerServerToClient(PacketUpdateWindowLong.class, PacketUpdateWindowLong::decode);

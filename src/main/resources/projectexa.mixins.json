@@ -15,6 +15,7 @@
 		"KnowledgeClearPKTMixin",
 		"UpdateTransmutationTargetsPktMixin",
 		"JeiRecipeTransferManagerMixin",
+		"JeiRecipeTransferButtonMixin",
 		"TaczGunSmithTableScreenMixin"
 	],
 	"mixins": [
