@@ -115,6 +115,7 @@ dependencies {
     implementation "com.mojang:brigadier:1.0.18"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 
+    compileOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
     runtimeOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
     runtimeOnly fg.deobf("curse.maven:ars-nouveau-401955:${getProperty("arsNouveauVersion")}")
     runtimeOnly fg.deobf("curse.maven:botania-225643:${getProperty("botaniaVersion")}")

@@ -2,6 +2,7 @@ package com.wjx.forge.projectexa.events;
 
 import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.integrations.goety.GoetyIntegration;
+import com.wjx.forge.projectexa.integrations.minecraft.MinecraftIntegration;
 import com.wjx.forge.projectexa.integrations.top.TOPIntegration;
 import moze_intel.projecte.integration.IntegrationHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,6 +15,7 @@ public class IMCEvents {
     @SubscribeEvent
     public static void interModEnqueueEvent(InterModEnqueueEvent event) {
         ModList modList = ModList.get();
+        MinecraftIntegration.sendIMC(event);
         if (modList.isLoaded(IntegrationHelper.TOP_MODID)) {
             TOPIntegration.sendIMC(event);
         }
