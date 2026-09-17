@@ -112,6 +112,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${getProperty("minecraft_version")}-${getProperty("forgeVersion")}"
     implementation fg.deobf("curse.maven:projecte-226410:${getProperty("projecteVersion")}")
+    compileOnly fg.deobf("curse.maven:inventory-profiles-next-495267:7565992")
     implementation "com.mojang:brigadier:1.0.18"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 

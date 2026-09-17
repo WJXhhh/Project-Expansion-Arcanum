@@ -9,6 +9,7 @@ import com.wjx.forge.projectexa.util.EMCFormat;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.container.inventory.TransmutationInventory;
 import moze_intel.projecte.gameObjs.gui.PEContainerScreen;
+import org.anti_ad.mc.ipn.api.IPNIgnore;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,6 +25,7 @@ import org.lwjgl.glfw.GLFW;
 import java.math.BigInteger;
 import java.util.Locale;
 
+@IPNIgnore
 public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArcaneTransmutationTablet> {
     private static final ResourceLocation TEXTURE = Main.rl("textures/gui/arcane_transmutation_tablet.png");
     private final TransmutationInventory inventory;
