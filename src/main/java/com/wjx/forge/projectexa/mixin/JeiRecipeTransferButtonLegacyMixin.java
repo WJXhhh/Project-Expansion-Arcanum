@@ -7,23 +7,18 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.function.Supplier;
-
-/** Uses the ProjectExA transfer icon for supported integration JEI buttons. */
+/** JEI 15.19 and earlier variant of the transfer button mixin. */
 @Pseudo
 @Mixin(targets = "mezz.jei.gui.recipes.RecipeTransferButton", remap = false)
-public abstract class JeiRecipeTransferButtonMixin {
+public abstract class JeiRecipeTransferButtonLegacyMixin {
     private static final ThreadLocal<Boolean> PROJECTEXA$SUPPORTED_RECIPE = new ThreadLocal<>();
 
     @Inject(
             method = "create(Lmezz/jei/api/gui/IRecipeLayoutDrawable;"
-                    + "Lmezz/jei/common/transfer/RecipeTransferService;"
-                    + "Ljava/util/function/Supplier;"
                     + "Ljava/lang/Runnable;)"
                     + "Lmezz/jei/gui/recipes/RecipeTransferButton;",
             at = @At("HEAD"),
@@ -31,8 +26,6 @@ public abstract class JeiRecipeTransferButtonMixin {
     )
     private static void projectexa$rememberRecipeCategory(
             IRecipeLayoutDrawable<?> recipeLayout,
-            @Coerce Object recipeTransferService,
-            Supplier<?> recipeTransferHandler,
             Runnable onClose,
             CallbackInfoReturnable<?> callbackInfo) {
         PROJECTEXA$SUPPORTED_RECIPE.set(JeiRecipeTransferButtonSupport.isSupportedRecipe(recipeLayout));
@@ -40,9 +33,6 @@ public abstract class JeiRecipeTransferButtonMixin {
 
     @ModifyArg(
             method = "create(Lmezz/jei/api/gui/IRecipeLayoutDrawable;"
-                    + "Lmezz/jei/common/transfer/RecipeTransferService;"
-                    + "Ljava/util/function/Supplier;"
-                    + "Ljava/util/function/BooleanSupplier;"
                     + "Ljava/lang/Runnable;)"
                     + "Lmezz/jei/gui/recipes/RecipeTransferButton;",
             at = @At(
@@ -50,9 +40,6 @@ public abstract class JeiRecipeTransferButtonMixin {
                     target = "Lmezz/jei/gui/recipes/RecipeTransferButton;<init>("
                             + "Lmezz/jei/api/gui/drawable/IDrawable;"
                             + "Lmezz/jei/api/gui/IRecipeLayoutDrawable;"
-                            + "Lmezz/jei/common/transfer/RecipeTransferService;"
-                            + "Ljava/util/function/Supplier;"
-                            + "Ljava/util/function/BooleanSupplier;"
                             + "Ljava/lang/Runnable;)V"
             ),
             index = 0,
@@ -66,8 +53,6 @@ public abstract class JeiRecipeTransferButtonMixin {
 
     @Inject(
             method = "create(Lmezz/jei/api/gui/IRecipeLayoutDrawable;"
-                    + "Lmezz/jei/common/transfer/RecipeTransferService;"
-                    + "Ljava/util/function/Supplier;"
                     + "Ljava/lang/Runnable;)"
                     + "Lmezz/jei/gui/recipes/RecipeTransferButton;",
             at = @At("RETURN"),
@@ -75,8 +60,6 @@ public abstract class JeiRecipeTransferButtonMixin {
     )
     private static void projectexa$forgetRecipeCategory(
             IRecipeLayoutDrawable<?> recipeLayout,
-            @Coerce Object recipeTransferService,
-            Supplier<?> recipeTransferHandler,
             Runnable onClose,
             CallbackInfoReturnable<?> callbackInfo) {
         PROJECTEXA$SUPPORTED_RECIPE.remove();

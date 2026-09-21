@@ -1,6 +1,5 @@
 package com.wjx.forge.projectexa.integrations.goety;
 
-import com.Polarice3.Goety.common.crafting.ModRecipeSerializer;
 import moze_intel.projecte.api.mapper.recipe.RecipeTypeMapper;
 import moze_intel.projecte.emc.mappers.recipe.BaseRecipeTypeMapper;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -19,6 +18,6 @@ public class CursedInfuserRecipeMapper extends BaseRecipeTypeMapper {
 
     @Override
     public boolean canHandle(RecipeType<?> recipeType) {
-        return recipeType == ModRecipeSerializer.CURSED_INFUSER.get();
+        return GoetyRecipeTypeResolver.is(recipeType, "cursed_infuser");
     }
 }

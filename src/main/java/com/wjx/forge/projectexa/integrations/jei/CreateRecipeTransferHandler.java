@@ -2,10 +2,9 @@ package com.wjx.forge.projectexa.integrations.jei;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.wjx.forge.projectexa.net.PacketHandler;
-import com.wjx.forge.projectexa.net.packets.to_server.PacketGoetyRitualTransmutation;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketCreateRecipeTransmutation;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.util.Util;
-import com.Polarice3.Goety.common.crafting.RitualRecipe;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -17,11 +16,15 @@ import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.api.proxy.IEMCProxy;
+import moze_intel.projecte.gameObjs.container.inventory.TransmutationInventory;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -30,14 +33,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** Adds the ProjectExA transmutation button to Goety's JEI ritual categories. */
-public final class GoetyRitualTransferHandler
-        implements IRecipeTransferHandler<AbstractContainerMenu, RitualRecipe> {
-    public static final GoetyRitualTransferHandler INSTANCE = new GoetyRitualTransferHandler();
+/** Adds the ProjectExA transmutation button to Create's JEI categories. */
+public final class CreateRecipeTransferHandler
+        implements IRecipeTransferHandler<AbstractContainerMenu, Object> {
+    public static final CreateRecipeTransferHandler INSTANCE = new CreateRecipeTransferHandler();
 
     private static final int GREEN_HIGHLIGHT = 0x6600FF00;
     private static final int YELLOW_HIGHLIGHT = 0x66FFFF00;
     private static final int RED_HIGHLIGHT = 0x66FF0000;
+    private static final int MAX_FALLBACK_OPTIONS = 32;
+
+    private static final RecipeType<Object> RECIPE_TYPE =
+            RecipeType.create(CreateJeiRecipeTypes.NAMESPACE, "processing", Object.class);
 
     private static final IRecipeTransferError HIDDEN = new IRecipeTransferError() {
         @Override
@@ -46,7 +53,7 @@ public final class GoetyRitualTransferHandler
         }
     };
 
-    private GoetyRitualTransferHandler() {
+    private CreateRecipeTransferHandler() {
     }
 
     @Override
@@ -60,34 +67,94 @@ public final class GoetyRitualTransferHandler
     }
 
     @Override
-    public RecipeType<RitualRecipe> getRecipeType() {
-        return RecipeType.create("goety", "ritual", RitualRecipe.class);
+    public RecipeType<Object> getRecipeType() {
+        // This handler is supplied directly by the transfer-manager mixin rather
+        // than registered against one particular JEI recipe type.
+        return RECIPE_TYPE;
     }
 
     @Override
-    public @Nullable IRecipeTransferError transferRecipe(AbstractContainerMenu container, RitualRecipe recipe,
+    public @Nullable IRecipeTransferError transferRecipe(AbstractContainerMenu container, Object recipe,
                                                           IRecipeSlotsView slots, Player player, boolean transferAll,
                                                           boolean doTransfer) {
-        if (recipe == null || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) {
+        if (!isSupportedRecipe(recipe) || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) {
+            return HIDDEN;
+        }
+
+        List<IRecipeSlotView> materialSlots = getMaterialSlots(slots);
+        if (materialSlots.isEmpty()) {
             return HIDDEN;
         }
 
         if (doTransfer) {
-            PacketHandler.sendToServer(new PacketGoetyRitualTransmutation(recipe.getId()));
+            PacketCreateRecipeTransmutation packet = createPacket(recipe, materialSlots);
+            if (packet == null) {
+                return HIDDEN;
+            }
+            PacketHandler.sendToServer(packet);
             return null;
         }
 
-        return new StatusRenderer(slots, classifyInputs(slots, player));
+        return new StatusRenderer(materialSlots, classifyInputs(materialSlots, player));
     }
 
-    private static List<Status> classifyInputs(IRecipeSlotsView slots, Player player) {
-        List<Status> statuses = new ArrayList<>();
+    private static boolean isSupportedRecipe(Object recipe) {
+        if (!(recipe instanceof Recipe<?> minecraftRecipe)) {
+            return false;
+        }
+        ResourceLocation recipeType = BuiltInRegistries.RECIPE_TYPE.getKey(minecraftRecipe.getType());
+        return CreateJeiRecipeTypes.isSupportedRecipeType(recipeType);
+    }
+
+    private static List<IRecipeSlotView> getMaterialSlots(IRecipeSlotsView slots) {
+        // Create puts both visible item ingredients and the invisible repeated
+        // inputs of sequenced assembly under INPUT. Fluid inputs have no item
+        // stacks and are intentionally left unhighlighted and unconverted.
+        return new ArrayList<>(slots.getSlotViews(RecipeIngredientRole.INPUT));
+    }
+
+    @Nullable
+    private static PacketCreateRecipeTransmutation createPacket(Object recipe,
+                                                                 List<IRecipeSlotView> materialSlots) {
+        if (!(recipe instanceof Recipe<?> minecraftRecipe)) {
+            return null;
+        }
+
+        ResourceLocation recipeType = BuiltInRegistries.RECIPE_TYPE.getKey(minecraftRecipe.getType());
+        if (!CreateJeiRecipeTypes.isSupportedRecipeType(recipeType)) {
+            return null;
+        }
+
+        ResourceLocation recipeId = minecraftRecipe.getId();
+        if (recipeId != null && recipeId.getPath().isEmpty()) {
+            recipeId = null;
+        }
+
+        List<List<ItemStack>> fallbackIngredients = new ArrayList<>();
+        for (IRecipeSlotView slot : materialSlots) {
+            List<ItemStack> options = slot.getItemStacks()
+                    .filter(stack -> !stack.isEmpty())
+                    .map(stack -> stack.copyWithCount(1))
+                    .limit(MAX_FALLBACK_OPTIONS)
+                    .toList();
+            if (!options.isEmpty()) {
+                fallbackIngredients.add(options);
+            }
+        }
+
+        return new PacketCreateRecipeTransmutation(recipeType, recipeId, fallbackIngredients);
+    }
+
+    private static List<Status> classifyInputs(List<IRecipeSlotView> materialSlots, Player player) {
+        List<Status> statuses = new ArrayList<>(materialSlots.size());
         List<ItemStack> inventory = copyInventory(player);
         IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
         BigInteger availableEmc = provider == null ? BigInteger.ZERO : getAvailableEmc(provider);
 
-        for (IRecipeSlotView slot : slots.getSlotViews(RecipeIngredientRole.INPUT)) {
-            List<ItemStack> candidates = slot.getItemStacks().filter(stack -> !stack.isEmpty()).toList();
+        for (IRecipeSlotView slot : materialSlots) {
+            List<ItemStack> candidates = slot.getItemStacks()
+                    .filter(stack -> !stack.isEmpty())
+                    .toList();
             if (candidates.isEmpty()) {
                 statuses.add(Status.NONE);
                 continue;
@@ -198,7 +265,8 @@ public final class GoetyRitualTransferHandler
     private record Candidate(ItemStack stack, BigInteger cost) {
     }
 
-    private record StatusRenderer(IRecipeSlotsView slots, List<Status> statuses) implements IRecipeTransferError {
+    private record StatusRenderer(List<IRecipeSlotView> slots, List<Status> statuses)
+            implements IRecipeTransferError {
         @Override
         public Type getType() {
             return Type.COSMETIC;
@@ -211,7 +279,7 @@ public final class GoetyRitualTransferHandler
 
         @Override
         public void getTooltip(ITooltipBuilder tooltip) {
-            tooltip.add(Component.translatable("jei.projectexa.goety.transmute"));
+            tooltip.add(Component.translatable("jei.projectexa.create.transmute"));
         }
 
         @Override
@@ -220,12 +288,11 @@ public final class GoetyRitualTransferHandler
             PoseStack pose = graphics.pose();
             pose.pushPose();
             pose.translate(recipeX, recipeY, 0);
-            List<IRecipeSlotView> inputs = slots.getSlotViews(RecipeIngredientRole.INPUT);
-            int count = Math.min(inputs.size(), statuses.size());
+            int count = Math.min(slots.size(), statuses.size());
             for (int index = 0; index < count; index++) {
                 Status status = statuses.get(index);
                 if (status.highlight != 0) {
-                    inputs.get(index).drawHighlight(graphics, status.highlight);
+                    slots.get(index).drawHighlight(graphics, status.highlight);
                 }
             }
             pose.popPose();

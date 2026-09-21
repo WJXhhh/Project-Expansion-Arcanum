@@ -1,7 +1,5 @@
 package com.wjx.forge.projectexa.integrations.goety;
 
-import com.Polarice3.Goety.common.crafting.CauldronRecipe;
-import com.Polarice3.Goety.common.crafting.ModRecipeSerializer;
 import moze_intel.projecte.api.mapper.recipe.RecipeTypeMapper;
 import moze_intel.projecte.emc.mappers.recipe.BaseRecipeTypeMapper;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -25,15 +23,14 @@ public class CauldronRecipeMapper extends BaseRecipeTypeMapper {
 
     @Override
     public boolean canHandle(RecipeType<?> recipeType) {
-        return recipeType == ModRecipeSerializer.CAULDRON_TYPE.get();
+        return GoetyRecipeTypeResolver.is(recipeType, "cauldron");
     }
 
     @Override
     protected Collection<Ingredient> getIngredients(Recipe<?> recipe) {
-        CauldronRecipe cauldronRecipe = (CauldronRecipe) recipe;
         Collection<Ingredient> ingredients = new ArrayList<>(super.getIngredients(recipe));
-        Ingredient takeWith = cauldronRecipe.getTakeWith();
-        if (!takeWith.isEmpty()) {
+        Ingredient takeWith = GoetyRecipeTypeResolver.getCauldronTakeWith(recipe);
+        if (takeWith != null && !takeWith.isEmpty()) {
             // Goety consumes the take_with item when the cauldron product is collected.
             ingredients.add(takeWith);
         }

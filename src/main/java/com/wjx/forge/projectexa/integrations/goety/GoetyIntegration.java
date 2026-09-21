@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public final class GoetyIntegration {
     public static final String MOD_ID = "goety";
@@ -221,6 +222,13 @@ public final class GoetyIntegration {
     }
 
     private static void registerEMC(String itemPath, long emc) {
-        registerEMC(NSSItem.createItem(new ResourceLocation(MOD_ID, itemPath)), emc);
+        ResourceLocation itemId = new ResourceLocation(MOD_ID, itemPath);
+        if (!ForgeRegistries.ITEMS.containsKey(itemId)) {
+            // Some Goety releases add or rename items without removing the
+            // integration from their dependency list. Do not send ProjectE an
+            // NSS entry for an item that this release does not register.
+            return;
+        }
+        registerEMC(NSSItem.createItem(itemId), emc);
     }
 }

@@ -237,10 +237,18 @@ public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, 
 
     public long getItemCharge() {
         ItemStack upgrading = getUpgrading();
-        if (!upgrading.isEmpty()) {
-            return upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY).map(emcHolder -> emcHolder.getStoredEmc(upgrading)).orElse(-1L);
+        if (upgrading.isEmpty()) {
+            return -1L;
         }
-        return -1;
+
+        Optional<IItemEmcHolder> emcHolder = upgrading
+                .getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY)
+                .resolve();
+        if (emcHolder.isEmpty()) {
+            return -1L;
+        }
+
+        return emcHolder.get().getStoredEmc(upgrading);
     }
 
     public double getItemChargeProportion() {

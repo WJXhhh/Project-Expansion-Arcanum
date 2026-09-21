@@ -1,7 +1,6 @@
 package com.wjx.forge.projectexa.integrations.goety;
 
-import com.Polarice3.Goety.common.crafting.CauldronRecipe;
-import com.Polarice3.Goety.common.crafting.ModRecipeSerializer;
+import com.Polarice3.Goety.common.crafting.BrewingRecipe;
 import com.Polarice3.Goety.common.effects.brew.BrewEffects;
 import com.wjx.forge.projectexa.util.Util;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
@@ -14,8 +13,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.Container;
 
 import javax.annotation.Nullable;
 import java.math.BigInteger;
@@ -94,38 +91,17 @@ public final class GoetyRecipeIntegration {
         }
 
         List<Ingredient> ingredients = new ArrayList<>(recipe.getIngredients());
-        if (recipe instanceof CauldronRecipe cauldronRecipe) {
-            Ingredient takeWith = cauldronRecipe.getTakeWith();
-            if (takeWith != null && !takeWith.isEmpty()) {
-                // Goety consumes this item when the cauldron product is collected.
-                ingredients.add(takeWith);
-            }
+        Ingredient takeWith = GoetyRecipeTypeResolver.getCauldronTakeWith(recipe);
+        if (takeWith != null && !takeWith.isEmpty()) {
+            // Goety consumes this item when the cauldron product is collected.
+            ingredients.add(takeWith);
         }
         return ingredients;
     }
 
     @Nullable
     private static Recipe<?> findRecipe(RecipeManager recipeManager, String path, ResourceLocation recipeId) {
-        return switch (path) {
-            case "cursed_infuser" -> findRecipe(recipeManager,
-                    ModRecipeSerializer.CURSED_INFUSER.get(), recipeId);
-            case "brazier" -> findRecipe(recipeManager,
-                    ModRecipeSerializer.BRAZIER_TYPE.get(), recipeId);
-            case "cauldron" -> findRecipe(recipeManager,
-                    ModRecipeSerializer.CAULDRON_TYPE.get(), recipeId);
-            case "pulverize" -> findRecipe(recipeManager,
-                    ModRecipeSerializer.PULVERIZE_TYPE.get(), recipeId);
-            case "soul_absorber" -> findRecipe(recipeManager,
-                    ModRecipeSerializer.SOUL_ABSORBER.get(), recipeId);
-            default -> null;
-        };
-    }
-
-    @Nullable
-    private static <C extends Container, T extends Recipe<C>> T findRecipe(RecipeManager recipeManager,
-                                                                            RecipeType<T> recipeType,
-                                                                            ResourceLocation recipeId) {
-        return recipeManager.getAllRecipesFor(recipeType).stream()
+        return GoetyRecipeTypeResolver.getRecipes(recipeManager, path).stream()
                 .filter(recipe -> recipe.getId().equals(recipeId))
                 .findFirst()
                 .orElse(null);
@@ -138,7 +114,9 @@ public final class GoetyRecipeIntegration {
             return null;
         }
 
-        boolean hasRecipe = recipeManager.getAllRecipesFor(ModRecipeSerializer.BREWING_TYPE.get()).stream()
+        boolean hasRecipe = GoetyRecipeTypeResolver.getRecipes(recipeManager, "brewing").stream()
+                .filter(recipe -> recipe instanceof BrewingRecipe)
+                .map(recipe -> (BrewingRecipe) recipe)
                 .anyMatch(recipe -> recipe.getInput().test(catalyst));
         boolean hasBuiltInEffect = BrewEffects.INSTANCE != null
                 && BrewEffects.INSTANCE.getEffectFromCatalyst(catalyst.getItem()) != null;

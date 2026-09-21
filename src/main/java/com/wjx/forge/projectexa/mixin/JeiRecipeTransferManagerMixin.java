@@ -1,6 +1,12 @@
 package com.wjx.forge.projectexa.mixin;
 
 import com.wjx.forge.projectexa.integrations.jei.UniversalArcaneCraftingRecipeTransferHandler;
+import com.wjx.forge.projectexa.integrations.jei.ArsNouveauJeiRecipeTypes;
+import com.wjx.forge.projectexa.integrations.jei.ArsNouveauRecipeTransferHandler;
+import com.wjx.forge.projectexa.integrations.jei.BotaniaJeiRecipeTypes;
+import com.wjx.forge.projectexa.integrations.jei.BotaniaRecipeTransferHandler;
+import com.wjx.forge.projectexa.integrations.jei.CreateJeiRecipeTypes;
+import com.wjx.forge.projectexa.integrations.jei.CreateRecipeTransferHandler;
 import com.wjx.forge.projectexa.integrations.jei.GoetyJeiRecipeTypes;
 import com.wjx.forge.projectexa.integrations.jei.GoetyRecipeTransferHandler;
 import com.wjx.forge.projectexa.integrations.jei.GoetyRitualTransferHandler;
@@ -39,6 +45,12 @@ public class JeiRecipeTransferManagerMixin {
             callback.setReturnValue(Optional.of(GoetyRitualTransferHandler.INSTANCE));
         } else if (ModList.get().isLoaded("goety") && GoetyJeiRecipeTypes.isStaticRecipeType(recipeType)) {
             callback.setReturnValue(Optional.of(GoetyRecipeTransferHandler.INSTANCE));
+        } else if (ModList.get().isLoaded("ars_nouveau") && ArsNouveauJeiRecipeTypes.isSupported(recipeType)) {
+            callback.setReturnValue(Optional.of(ArsNouveauRecipeTransferHandler.INSTANCE));
+        } else if (ModList.get().isLoaded("botania") && BotaniaJeiRecipeTypes.isSupported(recipeType)) {
+            callback.setReturnValue(Optional.of(BotaniaRecipeTransferHandler.INSTANCE));
+        } else if (ModList.get().isLoaded("create") && CreateJeiRecipeTypes.isSupported(recipeType)) {
+            callback.setReturnValue(Optional.of(CreateRecipeTransferHandler.INSTANCE));
         }
     }
 }

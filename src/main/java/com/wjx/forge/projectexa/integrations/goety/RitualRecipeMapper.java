@@ -1,6 +1,5 @@
 package com.wjx.forge.projectexa.integrations.goety;
 
-import com.Polarice3.Goety.common.crafting.ModRecipeSerializer;
 import com.Polarice3.Goety.common.crafting.RitualRecipe;
 import moze_intel.projecte.api.mapper.collector.IMappingCollector;
 import moze_intel.projecte.api.mapper.recipe.INSSFakeGroupManager;
@@ -36,7 +35,7 @@ public class RitualRecipeMapper extends BaseRecipeTypeMapper {
 
     @Override
     public boolean canHandle(RecipeType<?> recipeType) {
-        return recipeType == ModRecipeSerializer.RITUAL_TYPE.get();
+        return GoetyRecipeTypeResolver.is(recipeType, "ritual");
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.wjx.forge.projectexa.gui.GUIStoneTable;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
+import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.runtime.IClickableIngredient;
@@ -57,6 +58,10 @@ public class StoneTableJeiHandler implements IGuiContainerHandler<GUIStoneTable>
         @Override
         public ItemStack getIngredient() {
             return stack;
+        }
+
+        public ITypedIngredient<ItemStack> normalize(IIngredientHelper<ItemStack> ingredientHelper) {
+            return new TypedIngredient(ingredientHelper.normalizeIngredient(stack));
         }
     }
 }

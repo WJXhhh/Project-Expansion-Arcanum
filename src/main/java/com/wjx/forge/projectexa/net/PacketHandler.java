@@ -12,6 +12,9 @@ import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationT
 import com.wjx.forge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketGoetyRitualTransmutation;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketGoetyRecipeTransmutation;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketArsNouveauRecipeTransmutation;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketBotaniaRecipeTransmutation;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketCreateRecipeTransmutation;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTabletWithRecipe;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketStoneTableAction;
@@ -54,6 +57,9 @@ public class PacketHandler {
         registerClientToServer(PacketTaczTransmutation.class, PacketTaczTransmutation::decode);
         registerClientToServer(PacketGoetyRitualTransmutation.class, PacketGoetyRitualTransmutation::decode);
         registerClientToServer(PacketGoetyRecipeTransmutation.class, PacketGoetyRecipeTransmutation::decode);
+        registerClientToServer(PacketArsNouveauRecipeTransmutation.class, PacketArsNouveauRecipeTransmutation::decode);
+        registerClientToServer(PacketBotaniaRecipeTransmutation.class, PacketBotaniaRecipeTransmutation::decode);
+        registerClientToServer(PacketCreateRecipeTransmutation.class, PacketCreateRecipeTransmutation::decode);
         registerServerToClient(PacketOpenAlchemicalBookGUI.class, PacketOpenAlchemicalBookGUI::decode);
         registerServerToClient(PacketSyncAlchemicalBookLocations.class, PacketSyncAlchemicalBookLocations::decode);
         registerServerToClient(PacketUpdateWindowLong.class, PacketUpdateWindowLong::decode);

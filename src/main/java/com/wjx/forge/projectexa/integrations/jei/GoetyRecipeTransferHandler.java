@@ -1,13 +1,12 @@
 package com.wjx.forge.projectexa.integrations.jei;
 
 import com.Polarice3.Goety.common.crafting.BrazierRecipe;
-import com.Polarice3.Goety.common.crafting.CauldronRecipe;
 import com.Polarice3.Goety.common.crafting.CursedInfuserRecipes;
 import com.Polarice3.Goety.common.crafting.PulverizeRecipe;
 import com.Polarice3.Goety.common.crafting.SoulAbsorberRecipes;
-import com.Polarice3.Goety.compat.jei.JeiRecipeTypes;
 import com.Polarice3.Goety.compat.jei.WitchBrewJeiRecipe;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.wjx.forge.projectexa.integrations.goety.GoetyRecipeTypeResolver;
 import com.wjx.forge.projectexa.net.PacketHandler;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketGoetyRecipeTransmutation;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
@@ -72,12 +71,11 @@ public final class GoetyRecipeTransferHandler
         return Optional.empty();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public RecipeType<Object> getRecipeType() {
         // This handler is supplied directly by the transfer-manager mixin rather
         // than registered against one particular JEI recipe type.
-        return (RecipeType) JeiRecipeTypes.CURSED_INFUSER;
+        return RecipeType.create("goety", "cursed_infuser", Object.class);
     }
 
     @Override
@@ -108,7 +106,7 @@ public final class GoetyRecipeTransferHandler
     private static boolean isSupportedRecipe(Object recipe) {
         return recipe instanceof CursedInfuserRecipes
                 || recipe instanceof BrazierRecipe
-                || recipe instanceof CauldronRecipe
+                || isRecipeType(recipe, "cauldron")
                 || recipe instanceof PulverizeRecipe
                 || recipe instanceof SoulAbsorberRecipes
                 || recipe instanceof WitchBrewJeiRecipe;
@@ -133,8 +131,8 @@ public final class GoetyRecipeTransferHandler
     private static List<IRecipeSlotView> getMaterialSlots(Object recipe, IRecipeSlotsView slots, Player player) {
         List<IRecipeSlotView> materialSlots = new ArrayList<>(slots.getSlotViews(RecipeIngredientRole.INPUT));
 
-        if (recipe instanceof CauldronRecipe cauldronRecipe) {
-            Ingredient takeWith = cauldronRecipe.getTakeWith();
+        if (isRecipeType(recipe, "cauldron") && recipe instanceof Recipe<?> minecraftRecipe) {
+            Ingredient takeWith = GoetyRecipeTypeResolver.getCauldronTakeWith(minecraftRecipe);
             if (takeWith != null && !takeWith.isEmpty()) {
                 findLastMatchingIngredient(slots.getSlotViews(RecipeIngredientRole.CATALYST), takeWith)
                         .ifPresent(materialSlots::add);
@@ -146,6 +144,11 @@ public final class GoetyRecipeTransferHandler
         }
 
         return materialSlots;
+    }
+
+    private static boolean isRecipeType(Object recipe, String path) {
+        return recipe instanceof Recipe<?> minecraftRecipe
+                && GoetyRecipeTypeResolver.is(minecraftRecipe.getType(), path);
     }
 
     private static Optional<IRecipeSlotView> findLastMatchingIngredient(List<IRecipeSlotView> slots,

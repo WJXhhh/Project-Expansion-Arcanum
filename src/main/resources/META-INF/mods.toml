@@ -60,3 +60,24 @@ mandatory = false
 versionRange = "*"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.projectexa]]
+modId = "ars_nouveau"
+mandatory = false
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.projectexa]]
+modId = "botania"
+mandatory = false
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.projectexa]]
+modId = "create"
+mandatory = false
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"

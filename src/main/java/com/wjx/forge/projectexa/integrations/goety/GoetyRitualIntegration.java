@@ -1,7 +1,6 @@
 package com.wjx.forge.projectexa.integrations.goety;
 
 import com.wjx.forge.projectexa.util.Util;
-import com.Polarice3.Goety.common.crafting.ModRecipeSerializer;
 import com.Polarice3.Goety.common.crafting.RitualRecipe;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -66,8 +65,9 @@ public final class GoetyRitualIntegration {
 
     @Nullable
     private static RitualRecipe findRecipe(RecipeManager recipeManager, ResourceLocation recipeId) {
-        return recipeManager.getAllRecipesFor(ModRecipeSerializer.RITUAL_TYPE.get()).stream()
-                .filter(recipe -> recipe.getId().equals(recipeId))
+        return GoetyRecipeTypeResolver.getRecipes(recipeManager, "ritual").stream()
+                .filter(recipe -> recipe instanceof RitualRecipe && recipe.getId().equals(recipeId))
+                .map(recipe -> (RitualRecipe) recipe)
                 .findFirst()
                 .orElse(null);
     }
