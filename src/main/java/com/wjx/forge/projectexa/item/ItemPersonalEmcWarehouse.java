@@ -5,6 +5,7 @@ import com.wjx.forge.projectexa.integrations.tacz.TaczIntegration;
 import com.wjx.forge.projectexa.util.EMCFormat;
 import com.wjx.forge.projectexa.util.TagNames;
 import com.wjx.forge.projectexa.util.Util;
+import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.integration.IntegrationHelper;
@@ -27,16 +28,21 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class ItemPersonalEmcWarehouse extends ItemPE {
-    /** Temporarily disabled until the personal EMC warehouse is complete. */
-    public static final boolean ENABLED = false;
+    /** Enables the personal EMC warehouse and its inventory integrations. */
+    public static final boolean ENABLED = true;
     public static final int FILTER_SLOTS = 27;
     private static final String FILTERS = "Filters";
     private static final String WAREHOUSE_ID = "WarehouseId";
+    private static final String AVAILABLE_FILTERS = "AvailableFilters";
+    private static final String AVAILABLE_FILTER_COUNTS = "AvailableFilterCounts";
+    private static final int MAX_CLIENT_AVAILABLE_COUNT = 9_999;
 
     public ItemPersonalEmcWarehouse() {
         super(new Properties().rarity(Rarity.EPIC).stacksTo(1).fireResistant());
@@ -99,6 +105,8 @@ public class ItemPersonalEmcWarehouse extends ItemPE {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putUUID(TagNames.OWNER, player.getUUID());
         tag.putString(TagNames.OWNER_NAME, player.getGameProfile().getName());
+        tag.remove(AVAILABLE_FILTERS);
+        tag.remove(AVAILABLE_FILTER_COUNTS);
         if (!tag.hasUUID(WAREHOUSE_ID)) {
             tag.putUUID(WAREHOUSE_ID, UUID.randomUUID());
         }
@@ -147,6 +155,87 @@ public class ItemPersonalEmcWarehouse extends ItemPE {
         } else {
             root.put(FILTERS, filters);
         }
+        root.remove(AVAILABLE_FILTERS);
+        root.remove(AVAILABLE_FILTER_COUNTS);
+    }
+
+    /**
+     * Updates the compact server-authoritative availability snapshot stored on the
+     * warehouse. The snapshot lets client-side item handlers (notably TACZ reload
+     * prediction) make the same decision as the server even when another player
+     * owns the bound EMC account.
+     *
+     * @return whether the stack NBT changed and needs to be synced to its holder
+     */
+    public static boolean refreshAvailability(ItemStack warehouse) {
+        long availableFilters = 0L;
+        int[] availableFilterCounts = new int[FILTER_SLOTS];
+        ServerPlayer owner = getOwner(warehouse).map(Util::getPlayer).orElse(null);
+        IKnowledgeProvider provider = owner == null ? null : Util.getKnowledgeProvider(owner);
+        if (provider != null) {
+            BigInteger emc = provider.getEmc();
+            for (int slot = 0; slot < FILTER_SLOTS; slot++) {
+                ItemStack filter = getFilter(warehouse, slot);
+                if (filter.isEmpty()) {
+                    continue;
+                }
+                long value = IEMCProxy.INSTANCE.getValue(filter);
+                int available = value > 0 && provider.hasKnowledge(filter)
+                        ? owner.isCreative() ? MAX_CLIENT_AVAILABLE_COUNT
+                        : Math.min(MAX_CLIENT_AVAILABLE_COUNT,
+                        Util.safeIntValue(emc.divide(BigInteger.valueOf(value)))) : 0;
+                if (available > 0) {
+                    availableFilters |= 1L << slot;
+                    availableFilterCounts[slot] = available;
+                }
+            }
+        }
+
+        CompoundTag tag = warehouse.getOrCreateTag();
+        boolean changed = !tag.contains(AVAILABLE_FILTERS, Tag.TAG_LONG)
+                || tag.getLong(AVAILABLE_FILTERS) != availableFilters
+                || !tag.contains(AVAILABLE_FILTER_COUNTS, Tag.TAG_INT_ARRAY)
+                || !Arrays.equals(tag.getIntArray(AVAILABLE_FILTER_COUNTS), availableFilterCounts);
+        if (changed) {
+            tag.putLong(AVAILABLE_FILTERS, availableFilters);
+            tag.putIntArray(AVAILABLE_FILTER_COUNTS, availableFilterCounts);
+        }
+        return changed;
+    }
+
+    public static boolean hasAvailabilitySnapshot(ItemStack warehouse) {
+        CompoundTag tag = warehouse.getTag();
+        return tag != null && (tag.contains(AVAILABLE_FILTER_COUNTS, Tag.TAG_INT_ARRAY)
+                || tag.contains(AVAILABLE_FILTERS, Tag.TAG_LONG));
+    }
+
+    public static boolean hasAvailabilityCountSnapshot(ItemStack warehouse) {
+        CompoundTag tag = warehouse.getTag();
+        return tag != null && tag.contains(AVAILABLE_FILTER_COUNTS, Tag.TAG_INT_ARRAY);
+    }
+
+    public static boolean isFilterAvailableSnapshot(ItemStack warehouse, int slot) {
+        CompoundTag tag = warehouse.getTag();
+        if (slot < 0 || slot >= FILTER_SLOTS || tag == null) {
+            return false;
+        }
+        if (hasAvailabilityCountSnapshot(warehouse)) {
+            return getFilterAvailableCountSnapshot(warehouse, slot) > 0;
+        }
+        return tag.contains(AVAILABLE_FILTERS, Tag.TAG_LONG)
+                && (tag.getLong(AVAILABLE_FILTERS) & (1L << slot)) != 0;
+    }
+
+    public static int getFilterAvailableCountSnapshot(ItemStack warehouse, int slot) {
+        CompoundTag tag = warehouse.getTag();
+        if (slot < 0 || slot >= FILTER_SLOTS || tag == null) {
+            return 0;
+        }
+        if (hasAvailabilityCountSnapshot(warehouse)) {
+            int[] counts = tag.getIntArray(AVAILABLE_FILTER_COUNTS);
+            return slot < counts.length ? Math.max(0, counts[slot]) : 0;
+        }
+        return 0;
     }
 
     public static int getFilterCount(ItemStack warehouse) {

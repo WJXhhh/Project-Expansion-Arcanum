@@ -1,5 +1,6 @@
 package com.wjx.forge.projectexa.integrations.tacz;
 
+import com.wjx.forge.projectexa.item.EmcWarehouseInventoryHandler;
 import com.wjx.forge.projectexa.mixin.TaczGunSmithTableMenuAccessor;
 import com.wjx.forge.projectexa.util.Util;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
@@ -11,14 +12,18 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.container.inventory.TransmutationInventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
 
 import java.math.BigInteger;
 import java.util.List;
 
-/** Server-side TACZ integration. All validation happens again on the server. */
+/** TACZ integration. All inventory mutations are validated again on the server. */
 public final class TaczIntegration {
     private static final int MAX_INPUTS = 64;
+    public static final int MAX_HUD_AMMO_COUNT = 9_999;
 
     private TaczIntegration() {
     }
@@ -26,6 +31,17 @@ public final class TaczIntegration {
     /** TACZ stores the concrete ammunition id in NBT on a shared ammo item. */
     public static boolean isAmmo(ItemStack stack) {
         return stack.getItem() instanceof IAmmo;
+    }
+
+    public static int getWarehouseAmmoCount(Player player, ItemStack gunStack) {
+        IItemHandler itemHandler = player.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+        if (!(itemHandler instanceof EmcWarehouseInventoryHandler warehouseHandler)) {
+            return 0;
+        }
+        return warehouseHandler.countMatchingWarehouseItems(available ->
+                        available.getItem() instanceof IAmmo ammo
+                                && ammo.isAmmoOfGun(gunStack, available),
+                MAX_HUD_AMMO_COUNT);
     }
 
     public static void transmute(ServerPlayer player, ResourceLocation recipeId,

@@ -1,9 +1,13 @@
 package com.wjx.forge.projectexa;
 
 import com.wjx.forge.projectexa.config.Config;
+import com.wjx.forge.projectexa.item.ItemPersonalEmcWarehouse;
 import com.wjx.forge.projectexa.net.PacketHandler;
 import com.wjx.forge.projectexa.registries.*;
 import com.wjx.forge.projectexa.util.*;
+import moze_intel.projecte.integration.IntegrationHelper;
+import moze_intel.projecte.integration.curios.CuriosIntegration;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
@@ -13,10 +17,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Objects;
@@ -53,6 +59,13 @@ public class Main {
         for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                 ItemStack stack = player.getInventory().getItem(i);
+                if (stack.getItem() instanceof ItemPersonalEmcWarehouse
+                        && ItemPersonalEmcWarehouse.isBound(stack)
+                        && ItemPersonalEmcWarehouse.refreshAvailability(stack)) {
+                    player.getInventory().setChanged();
+                    player.connection.send(new ClientboundContainerSetSlotPacket(
+                            ClientboundContainerSetSlotPacket.PLAYER_INVENTORY, 0, i, stack));
+                }
                 if (stack.getItem().equals(Items.INFINITE_FUEL.get())) {
                     stack.getOrCreateTag().putUUID(TagNames.OWNER, player.getUUID());
                     continue;
@@ -60,6 +73,18 @@ public class Main {
                 boolean hasEnch = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.ALCHEMICAL_COLLECTION.get(), stack) > 0;
                 if(hasEnch && !stack.getOrCreateTag().contains(TagNames.ALCHEMICAL_COLLECTION_ENABLED)) {
                     stack.getOrCreateTag().putBoolean(TagNames.ALCHEMICAL_COLLECTION_ENABLED, true);
+                }
+            }
+            if (ModList.get().isLoaded(IntegrationHelper.CURIO_MODID)) {
+                IItemHandler curios = CuriosIntegration.getAll(player);
+                if (curios != null) {
+                    for (int slot = 0; slot < curios.getSlots(); slot++) {
+                        ItemStack stack = curios.getStackInSlot(slot);
+                        if (stack.getItem() instanceof ItemPersonalEmcWarehouse
+                                && ItemPersonalEmcWarehouse.isBound(stack)) {
+                            ItemPersonalEmcWarehouse.refreshAvailability(stack);
+                        }
+                    }
                 }
             }
         }

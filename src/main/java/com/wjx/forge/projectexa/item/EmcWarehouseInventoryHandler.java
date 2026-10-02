@@ -3,29 +3,56 @@ package com.wjx.forge.projectexa.item;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 /** Adds bound EMC warehouse slots after an entity's physical inventory slots. */
 public class EmcWarehouseInventoryHandler implements IItemHandler {
     private final LivingEntity holder;
     private final IItemHandler physicalInventory;
+    private final List<IItemHandler> warehouseSources;
 
     public EmcWarehouseInventoryHandler(LivingEntity holder, IItemHandler physicalInventory) {
+        this(holder, physicalInventory, null);
+    }
+
+    public EmcWarehouseInventoryHandler(LivingEntity holder, IItemHandler physicalInventory,
+                                        @Nullable IItemHandler accessoryInventory) {
         this.holder = holder;
         this.physicalInventory = physicalInventory;
+        this.warehouseSources = new ArrayList<>();
+        this.warehouseSources.add(physicalInventory);
+        if (accessoryInventory != null && accessoryInventory != physicalInventory) {
+            this.warehouseSources.add(accessoryInventory);
+        }
     }
 
     public static boolean hasWarehouse(IItemHandler physicalInventory) {
+        return hasWarehouse(physicalInventory, null);
+    }
+
+    public static boolean hasWarehouse(IItemHandler physicalInventory,
+                                       @Nullable IItemHandler accessoryInventory) {
         if (!ItemPersonalEmcWarehouse.ENABLED) {
             return false;
         }
-        for (int slot = 0; slot < physicalInventory.getSlots(); slot++) {
-            ItemStack stack = physicalInventory.getStackInSlot(slot);
-            if (stack.getItem() instanceof ItemPersonalEmcWarehouse
-                    && ItemPersonalEmcWarehouse.isBound(stack)) {
-                return true;
+        IItemHandler[] sources = {physicalInventory, accessoryInventory};
+        for (IItemHandler source : sources) {
+            if (source == null) {
+                continue;
+            }
+            for (int slot = 0; slot < source.getSlots(); slot++) {
+                ItemStack stack = source.getStackInSlot(slot);
+                if (stack.getItem() instanceof ItemPersonalEmcWarehouse
+                        && ItemPersonalEmcWarehouse.isBound(stack)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -86,14 +113,58 @@ public class EmcWarehouseInventoryHandler implements IItemHandler {
 
     private List<ItemStack> warehouses() {
         List<ItemStack> result = new ArrayList<>();
-        for (int slot = 0; slot < physicalInventory.getSlots(); slot++) {
-            ItemStack stack = physicalInventory.getStackInSlot(slot);
-            if (stack.getItem() instanceof ItemPersonalEmcWarehouse
-                    && ItemPersonalEmcWarehouse.isBound(stack)) {
-                result.add(stack);
+        for (IItemHandler source : warehouseSources) {
+            for (int slot = 0; slot < source.getSlots(); slot++) {
+                ItemStack stack = source.getStackInSlot(slot);
+                if (stack.getItem() instanceof ItemPersonalEmcWarehouse
+                        && ItemPersonalEmcWarehouse.isBound(stack)) {
+                    result.add(stack);
+                }
             }
         }
         return result;
+    }
+
+    /**
+     * Counts matching virtual items while treating warehouses bound to the same
+     * player as one EMC pool. The returned value saturates at {@code limit}.
+     */
+    public int countMatchingWarehouseItems(Predicate<ItemStack> predicate, int limit) {
+        if (limit <= 0) {
+            return 0;
+        }
+        Map<UUID, Integer> availableByAccount = new HashMap<>();
+        for (ItemStack warehouse : warehouses()) {
+            UUID owner = ItemPersonalEmcWarehouse.getOwner(warehouse).orElse(null);
+            if (owner == null) {
+                continue;
+            }
+            if (holder.level().isClientSide
+                    && !ItemPersonalEmcWarehouse.hasAvailabilityCountSnapshot(warehouse)
+                    && !owner.equals(holder.getUUID())) {
+                continue;
+            }
+            PersonalEmcWarehouseHandler handler = new PersonalEmcWarehouseHandler(warehouse, holder);
+            int bestAvailable = 0;
+            for (int slot = 0; slot < ItemPersonalEmcWarehouse.FILTER_SLOTS; slot++) {
+                ItemStack available = handler.getStackInSlot(slot);
+                if (!available.isEmpty() && predicate.test(available)) {
+                    bestAvailable = Math.max(bestAvailable, Math.min(limit, available.getCount()));
+                }
+            }
+            if (bestAvailable > 0) {
+                availableByAccount.merge(owner, bestAvailable, Math::max);
+            }
+        }
+
+        int total = 0;
+        for (int available : availableByAccount.values()) {
+            if (available >= limit - total) {
+                return limit;
+            }
+            total += available;
+        }
+        return total;
     }
 
     private record LocatedSlot(IItemHandler handler, int slot) {

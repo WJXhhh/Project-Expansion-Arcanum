@@ -1,0 +1,38 @@
+{
+  "parent": "projectexa:arcane_transmutation_tablet",
+  "criteria": {
+    "personal_emc_warehouse": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "projectexa:personal_emc_warehouse"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.projectexa.personal_emc_warehouse.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "projectexa:personal_emc_warehouse"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.projectexa.personal_emc_warehouse"
+    }
+  },
+  "requirements": [
+    [
+      "personal_emc_warehouse"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

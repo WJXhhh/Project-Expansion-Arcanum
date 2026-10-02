@@ -2,11 +2,14 @@ package com.wjx.forge.projectexa.mixin;
 
 import com.wjx.forge.projectexa.item.EmcWarehouseInventoryHandler;
 import com.wjx.forge.projectexa.item.ItemPersonalEmcWarehouse;
+import moze_intel.projecte.integration.IntegrationHelper;
+import moze_intel.projecte.integration.curios.CuriosIntegration;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,8 +30,11 @@ public class PlayerEmcWarehouseMixin {
         }
         Player player = (Player) (Object) this;
         IItemHandler physical = (IItemHandler) cir.getReturnValue().orElse(null);
-        if (physical != null && EmcWarehouseInventoryHandler.hasWarehouse(physical)) {
-            cir.setReturnValue(LazyOptional.of(() -> new EmcWarehouseInventoryHandler(player, physical)).cast());
+        IItemHandler curios = ModList.get().isLoaded(IntegrationHelper.CURIO_MODID)
+                ? CuriosIntegration.getAll(player) : null;
+        if (physical != null && EmcWarehouseInventoryHandler.hasWarehouse(physical, curios)) {
+            cir.setReturnValue(LazyOptional.of(
+                    () -> new EmcWarehouseInventoryHandler(player, physical, curios)).cast());
         }
     }
 }

@@ -6,6 +6,7 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.utils.PlayerHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
@@ -40,20 +41,24 @@ public class PersonalEmcWarehouseHandler implements IItemHandler {
 
         Access access = getAccess();
         if (access == null) {
-            // Client consumers get an optimistic view for interaction prediction. The
-            // server still fails closed if the bound account is offline.
+            if (isClientSide() && ItemPersonalEmcWarehouse.hasAvailabilityCountSnapshot(warehouse)) {
+                int available = ItemPersonalEmcWarehouse.getFilterAvailableCountSnapshot(warehouse, slot);
+                return available > 0 ? template.copyWithCount(available) : ItemStack.EMPTY;
+            }
+            IKnowledgeProvider clientProvider = getClientOwnerProvider();
+            if (clientProvider != null) {
+                return getAffordableStack(template, clientProvider,
+                        accessingEntity instanceof Player player && player.isCreative());
+            }
+            if (isClientSide() && ItemPersonalEmcWarehouse.isFilterAvailableSnapshot(warehouse, slot)) {
+                return template.copyWithCount(template.getMaxStackSize());
+            }
+            // Newly created or just edited stacks may not have received their first
+            // server snapshot yet. Use local owner data where possible, otherwise
+            // keep the old prediction only for that brief window.
             return isClientSide() ? template.copyWithCount(template.getMaxStackSize()) : ItemStack.EMPTY;
         }
-        if (access.player().isCreative()) {
-            return template.copyWithCount(Integer.MAX_VALUE);
-        }
-
-        long value = IEMCProxy.INSTANCE.getValue(template);
-        if (value <= 0 || !access.provider().hasKnowledge(template)) {
-            return ItemStack.EMPTY;
-        }
-        int affordable = Util.safeIntValue(access.provider().getEmc().divide(BigInteger.valueOf(value)));
-        return affordable <= 0 ? ItemStack.EMPTY : template.copyWithCount(affordable);
+        return getAffordableStack(template, access.provider(), access.player().isCreative());
     }
 
     @Override
@@ -90,7 +95,9 @@ public class PersonalEmcWarehouseHandler implements IItemHandler {
             return ItemStack.EMPTY;
         }
         if (isClientSide()) {
-            return template.copyWithCount(amount);
+            ItemStack available = getStackInSlot(slot);
+            return available.isEmpty() ? ItemStack.EMPTY
+                    : template.copyWithCount(Math.min(amount, available.getCount()));
         }
         Access access = getAccess();
         if (access == null) {
@@ -144,6 +151,27 @@ public class PersonalEmcWarehouseHandler implements IItemHandler {
         }
         IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
         return provider == null ? null : new Access(player, provider);
+    }
+
+    private @Nullable IKnowledgeProvider getClientOwnerProvider() {
+        if (!isClientSide() || !(accessingEntity instanceof Player player)
+                || ItemPersonalEmcWarehouse.getOwner(warehouse)
+                .filter(player.getUUID()::equals).isEmpty()) {
+            return null;
+        }
+        return Util.getKnowledgeProvider(player);
+    }
+
+    private static ItemStack getAffordableStack(ItemStack template, IKnowledgeProvider provider, boolean creative) {
+        if (creative) {
+            return template.copyWithCount(Integer.MAX_VALUE);
+        }
+        long value = IEMCProxy.INSTANCE.getValue(template);
+        if (value <= 0 || !provider.hasKnowledge(template)) {
+            return ItemStack.EMPTY;
+        }
+        int affordable = Util.safeIntValue(provider.getEmc().divide(BigInteger.valueOf(value)));
+        return affordable <= 0 ? ItemStack.EMPTY : template.copyWithCount(affordable);
     }
 
     private boolean isClientSide() {
