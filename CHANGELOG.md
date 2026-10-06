@@ -8,6 +8,8 @@ to 1.1.10 to 1.1.11 in the repository, so 1.1.5, 1.1.6 and 1.1.8 have no recorde
 
 ### Added
 
+- Bound Personal EMC Warehouses equipped in a Touhou Little Maid's Curios slots now supply
+  ammunition for TACZ guns, in addition to warehouses carried in her inventory.
 - ProjectE now calculates EMC for TACZ guns, ammunition and attachments automatically.
   Gun smith table recipes are mapped through ProjectE's own `@RecipeTypeMapper` extension
   point, so the values are derived from the recipe materials by ProjectE's graph solver
@@ -27,6 +29,12 @@ to 1.1.10 to 1.1.11 in the repository, so 1.1.5, 1.1.6 and 1.1.8 have no recorde
   which is what lets mods that keep their item identity in NBT carry per-variant values.
   Controlled by the new `persistentNbtEmcFallback` config option (default on); items that
   already resolve today are unaffected.
+
+### Fixed
+
+- Fixed a crash when syncing or clicking Touhou Little Maid inventory slots while a bound
+  Personal EMC Warehouse is present. Direct writes now delegate to the physical inventory;
+  virtual warehouse slots continue to require EMC-accounted insertion and extraction.
 
 ## 1.1.11 — 2026-09-01
 

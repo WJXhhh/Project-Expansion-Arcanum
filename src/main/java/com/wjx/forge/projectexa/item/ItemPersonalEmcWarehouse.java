@@ -10,6 +10,7 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.integration.IntegrationHelper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -77,10 +78,12 @@ public class ItemPersonalEmcWarehouse extends ItemPE {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
         tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip.bind").withStyle(ChatFormatting.DARK_GRAY));
-        if (ModList.get().isLoaded("touhou_little_maid")) {
-            tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip.maid")
-                    .withStyle(ChatFormatting.DARK_GRAY));
+        if (Screen.hasShiftDown()) {
+            tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip.bind").withStyle(ChatFormatting.DARK_GRAY));
+            if (ModList.get().isLoaded("touhou_little_maid")) {
+                tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip.maid")
+                        .withStyle(ChatFormatting.DARK_GRAY));
+            }
         }
         getOwner(stack).ifPresentOrElse(owner -> {
             tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.account", getOwnerName(stack))

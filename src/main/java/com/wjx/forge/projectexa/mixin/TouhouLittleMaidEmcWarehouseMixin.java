@@ -2,11 +2,14 @@ package com.wjx.forge.projectexa.mixin;
 
 import com.wjx.forge.projectexa.item.EmcWarehouseInventoryHandler;
 import com.wjx.forge.projectexa.item.ItemPersonalEmcWarehouse;
+import moze_intel.projecte.integration.IntegrationHelper;
+import moze_intel.projecte.integration.curios.CuriosIntegration;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Makes a bound warehouse in a maid inventory visible to TACZ's normal reload scan. */
+/** Makes bound warehouses in a maid's inventory or equipped Curios visible to TACZ's reload scan. */
 @Pseudo
 @Mixin(targets = "com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid")
 public class TouhouLittleMaidEmcWarehouseMixin {
@@ -29,8 +32,11 @@ public class TouhouLittleMaidEmcWarehouseMixin {
         }
         LivingEntity maid = (LivingEntity) (Object) this;
         IItemHandler physical = (IItemHandler) cir.getReturnValue().orElse(null);
-        if (physical != null && EmcWarehouseInventoryHandler.hasWarehouse(physical)) {
-            cir.setReturnValue(LazyOptional.of(() -> new EmcWarehouseInventoryHandler(maid, physical)).cast());
+        IItemHandler curios = ModList.get().isLoaded(IntegrationHelper.CURIO_MODID)
+                ? CuriosIntegration.getAll(maid) : null;
+        if (physical != null && EmcWarehouseInventoryHandler.hasWarehouse(physical, curios)) {
+            cir.setReturnValue(LazyOptional.of(
+                    () -> new EmcWarehouseInventoryHandler(maid, physical, curios)).cast());
         }
     }
 }

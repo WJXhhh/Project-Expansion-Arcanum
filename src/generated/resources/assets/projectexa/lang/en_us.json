@@ -618,7 +618,7 @@
 	"item.projectexa.personal_emc_warehouse": "Personal EMC Warehouse",
 	"item.projectexa.personal_emc_warehouse.tooltip": "Uses the bound account's knowledge and EMC as an inventory for tools, guns, and other items.",
 	"item.projectexa.personal_emc_warehouse.tooltip.bind": "Right-click to open; sneak-right-click to bind or rebind it to yourself. Any holder can use it.",
-	"item.projectexa.personal_emc_warehouse.tooltip.maid": "Put it in a Touhou Little Maid inventory to supply ammo for TACZ guns.",
+	"item.projectexa.personal_emc_warehouse.tooltip.maid": "Put it in a Touhou Little Maid inventory or equip it in a Curios slot to supply ammo for TACZ guns.",
 	"item.projectexa.personal_emc_warehouse.unbound": "Unbound; right-click to bind it to yourself and open it",
 	"item.projectexa.personal_emc_warehouse.bound": "Warehouse is now bound to %s.",
 	"item.projectexa.personal_emc_warehouse.account": "Bound account: %s",

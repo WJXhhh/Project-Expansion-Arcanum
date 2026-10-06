@@ -3,6 +3,7 @@ package com.wjx.forge.projectexa.item;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 /** Adds bound EMC warehouse slots after an entity's physical inventory slots. */
-public class EmcWarehouseInventoryHandler implements IItemHandler {
+public class EmcWarehouseInventoryHandler implements IItemHandlerModifiable {
     private final LivingEntity holder;
     private final IItemHandler physicalInventory;
     private final List<IItemHandler> warehouseSources;
@@ -67,6 +68,22 @@ public class EmcWarehouseInventoryHandler implements IItemHandler {
     public ItemStack getStackInSlot(int slot) {
         LocatedSlot located = locate(slot);
         return located == null ? ItemStack.EMPTY : located.handler().getStackInSlot(located.slot());
+    }
+
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        // SlotItemHandler uses this for both menu synchronization and player clicks.
+        // Preserve the physical handler's direct-write behavior, including its callbacks.
+        if (slot >= 0 && slot < physicalInventory.getSlots()) {
+            if (physicalInventory instanceof IItemHandlerModifiable modifiable) {
+                modifiable.setStackInSlot(slot, stack);
+                return;
+            }
+            throw new UnsupportedOperationException("The physical inventory does not support direct slot writes");
+        }
+        // Virtual stacks are derived from EMC, not stored items. Replacing one would
+        // bypass accounting; consumers must use insertItem/extractItem instead.
+        throw new UnsupportedOperationException("EMC warehouse slots do not support direct slot writes");
     }
 
     @Override
