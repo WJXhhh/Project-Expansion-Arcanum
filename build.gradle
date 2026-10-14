@@ -89,6 +89,16 @@ mixin {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    maven {
+        name = "FTB"
+        url = "https://maven.ftb.dev/releases"
+        content { includeGroup "dev.ftb.mods" }
+    }
+    maven {
+        name = "Architectury"
+        url = "https://maven.architectury.dev/"
+        content { includeGroup "dev.architectury" }
+    }
     maven { url = "https://modmaven.dev/" }
     maven {
         url "https://www.cursemaven.com"
@@ -126,6 +136,19 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:create-328085:${getProperty("createVersion")}")
     runtimeOnly fg.deobf("curse.maven:patchouli-306770:${getProperty("patchouliVersion")}")
 
+    // Optional integrations and their development runtime dependencies.
+    compileOnly fg.deobf("dev.ftb.mods:ftb-quests-forge:${getProperty("ftbQuestsVersion")}") { transitive = false }
+    runtimeOnly fg.deobf("dev.ftb.mods:ftb-quests-forge:${getProperty("ftbQuestsVersion")}") { transitive = false }
+    compileOnly fg.deobf("dev.ftb.mods:ftb-library-forge:${getProperty("ftbLibraryVersion")}") { transitive = false }
+    runtimeOnly fg.deobf("dev.ftb.mods:ftb-library-forge:${getProperty("ftbLibraryVersion")}") { transitive = false }
+    compileOnly fg.deobf("dev.ftb.mods:ftb-teams-forge:${getProperty("ftbTeamsVersion")}") { transitive = false }
+    runtimeOnly fg.deobf("dev.ftb.mods:ftb-teams-forge:${getProperty("ftbTeamsVersion")}") { transitive = false }
+    runtimeOnly fg.deobf("dev.architectury:architectury-forge:${getProperty("architecturyVersion")}") { transitive = false }
+    compileOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
+    runtimeOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
+    compileOnly fg.deobf("curse.maven:rs-integration-1630184:${getProperty("rsIntegrationVersion")}")
+    runtimeOnly fg.deobf("curse.maven:rs-integration-1630184:${getProperty("rsIntegrationVersion")}")
+
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}")
     runtimeOnly fg.deobf("curse.maven:no-chat-reports-634062:${getProperty("ncrVersion")}")
@@ -133,7 +156,6 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-forge-api:${getProperty("jeiVersion")}")
     runtimeOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-forge:${getProperty("jeiVersion")}")
     runtimeOnly fg.deobf("curse.maven:pipez-443900:${getProperty("pipezVersion")}")
-    runtimeOnly fg.deobf("curse.maven:ae2-223794:${getProperty("ae2Version")}")
     runtimeOnly fg.deobf("curse.maven:itank-256991:${getProperty("itankVersion")}")
     runtimeOnly fg.deobf("curse.maven:cloth-config-348521:${getProperty("clothVersion")}")
     runtimeOnly fg.deobf("curse.maven:better-advancements-272515:${getProperty("baVersion")}")

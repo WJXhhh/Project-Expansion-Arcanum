@@ -3,16 +3,13 @@
   "category": "misc",
   "group": "projectexa:personal_emc_warehouse",
   "pattern": [
-    "SMS",
+    " M ",
     "MTM",
-    "SMS"
+    " M "
   ],
   "key": {
-    "S": {
-      "item": "projectexa:final_star_shard"
-    },
     "M": {
-      "item": "projectexa:magenta_matter"
+      "item": "projectexa:magenta_emc_link"
     },
     "T": {
       "item": "projectexa:arcane_transmutation_tablet"
