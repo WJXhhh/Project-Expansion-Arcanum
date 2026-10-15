@@ -139,6 +139,7 @@ dependencies {
     // Optional integrations and their development runtime dependencies.
     compileOnly fg.deobf("dev.ftb.mods:ftb-quests-forge:${getProperty("ftbQuestsVersion")}") { transitive = false }
     runtimeOnly fg.deobf("dev.ftb.mods:ftb-quests-forge:${getProperty("ftbQuestsVersion")}") { transitive = false }
+    runtimeOnly fg.deobf("dev.ftb.mods:ftb-xmod-compat-forge:2.1.3") { transitive = false }
     compileOnly fg.deobf("dev.ftb.mods:ftb-library-forge:${getProperty("ftbLibraryVersion")}") { transitive = false }
     runtimeOnly fg.deobf("dev.ftb.mods:ftb-library-forge:${getProperty("ftbLibraryVersion")}") { transitive = false }
     compileOnly fg.deobf("dev.ftb.mods:ftb-teams-forge:${getProperty("ftbTeamsVersion")}") { transitive = false }

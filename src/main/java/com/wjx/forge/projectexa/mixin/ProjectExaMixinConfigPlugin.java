@@ -1,5 +1,7 @@
 package com.wjx.forge.projectexa.mixin;
 
+import net.minecraftforge.fml.loading.FMLEnvironment;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -13,7 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
-/** Selects the JEI transfer button mixin matching the installed JEI internals. */
+/** Selects JEI transfer Mixins and limits RSI lifecycle workarounds to development runs. */
 public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
     private static final String RECIPE_TRANSFER_BUTTON = "mezz.jei.gui.recipes.RecipeTransferButton";
     private static final String MODERN_MIXIN =
@@ -29,6 +31,11 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
                     + "Ljava/util/function/Supplier;Ljava/lang/Runnable;)"
                     + "Lmezz/jei/gui/recipes/RecipeTransferButton;";
 
+    private static final Set<String> DEVELOPMENT_ONLY_RSI_MIXINS = Set.of(
+            "com.wjx.forge.projectexa.mixin.RsiKeyMappingsMixin",
+            "com.wjx.forge.projectexa.mixin.RsiSidePanelModuleMixin",
+            "com.wjx.forge.projectexa.mixin.RsiSidePanelClientMixin");
+
     @Override
     public void onLoad(String mixinPackage) {
     }
@@ -40,6 +47,10 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        // Published RSI mods tolerate early config reads; only userdev runs need these workarounds.
+        if (DEVELOPMENT_ONLY_RSI_MIXINS.contains(mixinClassName)) {
+            return !FMLEnvironment.production;
+        }
         if (!RECIPE_TRANSFER_BUTTON.equals(targetClassName)) {
             return true;
         }
