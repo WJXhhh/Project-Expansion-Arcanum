@@ -31,14 +31,3 @@ Sophisticated Backpacks 的情况；安装该模组时过滤重复的虚拟来�
 若整份计划的总 EMC 超过余额，实际账本预留会拒绝超额部分；不会透支。
 RSI 的仅扫描主物品栏的特殊 `reserveUpToFromMainInventoryThenNetwork` 路径不扩展，
 本联动针对递归配方的常规材料预留/精确预留路径。
-
-测试：`python scripts/tests/test_rsi_arcane.py`（JDK 17+，无需启动游戏）。
-测试编译并执行实际虚拟库存源，使用窄接口替身验证知识、计费、模拟、共享预留预算、
-物理库存优先、重复来源过滤、大整数及能力失效。它不是游戏端到端测试。
-
-原生账本测试：`python scripts/tests/test_rsi_arcane_native.py`，需要本机已缓存开发依赖，
-并存在用户已接受的 `run/eula.txt`（也可用 `--eula PATH` 指定）。
-它创建独立临时世界，仅监听回环地址/随机端口，使用 Forge FakePlayer 执行真实 RSI
-材料快照、普通/精确预留、EMC 扣费、取消返料、跨材料共享预算和移走转化桌测试，
-结束后自动关闭测试服务器并清理测试订阅者的编译输出。不打开已有存档。
-这些测试不等价于真实玩家的 JEI 点击端到端测试；后者仍需游戏内验收。
