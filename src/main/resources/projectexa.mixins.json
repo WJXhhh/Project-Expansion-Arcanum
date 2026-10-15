@@ -35,6 +35,8 @@
 		"NBTManagerPersistentEMCMixin",
 		"PhilosophersStoneMixin",
 		"PlayerEmcWarehouseMixin",
+		"BowEmcWarehouseMixin",
+		"CrossbowEmcWarehouseMixin",
 		"RsiExtractionLedgerAccessor",
 		"RsiExtractionLedgerMixin",
 		"RsiMaterialSourcesMixin",
