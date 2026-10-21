@@ -127,13 +127,13 @@ dependencies {
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 
     compileOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
-    runtimeOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
+    // runtimeOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
     compileOnly fg.deobf("curse.maven:ars-nouveau-401955:${getProperty("arsNouveauVersion")}")
-    runtimeOnly fg.deobf("curse.maven:ars-nouveau-401955:${getProperty("arsNouveauVersion")}")
+    // runtimeOnly fg.deobf("curse.maven:ars-nouveau-401955:${getProperty("arsNouveauVersion")}")
     compileOnly fg.deobf("curse.maven:botania-225643:${getProperty("botaniaVersion")}")
-    runtimeOnly fg.deobf("curse.maven:botania-225643:${getProperty("botaniaVersion")}")
+    // runtimeOnly fg.deobf("curse.maven:botania-225643:${getProperty("botaniaVersion")}")
     compileOnly fg.deobf("curse.maven:create-328085:${getProperty("createVersion")}")
-    runtimeOnly fg.deobf("curse.maven:create-328085:${getProperty("createVersion")}")
+    // runtimeOnly fg.deobf("curse.maven:create-328085:${getProperty("createVersion")}")
     runtimeOnly fg.deobf("curse.maven:patchouli-306770:${getProperty("patchouliVersion")}")
 
     // Optional integrations and their development runtime dependencies.
@@ -156,6 +156,8 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-common-api:${getProperty("jeiVersion")}")
     compileOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-forge-api:${getProperty("jeiVersion")}")
     runtimeOnly fg.deobf("mezz.jei:jei-${getProperty("minecraft_version")}-forge:${getProperty("jeiVersion")}")
+    compileOnly fg.deobf("curse.maven:just-enough-characters-250702:8771525")
+    runtimeOnly fg.deobf("curse.maven:just-enough-characters-250702:8771525")
     runtimeOnly fg.deobf("curse.maven:pipez-443900:${getProperty("pipezVersion")}")
     runtimeOnly fg.deobf("curse.maven:itank-256991:${getProperty("itankVersion")}")
     runtimeOnly fg.deobf("curse.maven:cloth-config-348521:${getProperty("clothVersion")}")

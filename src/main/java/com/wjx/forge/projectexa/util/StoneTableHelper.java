@@ -2,6 +2,7 @@ package com.wjx.forge.projectexa.util;
 
 import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.config.Config;
+import me.towdium.jecharacters.utils.Match;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -10,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,12 +57,15 @@ public final class StoneTableHelper {
 
         boolean modFilter = filter.charAt(0) == '@';
         String query = modFilter ? filter.substring(1) : filter;
+        boolean jecLoaded = !modFilter && ModList.get().isLoaded("jecharacters");
         return knownItems.stream().filter(stack -> {
             ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
             if (modFilter) {
                 return id.getNamespace().contains(query);
             }
-            return id.toString().contains(query) || stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains(query);
+            String name = stack.getHoverName().getString().toLowerCase(Locale.ROOT);
+            return id.toString().contains(query) || name.contains(query)
+                    || (jecLoaded && Match.contains(name, query));
         }).toList();
     }
 
