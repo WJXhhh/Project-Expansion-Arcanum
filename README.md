@@ -1,20 +1,18 @@
-# Project Expansion
-An unofficial expansion of [ProjectE](https://www.curseforge.com/minecraft/mc-mods/projecte).
-## This mod is not officially supported or endorsed by ProjectE
-Do not contact them for support. If you want
-support, [open an issue](https://github.com/DonovanDMC/ProjectExpansion/issues/new) on the github, or ask about it in
-the `#bug-reports` channel or our [Discord Server](https://discord.gg/SwxbbmMKQH) - make sure to mention what version of
-the mod you're using!
+# Project Expansion: Arcanum
 
-This is based on [ProjectEX](https://www.curseforge.com/minecraft/mc-mods/projectex-forge), which seems to be mostly
-abandoned at this point. This has been rewritten from the ground up, and has some new things.
+Independent maintenance fork of [Project Expansion](https://github.com/DonovanDMC/ProjectExpansion) by Donovan_DMC. Maintained by JDJades. Not officially supported by ProjectE.
 
-If you want to get updates instantly or just generally chat with developers, come see us in our [Discord Server](https://discord.gg/SwxbbmMKQH).
+## Environment
+- Minecraft 1.21.1
+- NeoForge 21.1.148 or compatible newer 21.1 build
+- Java 21
+- ProjectE PE1.1.0
 
-### Where To Find Releases
-- [Github Releases](https://github.com/DonovanDMC/ProjectExpansion/releases)
-- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/project-expansion)
-- [Modrinth](https://modrinth.com/mod/project-expansion)
+The runtime namespace remains `projectexa`. Porting features does **not** certify cross-version world migration. Do not open an irreplaceable 1.20.1 world in this development build.
 
+## Development
+`gradlew.bat compileJava` compiles Java sources. `gradlew.bat build` also invokes the asset generator, which requires the script runtime.
 
-See the [wiki](https://github.com/DonovanDMC/ProjectExpansion/wiki) for more information about the mod.
+Optional integrations must remain optional. This migration covers the stone table, Final Star, JEI transfer, personal EMC warehouse, projectiles and living-entity repair. External recipe integrations are a separate stage.
+
+See [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md) for original attribution.

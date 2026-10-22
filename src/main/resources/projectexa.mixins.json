@@ -10,7 +10,9 @@
     "KnowledgeSyncChangePKTMixin",
     "KnowledgeSyncEmcPKTMixin",
     "KnowledgeSyncInputsAndLocksPKTMixin",
-    "KnowledgeSyncPKTMixin"
+    "KnowledgeSyncPKTMixin",
+    "JeiRecipeTransferManagerMixin",
+    "JeiRecipesGuiMixin"
   ],
   "mixins": [
     "AlchemicalBagMixin",
@@ -25,9 +27,11 @@
     "SearchUpdatePKTMixin",
     "SetEmcCMDMixin",
     "ShutTheFuckUpMixin",
-    "TomeMixin"
+    "TomeMixin",
+    "EntityWarehouseCapabilityMixin",
+    "ProjectileWeaponWarehouseMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

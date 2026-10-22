@@ -39,7 +39,6 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -228,8 +227,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
             long itemEmc = IEMCProxy.INSTANCE.getValue(stack);
             if (itemEmc <= 0 || !provider.hasKnowledge(stack)) return ItemStack.EMPTY;
 
-            var handler = player.getCapability(Capabilities.ItemHandler.ENTITY);
-            if (handler == null) return ItemStack.EMPTY;
+            var handler = new net.neoforged.neoforge.items.wrapper.InvWrapper(player.getInventory());
 
             stack.setCount(stack.getMaxStackSize());
             int room = stack.getCount() - ItemHelper.simulateFit(player.getInventory().items, stack);
@@ -327,6 +325,9 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     }
 
     public void onRecipeTransfer(List<List<ItemStack>> recipe, boolean transferAll) {
+        if (!(player instanceof ServerPlayer) || !stillValid(player) || recipe == null || recipe.size() > 9
+                || recipe.stream().anyMatch(items -> items == null || items.size() > 256)) return;
+        recipe = recipe.stream().map(items -> (List<ItemStack>) new ArrayList<>(items)).toList();
         clearCrafting(false);
         fillCraftingSlots(recipe, transferAll);
     }
@@ -410,13 +411,8 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     public void transferItems(List<List<ItemStack>> recipe, int max) {
         for (int i = 0; i < max; ++i) {
             if (recipe.get(i) != null && !recipe.get(i).isEmpty()) {
-                transferFromInventory(i, recipe.get(i));
-            }
-        }
-
-        for (int i = 0; i < max; ++i) {
-            if (recipe.get(i) != null && !recipe.get(i).isEmpty()) {
-                transferFromTablet(i, recipe.get(i));
+                // One requested unit per pass, with real inventory taking precedence over EMC.
+                if (!transferFromInventory(i, recipe.get(i))) transferFromTablet(i, recipe.get(i));
             }
         }
 

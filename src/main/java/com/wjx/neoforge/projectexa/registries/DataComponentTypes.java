@@ -21,6 +21,13 @@ import java.util.UUID;
 public class DataComponentTypes {
     public static final DeferredRegister.DataComponents Registry = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Main.MOD_ID);
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> WAREHOUSE_ID = Registry.registerComponentType("warehouse_id",
+            builder -> builder.persistent(UUIDUtil.CODEC).networkSynchronized(UUIDUtil.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.world.item.component.ItemContainerContents>> WAREHOUSE_FILTERS = Registry.registerComponentType("warehouse_filters",
+            builder -> builder.persistent(net.minecraft.world.item.component.ItemContainerContents.CODEC).networkSynchronized(net.minecraft.world.item.component.ItemContainerContents.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<Integer>>> WAREHOUSE_AVAILABILITY = Registry.registerComponentType("warehouse_availability",
+            builder -> builder.persistent(Codec.INT.listOf(27, 27)).networkSynchronized(ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(27))));
+
     public record OwnerData(UUID uuid, String name) {
         public static final Codec<OwnerData> CODEC = RecordCodecBuilder.create(instance ->
                 instance.group(UUIDUtil.CODEC.fieldOf(TagNames.OWNER).forGetter(OwnerData::uuid), Codec.STRING.fieldOf(TagNames.OWNER_NAME).forGetter(OwnerData::name)).apply(instance, OwnerData::new)

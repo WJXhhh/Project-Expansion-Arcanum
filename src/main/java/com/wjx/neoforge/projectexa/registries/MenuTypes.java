@@ -25,6 +25,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class MenuTypes {
     public static final DeferredRegister<MenuType<?>> Registry = DeferredRegister.create(Registries.MENU, Main.MOD_ID);
 
+    public static final DeferredHolder<MenuType<?>, MenuType<ContainerStoneTable>> STONE_TABLE = register("stone_table", (id, inv, buf) -> new ContainerStoneTable(id, inv, buf.readBlockPos()));
+    public static final DeferredHolder<MenuType<?>, MenuType<ContainerPersonalEmcWarehouse>> PERSONAL_EMC_WAREHOUSE = register("personal_emc_warehouse", ContainerPersonalEmcWarehouse::fromNetwork);
+
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerCollector>> COLLECTOR_TIER_1 = registerBlockEntity("collector_tier_1", BlockEntityCollector.class, ContainerCollector.Tier1::new);
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerCollector>> COLLECTOR_TIER_2 = registerBlockEntity("collector_tier_2", BlockEntityCollector.class, ContainerCollector.Tier2::new);
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerCollector>> COLLECTOR_TIER_3 = registerBlockEntity("collector_tier_3", BlockEntityCollector.class, ContainerCollector.Tier3::new);

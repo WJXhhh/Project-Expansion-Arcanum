@@ -13,6 +13,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class Items {
     public static final DeferredRegister<Item> Registry = DeferredRegister.create(Registries.ITEM, Main.MOD_ID);
 
+    public static final DeferredHolder<Item, BlockItem> STONE_TABLE = Registry.register("stone_table", () -> new BlockItem(Blocks.STONE_TABLE.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, ItemPersonalEmcWarehouse> PERSONAL_EMC_WAREHOUSE = Registry.register("personal_emc_warehouse", ItemPersonalEmcWarehouse::new);
+
     public static final DeferredHolder<Item, ItemFinalStarShard> FINAL_STAR_SHARD = Registry.register("final_star_shard", ItemFinalStarShard::new);
     public static final DeferredHolder<Item, ItemFinalStar> FINAL_STAR = Registry.register("final_star", ItemFinalStar::new);
     public static final DeferredHolder<Item, ItemMatterUpgrader> MATTER_UPGRADER = Registry.register("matter_upgrader", ItemMatterUpgrader::new);

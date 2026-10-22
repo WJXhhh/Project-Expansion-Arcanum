@@ -22,7 +22,15 @@ public class CuriosIntegration {
         return Optional.empty();
     }
 
+    public static net.neoforged.neoforge.items.IItemHandler getAll(net.minecraft.world.entity.LivingEntity entity) {
+        return modLoaded() ? Integrator.getAll(entity) : null;
+    }
+
     private static final class Integrator {
+        private static net.neoforged.neoforge.items.IItemHandler getAll(net.minecraft.world.entity.LivingEntity entity) {
+            return CuriosApi.getCuriosInventory(entity).map(ICuriosItemHandler::getEquippedCurios).orElse(null);
+        }
+
         private static Optional<IItemHandlerModifiable> getCuriosInventory(Player player) {
             Optional<ICuriosItemHandler> curiosItemHandler = CuriosApi.getCuriosInventory(player);
             if (curiosItemHandler.isEmpty())  return Optional.empty();

@@ -18,6 +18,7 @@ import java.util.function.BiFunction;
 
 public class BlockTypes {
     public static final DeferredRegister<MapCodec<? extends Block>> Registry = DeferredRegister.create(Registries.BLOCK_TYPE, Main.MOD_ID);
+    public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<BlockStoneTable>> STONE_TABLE = Registry.register("stone_table", () -> BlockBehaviour.simpleCodec(BlockStoneTable::new));
 
     public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<BlockAdvancedAlchemicalChest>> ADVANCED_ALCHEMICAL_CHEST = registerColor("advanced_alchemical_chest", BlockAdvancedAlchemicalChest::new);
     public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<BlockCollector>> COLLECTOR = registerMatter("collector", BlockCollector::new);

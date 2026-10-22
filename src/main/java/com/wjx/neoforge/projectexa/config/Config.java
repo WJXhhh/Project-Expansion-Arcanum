@@ -52,6 +52,10 @@ public final class Config {
         public final ModConfigSpec.ConfigValue<Integer> compactSunBonus = Builder.comment("The bonus (multiplicative) the compact sun block should give. Set to 0 to disable.").define("compactSunBonus", 10);
         public final ModConfigSpec.ConfigValue<Boolean> sunMultiplierPriceCompensation = Builder.comment("Enable determining the sun bonus multiplier via the difference in emc price between the final power flower and the compact sun block, rounded up to the next 10. In normal gameplay this is ~33x, so a 40x multiplier. If either block has no emc value or the multiplier is lower than compactSunBonus, that value will be used instead.").define("sunMultiplierPriceCompensation", true);
         public final ModConfigSpec.ConfigValue<Boolean> enableReloadEMCCommand = Builder.comment("Enable the /projectexa reloademc command. This is experimental.").define("enableReloadEMCCommand", true);
+        public final ModConfigSpec.ConfigValue<Boolean> enableStoneTableWhitelist = Builder.define("enableStoneTableWhitelist", false);
+        public final ModConfigSpec.ConfigValue<Boolean> finalStarCopyAnyItem = Builder.define("finalStarCopyAnyItem", true);
+        public final ModConfigSpec.ConfigValue<Boolean> finalStarCopyNBT = Builder.comment("Copy all item data components instead of only default components.").define("finalStarCopyNBT", false);
+        public final ModConfigSpec.ConfigValue<Integer> finalStarUpdateInterval = Builder.defineInRange("finalStarUpdateInterval", 20, 0, Integer.MAX_VALUE);
         private Server() { Spec = Builder.build(); }
     }
 

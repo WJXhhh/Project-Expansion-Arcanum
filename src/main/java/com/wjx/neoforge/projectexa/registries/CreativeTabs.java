@@ -23,6 +23,8 @@ public class CreativeTabs {
                         Fuel.setAllCreativeTab(output);
                         AdvancedAlchemicalChest.setAllCreativeTab(output);
 
+                        output.accept(Items.STONE_TABLE.get());
+                        output.accept(Items.PERSONAL_EMC_WAREHOUSE.get());
                         output.accept(Items.FINAL_STAR_SHARD.get());
                         output.accept(Items.FINAL_STAR.get());
                         output.accept(Items.MATTER_UPGRADER.get());

@@ -16,7 +16,7 @@ import java.util.List;
 public record PacketArcaneTransmutationTabletRecipeTransfer(List<List<ItemStack>> recipe, boolean transferAll) implements IPacket {
     public static final CustomPacketPayload.Type<PacketArcaneTransmutationTabletRecipeTransfer> TYPE = new CustomPacketPayload.Type<>(Main.rl("arcane_transmutation_recipe_transfer"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PacketArcaneTransmutationTabletRecipeTransfer> STREAM_CODEC = StreamCodec.composite(
-            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()).apply(ByteBufCodecs.list()), PacketArcaneTransmutationTabletRecipeTransfer::recipe,
+            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list(256)).apply(ByteBufCodecs.list(9)), PacketArcaneTransmutationTabletRecipeTransfer::recipe,
             ByteBufCodecs.BOOL, PacketArcaneTransmutationTabletRecipeTransfer::transferAll,
             PacketArcaneTransmutationTabletRecipeTransfer::new
     );

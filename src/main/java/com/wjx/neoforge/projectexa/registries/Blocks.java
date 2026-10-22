@@ -1,6 +1,7 @@
 package com.wjx.neoforge.projectexa.registries;
 
 import com.wjx.neoforge.projectexa.Main;
+import com.wjx.neoforge.projectexa.block.BlockStoneTable;
 import com.wjx.neoforge.projectexa.block.BlockCompactSun;
 import com.wjx.neoforge.projectexa.block.BlockCondenserMK3;
 import com.wjx.neoforge.projectexa.block.BlockTransmutationInterface;
@@ -15,6 +16,8 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public class Blocks {
     public static final DeferredRegister.Blocks Registry = DeferredRegister.createBlocks(Main.MOD_ID);
+
+    public static final DeferredBlock<BlockStoneTable> STONE_TABLE = register("stone_table", BlockStoneTable::new, BlockStoneTable::getProperties);
 
     public static final DeferredBlock<BlockTransmutationInterface> TRANSMUTATION_INTERFACE = register("transmutation_interface", BlockTransmutationInterface::new, BlockTransmutationInterface::getProperties);
     public static final DeferredBlock<BlockCompactSun> COMPACT_SUN = register("compact_sun", BlockCompactSun::new, BlockCompactSun::getProperties);

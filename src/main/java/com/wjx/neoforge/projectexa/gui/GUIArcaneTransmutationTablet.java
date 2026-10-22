@@ -27,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.math.BigInteger;
 
+@org.anti_ad.mc.ipn.api.IPNIgnore
 public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArcaneTransmutationTablet> {
     public static final ResourceLocation texture = Main.rl("textures/gui/arcane_transmutation_tablet.png");
     // public static final ResourceLocation texture = Main.rl("textures/gui/arcane_transmutation_tablet_layout.png");

@@ -1,6 +1,8 @@
 package com.wjx.neoforge.projectexa.events;
 
 import com.wjx.neoforge.projectexa.Main;
+import com.wjx.neoforge.projectexa.gui.GUIStoneTable;
+import com.wjx.neoforge.projectexa.gui.GUIPersonalEmcWarehouse;
 import com.wjx.neoforge.projectexa.client.Keybinds;
 import com.wjx.neoforge.projectexa.gui.GUIArcaneTransmutationTablet;
 import com.wjx.neoforge.projectexa.gui.GUICollector;
@@ -22,6 +24,8 @@ public class ClientEvents {
     public static class ModEvents {
         @SubscribeEvent
         public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            event.register(MenuTypes.STONE_TABLE.get(), GUIStoneTable::new);
+            event.register(MenuTypes.PERSONAL_EMC_WAREHOUSE.get(), GUIPersonalEmcWarehouse::new);
             event.register(MenuTypes.COLLECTOR_TIER_1.get(), GUICollector.Tier1::new);
             event.register(MenuTypes.COLLECTOR_TIER_2.get(), GUICollector.Tier2::new);
             event.register(MenuTypes.COLLECTOR_TIER_3.get(), GUICollector.Tier3::new);

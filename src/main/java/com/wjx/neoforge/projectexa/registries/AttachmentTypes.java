@@ -10,6 +10,9 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public class AttachmentTypes {
     public static final DeferredRegister<AttachmentType<?>> Registry = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Main.MOD_ID);
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> REPAIR_COOLDOWN = Registry.register("repair_cooldown",
+            () -> AttachmentType.builder(() -> 0).serialize(com.mojang.serialization.Codec.INT).build());
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<AlchemicalBookLocationData>> ALCHEMICAL_BOOK_LOCATIONS = Registry.register("alchemical_book_locations",
             () -> AttachmentType.builder(AlchemicalBookLocationData::new)
                     .serialize(AlchemicalBookLocationData.CODEC)

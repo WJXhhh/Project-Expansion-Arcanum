@@ -14,6 +14,11 @@ version = minecraft_version + "-" + mod_version
 group = mod_group_id
 
 repositories {
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content { includeGroup "maven.modrinth" }
+    }
     mavenLocal()
     maven { url = "https://modmaven.dev/" }
     maven {
@@ -49,7 +54,7 @@ spotbugs {
 }
 
 base {
-    archivesName = mod_id
+    archivesName = "projectex-arcanum"
 }
 
 
@@ -131,6 +136,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
+    // Optional annotation API only; do not install IPN or its Kotlin runtime for every user.
+    compileOnly("maven.modrinth:inventory-profiles-next:vjuNnHLv") { transitive = false }
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"

@@ -60,6 +60,27 @@ public class Main {
     private void serverTick(ServerTickEvent.Post event) {
         AlchemicalCollectionCollector.process();
         for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
+            if (event.getServer().getTickCount() % 20 == 0) {
+                boolean changed = false;
+                for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+                    ItemStack warehouse = player.getInventory().getItem(slot);
+                    if (warehouse.getItem() instanceof com.wjx.neoforge.projectexa.item.ItemPersonalEmcWarehouse
+                            && com.wjx.neoforge.projectexa.item.ItemPersonalEmcWarehouse.refreshAvailability(warehouse)) {
+                        changed = true;
+                        player.connection.send(new net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket(-2, 0, slot, warehouse));
+                    }
+                }
+                var curios = com.wjx.neoforge.projectexa.integrations.curios.CuriosIntegration.getAll(player);
+                if (curios != null) {
+                    for (int slot = 0; slot < curios.getSlots(); slot++) {
+                        ItemStack warehouse = curios.getStackInSlot(slot);
+                        if (warehouse.getItem() instanceof com.wjx.neoforge.projectexa.item.ItemPersonalEmcWarehouse) {
+                            com.wjx.neoforge.projectexa.item.ItemPersonalEmcWarehouse.refreshAvailability(warehouse);
+                        }
+                    }
+                }
+                if (changed) player.getInventory().setChanged();
+            }
             for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                 ItemStack stack = player.getInventory().getItem(i);
                 if (stack.getItem().equals(Items.INFINITE_FUEL.get()) && !stack.has(DataComponentTypes.OWNER.get())) {

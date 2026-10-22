@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "projectexa:personal_emc_warehouse",
+  "pattern": [
+    " M ",
+    "MTM",
+    " M "
+  ],
+  "key": {
+    "M": {
+      "item": "projectexa:magenta_emc_link"
+    },
+    "T": {
+      "item": "projectexa:arcane_transmutation_tablet"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "projectexa:personal_emc_warehouse"
+  }
+}
