@@ -21,6 +21,7 @@ public final class PacketHandler {
     }
 
     public void register(PayloadRegistrar registrar) {
+        registrar.playToServer(PacketRecipeMaterialTransmutation.TYPE, PacketRecipeMaterialTransmutation.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketStoneTableAction.TYPE, PacketStoneTableAction.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketOpenArcaneTransmutationTabletWithRecipe.TYPE, PacketOpenArcaneTransmutationTabletWithRecipe.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketArcaneTransmutationTabletRecipeTransfer.TYPE, PacketArcaneTransmutationTabletRecipeTransfer.STREAM_CODEC, IPacket::handle);

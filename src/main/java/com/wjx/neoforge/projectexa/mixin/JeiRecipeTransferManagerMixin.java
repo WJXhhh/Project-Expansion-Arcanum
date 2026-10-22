@@ -1,6 +1,8 @@
 package com.wjx.neoforge.projectexa.mixin;
 
 import com.wjx.neoforge.projectexa.integrations.jei.UniversalArcaneCraftingRecipeTransferHandler;
+import com.wjx.neoforge.projectexa.integrations.jei.ModRecipeMaterialTransferHandler;
+import com.wjx.neoforge.projectexa.integrations.RecipeMaterialRequests;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,6 +22,8 @@ public class JeiRecipeTransferManagerMixin {
                                       CallbackInfoReturnable<Optional<?>> cir) {
         if (cir.getReturnValue().isEmpty() && category.getRecipeType().equals(RecipeTypes.CRAFTING)) {
             cir.setReturnValue(Optional.of(UniversalArcaneCraftingRecipeTransferHandler.INSTANCE));
+        } else if (cir.getReturnValue().isEmpty() && RecipeMaterialRequests.supported(category.getRecipeType().getUid())) {
+            cir.setReturnValue(Optional.of(new ModRecipeMaterialTransferHandler(category.getRecipeType())));
         }
     }
 }

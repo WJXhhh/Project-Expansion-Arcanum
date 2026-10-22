@@ -136,6 +136,10 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
+    compileOnly("curse.maven:ars-nouveau-401955:${ars_nouveau_version}") { transitive = false }
+    compileOnly("curse.maven:create-328085:${create_version}") { transitive = false }
+    compileOnly("curse.maven:goety-586095:${goety_version}") { transitive = false }
+
     // Optional annotation API only; do not install IPN or its Kotlin runtime for every user.
     compileOnly("maven.modrinth:inventory-profiles-next:vjuNnHLv") { transitive = false }
     // Example mod dependency using a mod jar from ./libs with a flat dir repository

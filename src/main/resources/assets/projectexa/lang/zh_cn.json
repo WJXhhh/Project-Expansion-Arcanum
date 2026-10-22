@@ -724,5 +724,13 @@
   "projectexa.configuration.enableStoneTableWhitelist": "启用石质转化桌白名单",
   "projectexa.configuration.finalStarCopyAnyItem": "终焉之星复制无 EMC 物品",
   "projectexa.configuration.finalStarCopyNBT": "终焉之星复制全部数据组件",
-  "projectexa.configuration.finalStarUpdateInterval": "终焉之星复制间隔"
+  "projectexa.configuration.finalStarUpdateInterval": "终焉之星复制间隔",
+  "jei.projectexa.transfer.materials_only": "仅转化缺少的材料；不直接合成产物，也不替代灵魂、魔源、流体或热量消耗。",
+  "projectexa.integration.goety.brazier": "诡厄火盆配方",
+  "projectexa.integration.goety.cauldron": "诡厄坩埚配方",
+  "projectexa.integration.goety.cursed_infuser": "诡厄诅咒注入配方",
+  "projectexa.integration.goety.ritual": "诡厄仪式配方",
+  "projectexa.integration.goety.totem": "诡厄根之图腾合成",
+  "projectexa.integration.goety.seeds": "诡厄基础 EMC 值",
+  "projectexa.integration.goety.pure_blood": "诡厄纯净不洁之血数据"
 }

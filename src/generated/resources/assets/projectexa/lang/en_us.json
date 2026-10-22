@@ -657,5 +657,13 @@
 	"projectexa.configuration.enableStoneTableWhitelist": "Enable Stone Table Whitelist",
 	"projectexa.configuration.finalStarCopyAnyItem": "Final Star Copies Items Without EMC",
 	"projectexa.configuration.finalStarCopyNBT": "Final Star Copies All Data Components",
-	"projectexa.configuration.finalStarUpdateInterval": "Final Star Copy Interval"
+	"projectexa.configuration.finalStarUpdateInterval": "Final Star Copy Interval",
+	"jei.projectexa.transfer.materials_only": "Transmute missing materials only; does not craft the result or replace soul, Source, fluid or heat costs.",
+	"projectexa.integration.goety.brazier": "Goety brazier recipes",
+	"projectexa.integration.goety.cauldron": "Goety cauldron recipes",
+	"projectexa.integration.goety.cursed_infuser": "Goety cursed infuser recipes",
+	"projectexa.integration.goety.ritual": "Goety ritual recipes",
+	"projectexa.integration.goety.totem": "Goety Totem of Roots crafting",
+	"projectexa.integration.goety.seeds": "Goety base EMC values",
+	"projectexa.integration.goety.pure_blood": "Goety pure unholy blood identity"
 }
