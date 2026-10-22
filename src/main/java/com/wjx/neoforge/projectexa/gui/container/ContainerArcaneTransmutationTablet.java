@@ -147,32 +147,40 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     @Override
     public void removed(Player player) {
         super.removed(player);
+        if (player.level().isClientSide) return;
+
+        ItemStack unlearnStack = unlearn.getItem().copy();
+        unlearn.set(ItemStack.EMPTY);
+        ItemStack carriedStack = getCarried().copy();
+        setCarried(ItemStack.EMPTY);
         if (!player.isAlive() || player instanceof ServerPlayer serverPlayer && serverPlayer.hasDisconnected()) {
-            player.drop(unlearn.getItem(), false);
-            for (ItemStack stack : this.craftSlots.getItems()) {
-                player.drop(stack, false);
-            }
-            for (int i = 0; i < this.resultSlots.getContainerSize(); i++) {
-                player.drop(this.resultSlots.getItem(i), false);
+            if (!unlearnStack.isEmpty()) player.drop(unlearnStack, false);
+            if (!carriedStack.isEmpty()) player.drop(carriedStack, false);
+            for (int i = 0; i < craftSlots.getContainerSize(); i++) {
+                ItemStack stack = craftSlots.removeItemNoUpdate(i);
+                if (!stack.isEmpty()) player.drop(stack, false);
             }
         } else {
-            Util.returnToInventoryOrTransmutation(playerInv, player, provider, unlearn.getItem(), false, true);
-            for (ItemStack stack : this.craftSlots.getItems()) {
-                Util.returnToInventoryOrTransmutation(playerInv, player, provider, stack, false, true);
-            }
-            for (int i = 0; i < this.resultSlots.getContainerSize(); i++) {
-                Util.returnToInventoryOrTransmutation(playerInv, player, provider, this.resultSlots.getItem(i), false, true);
+            // The unlearn slot already removed this item's knowledge. Return the physical item.
+            Util.returnToInventory(playerInv, player, unlearnStack, true);
+            Util.returnToInventoryOrTransmutation(playerInv, player, provider, carriedStack, false, true);
+            for (int i = 0; i < craftSlots.getContainerSize(); i++) {
+                Util.returnToInventoryOrTransmutation(playerInv, player, provider, craftSlots.removeItemNoUpdate(i), false, true);
             }
         }
+        // The result slot is only a preview; no ingredients were consumed for it.
+        resultSlots.removeItemNoUpdate(0);
     }
 
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
         if (this.tryGetSlot(slotIndex) instanceof PXCraftingSlot slot && slot.hasItem()) {
-            ItemStack itemStack = slot.getItem().copy();
-            this.moveItemStackTo(itemStack, PLAYER, (PLAYER + PLAYER_COUNT - 1), true);
-            slot.set(ItemStack.EMPTY);
-            return ItemStack.EMPTY;
+            ItemStack original = slot.getItem().copy();
+            ItemStack remainder = original.copy();
+            if (!this.moveItemStackTo(remainder, PLAYER, PLAYER + PLAYER_COUNT, true)) return ItemStack.EMPTY;
+            slot.set(remainder);
+            slot.setChanged();
+            return original;
         }
 
         if (this.tryGetSlot(slotIndex) instanceof PXResultSlot || slotIndex == RESULT) {
@@ -181,7 +189,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
                 ItemStack itemStack1 = slot.getItem();
                 ItemStack itemStack = itemStack1.copy();
                 itemStack1.getItem().onCraftedBy(itemStack, player.level(), player);
-                if (!this.moveItemStackTo(itemStack1, PLAYER, (PLAYER + PLAYER_COUNT - 1), true)) {
+                if (!this.moveItemStackTo(itemStack1, PLAYER, PLAYER + PLAYER_COUNT, true)) {
                     return ItemStack.EMPTY;
                 }
 
@@ -217,48 +225,26 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
         if (slotIndex >= OUTPUT && slotIndex < (OUTPUT + OUTPUT_COUNT)) {
             ItemStack stack = currentSlot.getItem().copy();
-            // Output Slots
             long itemEmc = IEMCProxy.INSTANCE.getValue(stack);
-            //Double-check the item actually has Emc and something didn't just go terribly wrong
-            if (itemEmc > 0) {
-                //Note: We can just set the size here as newStack is a copy stack used for modifications
-                stack.setCount(stack.getMaxStackSize());
-                //Check how much we can fit of the stack
-                int itemsRoomFor = stack.getCount() - ItemHelper.simulateFit(player.getInventory().items, stack);
-                if (itemsRoomFor == 1) {
-                    long availableEMC = transmutationInventory.getAvailableEmcAsLong();
-                    if (itemEmc > availableEMC) {
-                        //We need more EMC than we have available, but we were only trying to get a single item.
-                        // This means we can't actually produce any of the item
-                        return ItemStack.EMPTY;
-                    }
-                    if (transmutationInventory.isServer()) {
-                        transmutationInventory.removeEmc(BigInteger.valueOf(itemEmc));
-                    }
-                    stack.setCount(1);
-                    ItemHandlerHelper.insertItemStacked(player.getCapability(Capabilities.ItemHandler.ENTITY), stack, false);
-                } else if (itemsRoomFor > 1) {
-                    BigInteger availableEMC = transmutationInventory.getAvailableEmc();
-                    BigInteger emc = BigInteger.valueOf(itemEmc);
-                    BigInteger totalEmc = emc.multiply(BigInteger.valueOf(itemsRoomFor));
-                    if (totalEmc.compareTo(availableEMC) > 0) {
-                        //We need more EMC than we have available, so we have to calculate how much we actually can produce
-                        //Note: We first multiply then compare, as the larger the numbers are the less efficient division becomes
-                        BigInteger numOperations = availableEMC.divide(emc);
-                        //Note: As we already compared to a multiplication of an int times the number we divided by, so it should fit into an int
-                        itemsRoomFor = numOperations.intValue();
-                        totalEmc = emc.multiply(numOperations);
-                        if (itemsRoomFor <= 0) {
-                            return ItemStack.EMPTY;
-                        }
-                    }
-                    if (transmutationInventory.isServer()) {
-                        transmutationInventory.removeEmc(totalEmc);
-                    }
-                    //Set the stack size to what we found the max value is we have room for (capped at the stack's own max size)
-                    stack.setCount(itemsRoomFor);
-                    ItemHandlerHelper.insertItemStacked(player.getCapability(Capabilities.ItemHandler.ENTITY), stack, false);
-                }
+            if (itemEmc <= 0 || !provider.hasKnowledge(stack)) return ItemStack.EMPTY;
+
+            var handler = player.getCapability(Capabilities.ItemHandler.ENTITY);
+            if (handler == null) return ItemStack.EMPTY;
+
+            stack.setCount(stack.getMaxStackSize());
+            int room = stack.getCount() - ItemHelper.simulateFit(player.getInventory().items, stack);
+            if (room <= 0) return ItemStack.EMPTY;
+
+            BigInteger unitCost = BigInteger.valueOf(itemEmc);
+            BigInteger affordable = transmutationInventory.getAvailableEmc().divide(unitCost);
+            int count = affordable.compareTo(BigInteger.valueOf(room)) >= 0 ? room : affordable.intValue();
+            if (count <= 0) return ItemStack.EMPTY;
+
+            stack.setCount(count);
+            ItemStack remainder = ItemHandlerHelper.insertItemStacked(handler, stack, false);
+            int inserted = count - remainder.getCount();
+            if (inserted > 0 && transmutationInventory.isServer()) {
+                transmutationInventory.removeEmc(unitCost.multiply(BigInteger.valueOf(inserted)));
             }
         } else if (slotIndex >= (OUTPUT + OUTPUT_COUNT) && slotIndex < CRAFTING) {
             ItemStack slotStack = currentSlot.getItem();

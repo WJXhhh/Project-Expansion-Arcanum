@@ -10,7 +10,6 @@ import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,17 +53,8 @@ public class PXResultSlot extends ResultSlot {
             ItemStack stack = currentItems.get(i);
             // if empty or same as was originally present, skip
             if (stack.isEmpty() || items.get(i).equals(stack)) continue;
-            // if it has a value, move to tablet
-            if (IEMCProxy.INSTANCE.hasValue(stack)) {
-                tablet.transmutationInventory.handleKnowledge(stack);
-                long value = IEMCProxy.INSTANCE.getValue(stack);
-                tablet.transmutationInventory.addEmc(BigInteger.valueOf(value));
-                currentItems.set(i, ItemStack.EMPTY);
-                craftSlots.setItem(i, ItemStack.EMPTY);
-                continue;
-            }
-            // else, attempt to insert into the inventory
-            ItemStack result = Util.returnToInventory(tablet.getPlayer().getInventory(), player, stack, false);
+            ItemStack result = Util.returnToInventoryOrTransmutation(
+                    tablet.getPlayer().getInventory(), player, tablet.getProvider(), stack, false, false);
             // if we still have leftovers, just leave it in the slot. We'll skip over the slot later
             currentItems.set(i, result);
             craftSlots.setItem(i, result);

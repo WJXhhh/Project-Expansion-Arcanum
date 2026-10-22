@@ -401,10 +401,12 @@ public class Util {
     }
 
     public static ItemStack returnToInventoryOrTransmutation(Inventory playerInv, Player player, IKnowledgeProvider provider, ItemStack stack, boolean ignoreNBT, boolean force) {
+        if (stack.isEmpty()) return ItemStack.EMPTY;
         if (!IEMCProxy.INSTANCE.hasValue(stack) || (!ignoreNBT && !areStacksEqual(player.registryAccess(), stack, cleanStack(stack)))) return returnToInventory(playerInv, player, stack, force);
-        addKnowledge(player, provider, stack);
         long value = IEMCProxy.INSTANCE.getValue(stack);
-        BigInteger emc = provider.getEmc().add(BigInteger.valueOf(value));
+        if (value <= 0) return returnToInventory(playerInv, player, stack, force);
+        if (addKnowledge(player, provider, stack).fail()) return returnToInventory(playerInv, player, stack, force);
+        BigInteger emc = provider.getEmc().add(BigInteger.valueOf(value).multiply(BigInteger.valueOf(stack.getCount())));
         provider.setEmc(emc);
         if (player instanceof ServerPlayer serverPlayer) provider.syncEmc(serverPlayer);
         return ItemStack.EMPTY;
