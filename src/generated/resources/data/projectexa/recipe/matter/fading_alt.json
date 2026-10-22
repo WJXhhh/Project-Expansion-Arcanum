@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projectexa:matter/$TIER",
+  "pattern": [
+    "FFF",
+    "MMM",
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "item": "projectexa:white_fuel"
+    },
+    "M": {
+      "item": "projectexa:white_matter"
+    }
+  },
+  "result": {
+    "id": "projectexa:fading_matter"
+  }
+}

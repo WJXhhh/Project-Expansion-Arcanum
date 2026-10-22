@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:fuel/$TIER$",
+  "group": "projectexa:fuel/$TIER$",
   "ingredients": [
     {
       "item": "projecte:philosophers_stone"
     },
     {
-      "item": "projectexpansion:$PREV$_fuel"
+      "item": "projectexa:$PREV$_fuel"
     },
     {
-      "item": "projectexpansion:$PREV$_fuel"
+      "item": "projectexa:$PREV$_fuel"
     },
     {
-      "item": "projectexpansion:$PREV$_fuel"
+      "item": "projectexa:$PREV$_fuel"
     },
     {
-      "item": "projectexpansion:$PREV$_fuel"
+      "item": "projectexa:$PREV$_fuel"
     }
   ],
   "result": {
-    "id": "projectexpansion:$TIER$_fuel"
+    "id": "projectexa:$TIER$_fuel"
   }
 }

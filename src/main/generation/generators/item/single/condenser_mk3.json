@@ -1,6 +1,6 @@
 {
 	"parent": "projecte:block/base_chest",
 	"textures": {
-		"chest": "projectexpansion:block/condenser_mk3"
+		"chest": "projectexa:block/condenser_mk3"
 	}
 }

@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:star",
+  "group": "projectexa:star",
   "ingredients": [
     {
       "item": "projecte:klein_star_omega"
@@ -16,6 +16,6 @@
     }
   ],
   "result": {
-    "id": "projectexpansion:magnum_star_ein"
+    "id": "projectexa:magnum_star_ein"
   }
 }

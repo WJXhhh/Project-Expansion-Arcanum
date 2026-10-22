@@ -1,0 +1,32 @@
+{
+  "parent": "projectexa:lime_matter",
+  "criteria": {
+    "yellow_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:yellow_matter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.yellow_matter.description"
+    },
+    "icon": {
+      "id": "projectexa:yellow_matter"
+    },
+    "title": {
+      "translate": "advancements.projectexa.yellow_matter"
+    }
+  },
+  "requirements": [
+    [
+      "yellow_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

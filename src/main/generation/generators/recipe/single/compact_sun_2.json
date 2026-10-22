@@ -7,16 +7,16 @@
 	],
 	"key": {
 		"Y": {
-			"item": "projectexpansion:yellow_matter"
+			"item": "projectexa:yellow_matter"
 		},
 		"S": {
-			"item": "projectexpansion:final_star"
+			"item": "projectexa:final_star"
 		},
 		"H": {
-			"item": "projectexpansion:final_star_shard"
+			"item": "projectexa:final_star_shard"
 		}
 	},
 	"result": {
-		"id": "projectexpansion:compact_sun"
+		"id": "projectexa:compact_sun"
 	}
 }

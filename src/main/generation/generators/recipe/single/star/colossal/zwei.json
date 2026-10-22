@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:star",
+  "group": "projectexa:star",
   "ingredients": [
     {
-      "item": "projectexpansion:colossal_star_ein"
+      "item": "projectexa:colossal_star_ein"
     },
     {
-      "item": "projectexpansion:colossal_star_ein"
+      "item": "projectexa:colossal_star_ein"
     },
     {
-      "item": "projectexpansion:colossal_star_ein"
+      "item": "projectexa:colossal_star_ein"
     },
     {
-      "item": "projectexpansion:colossal_star_ein"
+      "item": "projectexa:colossal_star_ein"
     }
   ],
   "result": {
-    "id": "projectexpansion:colossal_star_zwei"
+    "id": "projectexa:colossal_star_zwei"
   }
 }

@@ -43,5 +43,5 @@ export const DYE_COLORS = [
 	"brown", "green", "red", "black"
 ];
 
-export const assetsDir = new URL("../../generated/resources/assets/projectexpansion/", import.meta.url);
-export const dataDir = new URL("../../generated/resources/data/projectexpansion/", import.meta.url);
+export const assetsDir = new URL("../../generated/resources/assets/projectexa/", import.meta.url);
+export const dataDir = new URL("../../generated/resources/data/projectexa/", import.meta.url);

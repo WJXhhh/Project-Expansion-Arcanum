@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "projectexpansion:$TIER$_fuel_block"
+          "name": "projectexa:$TIER$_fuel_block"
         }
       ],
       "conditions": [

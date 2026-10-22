@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "projectexpansion:item/matter_upgrader"
+    "layer0": "projectexa:item/matter_upgrader"
   }
 }

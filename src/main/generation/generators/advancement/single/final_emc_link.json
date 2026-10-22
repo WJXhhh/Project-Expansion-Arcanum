@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:emc_link",
+  "parent": "projectexa:emc_link",
   "criteria": {
     "final_emc_link": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:final_emc_link"
+            "items": "projectexa:final_emc_link"
           }
         ]
       },
@@ -14,14 +14,14 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.final_emc_link.description"
+      "translate": "advancements.projectexa.final_emc_link.description"
     },
     "frame": "goal",
     "icon": {
-      "id": "projectexpansion:final_emc_link"
+      "id": "projectexa:final_emc_link"
     },
     "title": {
-      "translate": "advancements.projectexpansion.final_emc_link"
+      "translate": "advancements.projectexa.final_emc_link"
     }
   },
   "requirements": [

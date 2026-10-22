@@ -7,16 +7,16 @@
   ],
   "key": {
     "B": {
-      "item": "projectexpansion:basic_alchemical_book"
+      "item": "projectexa:basic_alchemical_book"
     },
     "O": {
-      "item": "projectexpansion:magnum_star_omega"
+      "item": "projectexa:magnum_star_omega"
     },
     "E": {
-      "item": "projectexpansion:magnum_star_ein"
+      "item": "projectexa:magnum_star_ein"
     }
   },
   "result": {
-    "id": "projectexpansion:advanced_alchemical_book"
+    "id": "projectexa:advanced_alchemical_book"
   }
 }

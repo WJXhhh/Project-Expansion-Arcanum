@@ -1,0 +1,20 @@
+{
+	"values": [
+		"projectexa:basic_relay",
+		"projectexa:dark_relay",
+		"projectexa:red_relay",
+		"projectexa:magenta_relay",
+		"projectexa:pink_relay",
+		"projectexa:purple_relay",
+		"projectexa:violet_relay",
+		"projectexa:blue_relay",
+		"projectexa:cyan_relay",
+		"projectexa:green_relay",
+		"projectexa:lime_relay",
+		"projectexa:yellow_relay",
+		"projectexa:orange_relay",
+		"projectexa:white_relay",
+		"projectexa:fading_relay",
+		"projectexa:final_relay"
+	]
+}

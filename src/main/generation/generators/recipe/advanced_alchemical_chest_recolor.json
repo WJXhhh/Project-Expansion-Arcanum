@@ -1,15 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:advanced_alchemical_chest/$COLOR$",
+  "group": "projectexa:advanced_alchemical_chest/$COLOR$",
   "ingredients": [
     {
-      "tag": "projectexpansion:advanced_alchemical_chest"
+      "tag": "projectexa:advanced_alchemical_chest"
     },
     {
       "item": "minecraft:$COLOR$_dye"
     }
   ],
   "result": {
-    "id": "projectexpansion:$COLOR$_advanced_alchemical_chest"
+    "id": "projectexa:$COLOR$_advanced_alchemical_chest"
   }
 }

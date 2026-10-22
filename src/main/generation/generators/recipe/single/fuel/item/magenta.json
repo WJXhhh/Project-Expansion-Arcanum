@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:fuel/magenta",
+  "group": "projectexa:fuel/magenta",
   "ingredients": [
     {
       "item": "projecte:philosophers_stone"
@@ -19,6 +19,6 @@
     }
   ],
   "result": {
-    "id": "projectexpansion:magenta_fuel"
+    "id": "projectexa:magenta_fuel"
   }
 }

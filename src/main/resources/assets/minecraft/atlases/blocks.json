@@ -2,7 +2,7 @@
   "sources": [
     {
       "type": "minecraft:single",
-      "resource": "projectexpansion:curios/transmutation_tablet"
+      "resource": "projectexa:curios/transmutation_tablet"
     }
   ]
 }

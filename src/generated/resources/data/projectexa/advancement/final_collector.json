@@ -1,0 +1,33 @@
+{
+  "parent": "projectexa:collector",
+  "criteria": {
+    "final_collector": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:final_collector"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.final_collector.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "projectexa:final_collector"
+    },
+    "title": {
+      "translate": "advancements.projectexa.final_collector"
+    }
+  },
+  "requirements": [
+    [
+      "final_collector"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

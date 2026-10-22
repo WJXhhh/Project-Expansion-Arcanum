@@ -1,0 +1,32 @@
+{
+  "parent": "projectexa:collector",
+  "criteria": {
+    "compressed_collector": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#projectexa:compressed_collector"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.compressed_collector.description"
+    },
+    "icon": {
+      "id": "projectexa:basic_compressed_collector"
+    },
+    "title": {
+      "translate": "advancements.projectexa.compressed_collector"
+    }
+  },
+  "requirements": [
+    [
+      "compressed_collector"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

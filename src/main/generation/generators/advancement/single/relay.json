@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "#projectexpansion:relay"
+            "items": "#projectexa:relay"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.relay.description"
+      "translate": "advancements.projectexa.relay.description"
     },
     "icon": {
-      "id": "projectexpansion:basic_relay"
+      "id": "projectexa:basic_relay"
     },
     "title": {
-      "translate": "advancements.projectexpansion.relay"
+      "translate": "advancements.projectexa.relay"
     }
   },
   "requirements": [

@@ -1,0 +1,32 @@
+{
+  "parent": "projectexa:pink_matter",
+  "criteria": {
+    "purple_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:purple_matter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.purple_matter.description"
+    },
+    "icon": {
+      "id": "projectexa:purple_matter"
+    },
+    "title": {
+      "translate": "advancements.projectexa.purple_matter"
+    }
+  },
+  "requirements": [
+    [
+      "purple_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

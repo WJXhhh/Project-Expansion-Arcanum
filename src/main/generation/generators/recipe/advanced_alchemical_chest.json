@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "projectexpansion:advanced_alchemical_chest/$COLOR$",
+  "group": "projectexa:advanced_alchemical_chest/$COLOR$",
   "pattern": [
     "DLD",
     "MBM",
@@ -24,6 +24,6 @@
     }
   },
   "result": {
-    "id": "projectexpansion:$COLOR$_advanced_alchemical_chest"
+    "id": "projectexa:$COLOR$_advanced_alchemical_chest"
   }
 }

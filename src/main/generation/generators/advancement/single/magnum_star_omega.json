@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:magnum_star_omega"
+            "items": "projectexa:magnum_star_omega"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.magnum_star_omega.description"
+      "translate": "advancements.projectexa.magnum_star_omega.description"
     },
     "icon": {
-      "id": "projectexpansion:magnum_star_omega"
+      "id": "projectexa:magnum_star_omega"
     },
     "title": {
-      "translate": "advancements.projectexpansion.magnum_star_omega"
+      "translate": "advancements.projectexa.magnum_star_omega"
     }
   },
   "requirements": [

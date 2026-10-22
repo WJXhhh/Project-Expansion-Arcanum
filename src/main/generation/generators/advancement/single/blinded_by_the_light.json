@@ -1,5 +1,5 @@
 {
-	"parent": "projectexpansion:compact_sun",
+	"parent": "projectexa:compact_sun",
 	"criteria": {
 		"blinded_by_the_light": {
 			"trigger": "minecraft:impossible"
@@ -8,7 +8,7 @@
 	"display": {
 		"announce_to_chat": true,
 		"description": {
-			"translate": "advancements.projectexpansion.blinded_by_the_light.description"
+			"translate": "advancements.projectexa.blinded_by_the_light.description"
 		},
 		"frame": "goal",
 		"hidden": true,
@@ -17,7 +17,7 @@
 		},
 		"show_toast": true,
 		"title": {
-			"translate": "advancements.projectexpansion.blinded_by_the_light"
+			"translate": "advancements.projectexa.blinded_by_the_light"
 		}
 	},
 	"requirements": [

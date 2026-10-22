@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "projectexpansion:block/power_flower/$TIER$"
+      "model": "projectexa:block/power_flower/$TIER$"
     }
   }
 }

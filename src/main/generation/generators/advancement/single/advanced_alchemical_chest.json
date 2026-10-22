@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "#projectexpansion:advanced_alchemical_chest"
+            "items": "#projectexa:advanced_alchemical_chest"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.advanced_alchemical_chest.description"
+      "translate": "advancements.projectexa.advanced_alchemical_chest.description"
     },
     "icon": {
-      "id": "projectexpansion:white_advanced_alchemical_chest"
+      "id": "projectexa:white_advanced_alchemical_chest"
     },
     "title": {
-      "translate": "advancements.projectexpansion.advanced_alchemical_chest"
+      "translate": "advancements.projectexa.advanced_alchemical_chest"
     }
   },
   "requirements": [

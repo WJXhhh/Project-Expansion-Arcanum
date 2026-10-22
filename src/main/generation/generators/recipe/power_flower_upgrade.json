@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "projectexpansion:matter/$TIER$",
+  "group": "projectexa:matter/$TIER$",
   "pattern": [
     "CLC",
     "RPR",
@@ -8,19 +8,19 @@
   ],
   "key": {
     "L": {
-      "item": "projectexpansion:$TIER$_emc_link"
+      "item": "projectexa:$TIER$_emc_link"
     },
     "C": {
-      "item": "projectexpansion:$TIER$_compressed_collector"
+      "item": "projectexa:$TIER$_compressed_collector"
     },
     "R": {
-      "item": "projectexpansion:$TIER$_relay"
+      "item": "projectexa:$TIER$_relay"
     },
     "P": {
-      "item": "projectexpansion:$PREV$_power_flower"
+      "item": "projectexa:$PREV$_power_flower"
     }
   },
   "result": {
-    "id": "projectexpansion:$TIER$_power_flower"
+    "id": "projectexa:$TIER$_power_flower"
   }
 }

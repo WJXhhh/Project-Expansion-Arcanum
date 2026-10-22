@@ -1,7 +1,7 @@
 {
-  "parent": "projectexpansion:block/power_flower/base",
+  "parent": "projectexa:block/power_flower/base",
   "textures": {
-    "collector": "projectexpansion:block/collector/$TIER$",
-    "relay": "projectexpansion:block/relay/$TIER$"
+    "collector": "projectexa:block/collector/$TIER$",
+    "relay": "projectexa:block/relay/$TIER$"
   }
 }

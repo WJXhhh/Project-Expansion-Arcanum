@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:star",
+  "group": "projectexa:star",
   "ingredients": [
     {
-      "item": "projectexpansion:gargantuan_star_vier"
+      "item": "projectexa:gargantuan_star_vier"
     },
     {
-      "item": "projectexpansion:gargantuan_star_vier"
+      "item": "projectexa:gargantuan_star_vier"
     },
     {
-      "item": "projectexpansion:gargantuan_star_vier"
+      "item": "projectexa:gargantuan_star_vier"
     },
     {
-      "item": "projectexpansion:gargantuan_star_vier"
+      "item": "projectexa:gargantuan_star_vier"
     }
   ],
   "result": {
-    "id": "projectexpansion:gargantuan_star_sphere"
+    "id": "projectexa:gargantuan_star_sphere"
   }
 }

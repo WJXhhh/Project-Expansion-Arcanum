@@ -1,0 +1,32 @@
+{
+  "parent": "projectexa:green_fuel",
+  "criteria": {
+    "lime_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:lime_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.lime_fuel.description"
+    },
+    "icon": {
+      "id": "projectexa:lime_fuel"
+    },
+    "title": {
+      "translate": "advancements.projectexa.lime_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "lime_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

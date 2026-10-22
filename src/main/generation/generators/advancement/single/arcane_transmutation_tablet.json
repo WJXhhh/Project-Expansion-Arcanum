@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "projectexpansion:arcane_transmutation_tablet"
+              "projectexa:arcane_transmutation_tablet"
             ]
           }
         ]
@@ -16,15 +16,15 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.arcane_transmutation_tablet.description"
+      "translate": "advancements.projectexa.arcane_transmutation_tablet.description"
     },
     "frame": "goal",
     "hidden": true,
     "icon": {
-      "id": "projectexpansion:arcane_transmutation_tablet"
+      "id": "projectexa:arcane_transmutation_tablet"
     },
     "title": {
-      "translate": "advancements.projectexpansion.arcane_transmutation_tablet"
+      "translate": "advancements.projectexa.arcane_transmutation_tablet"
     }
   },
   "requirements": [

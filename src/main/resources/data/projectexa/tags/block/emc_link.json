@@ -1,0 +1,20 @@
+{
+	"values": [
+		"projectexa:basic_emc_link",
+		"projectexa:dark_emc_link",
+		"projectexa:red_emc_link",
+		"projectexa:magenta_emc_link",
+		"projectexa:pink_emc_link",
+		"projectexa:purple_emc_link",
+		"projectexa:violet_emc_link",
+		"projectexa:blue_emc_link",
+		"projectexa:cyan_emc_link",
+		"projectexa:green_emc_link",
+		"projectexa:lime_emc_link",
+		"projectexa:yellow_emc_link",
+		"projectexa:orange_emc_link",
+		"projectexa:white_emc_link",
+		"projectexa:fading_emc_link",
+		"projectexa:final_emc_link"
+	]
+}

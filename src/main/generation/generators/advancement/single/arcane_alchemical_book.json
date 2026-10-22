@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:master_alchemical_book",
+  "parent": "projectexa:master_alchemical_book",
   "criteria": {
     "arcane_alchemical_book": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:arcane_alchemical_book"
+            "items": "projectexa:arcane_alchemical_book"
           }
         ]
       },
@@ -14,14 +14,14 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.arcane_alchemical_book.description"
+      "translate": "advancements.projectexa.arcane_alchemical_book.description"
     },
     "frame": "goal",
     "icon": {
-      "id": "projectexpansion:arcane_alchemical_book"
+      "id": "projectexa:arcane_alchemical_book"
     },
     "title": {
-      "translate": "advancements.projectexpansion.arcane_alchemical_book"
+      "translate": "advancements.projectexa.arcane_alchemical_book"
     }
   },
   "requirements": [

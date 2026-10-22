@@ -7,16 +7,16 @@
   ],
   "key": {
     "B": {
-      "item": "projectexpansion:master_alchemical_book"
+      "item": "projectexa:master_alchemical_book"
     },
     "S": {
-      "item": "projectexpansion:final_star_shard"
+      "item": "projectexa:final_star_shard"
     },
     "F": {
-      "item": "projectexpansion:final_star"
+      "item": "projectexa:final_star"
     }
   },
   "result": {
-    "id": "projectexpansion:arcane_alchemical_book"
+    "id": "projectexa:arcane_alchemical_book"
   }
 }

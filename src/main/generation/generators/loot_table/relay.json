@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "projectexpansion:$TIER$_relay"
+          "name": "projectexa:$TIER$_relay"
         }
       ],
       "conditions": [

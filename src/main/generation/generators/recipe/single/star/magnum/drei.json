@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:star",
+  "group": "projectexa:star",
   "ingredients": [
     {
-      "item": "projectexpansion:magnum_star_zwei"
+      "item": "projectexa:magnum_star_zwei"
     },
     {
-      "item": "projectexpansion:magnum_star_zwei"
+      "item": "projectexa:magnum_star_zwei"
     },
     {
-      "item": "projectexpansion:magnum_star_zwei"
+      "item": "projectexa:magnum_star_zwei"
     },
     {
-      "item": "projectexpansion:magnum_star_zwei"
+      "item": "projectexa:magnum_star_zwei"
     }
   ],
   "result": {
-    "id": "projectexpansion:magnum_star_drei"
+    "id": "projectexa:magnum_star_drei"
   }
 }

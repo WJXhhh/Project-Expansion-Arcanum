@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:alchemical_bag",
+  "criteria": {
+    "advanced_alchemical_chest": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#projectexa:advanced_alchemical_chest"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.advanced_alchemical_chest.description"
+    },
+    "icon": {
+      "id": "projectexa:white_advanced_alchemical_chest"
+    },
+    "title": {
+      "translate": "advancements.projectexa.advanced_alchemical_chest"
+    }
+  },
+  "requirements": [
+    [
+      "advanced_alchemical_chest"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

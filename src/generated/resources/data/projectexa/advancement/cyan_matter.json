@@ -1,0 +1,32 @@
+{
+  "parent": "projectexa:blue_matter",
+  "criteria": {
+    "cyan_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:cyan_matter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.cyan_matter.description"
+    },
+    "icon": {
+      "id": "projectexa:cyan_matter"
+    },
+    "title": {
+      "translate": "advancements.projectexa.cyan_matter"
+    }
+  },
+  "requirements": [
+    [
+      "cyan_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

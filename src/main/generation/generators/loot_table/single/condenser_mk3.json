@@ -6,12 +6,12 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "projectexpansion:condenser_mk3"
+					"name": "projectexa:condenser_mk3"
 				}
 			],
 			"name": "main",
 			"rolls": 1.0
 		}
 	],
-	"random_sequence": "projectexpansion:blocks/condenser_mk3"
+	"random_sequence": "projectexa:blocks/condenser_mk3"
 }

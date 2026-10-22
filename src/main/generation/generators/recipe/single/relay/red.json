@@ -1,15 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:matter/red",
+  "group": "projectexa:matter/red",
   "ingredients": [
     {
-      "item": "projectexpansion:dark_relay"
+      "item": "projectexa:dark_relay"
     },
     {
       "item": "projecte:red_matter"
     }
   ],
   "result": {
-    "id": "projectexpansion:red_relay"
+    "id": "projectexa:red_relay"
   }
 }

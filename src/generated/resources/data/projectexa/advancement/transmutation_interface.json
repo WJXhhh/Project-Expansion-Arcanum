@@ -1,0 +1,33 @@
+{
+  "parent": "projecte:transmutation_tablet",
+  "criteria": {
+    "transmutation_interface": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:transmutation_interface"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.transmutation_interface.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "projectexa:transmutation_interface"
+    },
+    "title": {
+      "translate": "advancements.projectexa.transmutation_interface"
+    }
+  },
+  "requirements": [
+    [
+      "transmutation_interface"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

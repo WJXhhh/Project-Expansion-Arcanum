@@ -1,5 +1,5 @@
 {
-	"command.projectexpansion.dumpfuelmap.fuel": "Fuel",
-	"command.projectexpansion.dumpfuelmap.emc": "EMC",
-	"command.projectexpansion.dumpfuelmap.index": "Index"
+	"command.projectexa.dumpfuelmap.fuel": "Fuel",
+	"command.projectexa.dumpfuelmap.emc": "EMC",
+	"command.projectexa.dumpfuelmap.index": "Index"
 }

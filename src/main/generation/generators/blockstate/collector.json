@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "projectexpansion:block/collector/$TIER$"
+      "model": "projectexa:block/collector/$TIER$"
     }
   }
 }

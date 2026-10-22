@@ -1,12 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:matter/basic",
+  "group": "projectexa:matter/basic",
   "ingredients": [
     {
       "item": "projecte:relay_mk1"
     }
   ],
   "result": {
-    "id": "projectexpansion:basic_relay"
+    "id": "projectexa:basic_relay"
   }
 }

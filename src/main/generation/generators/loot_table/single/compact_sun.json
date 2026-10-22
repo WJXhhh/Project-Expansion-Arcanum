@@ -6,7 +6,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "projectexpansion:compact_sun"
+					"name": "projectexa:compact_sun"
 				}
 			],
 			"conditions": [

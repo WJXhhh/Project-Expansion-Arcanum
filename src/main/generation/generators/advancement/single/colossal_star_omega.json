@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:magnum_star_omega",
+  "parent": "projectexa:magnum_star_omega",
   "criteria": {
     "colossal_star_omega": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:colossal_star_omega"
+            "items": "projectexa:colossal_star_omega"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.colossal_star_omega.description"
+      "translate": "advancements.projectexa.colossal_star_omega.description"
     },
     "icon": {
-      "id": "projectexpansion:colossal_star_omega"
+      "id": "projectexa:colossal_star_omega"
     },
     "title": {
-      "translate": "advancements.projectexpansion.colossal_star_omega"
+      "translate": "advancements.projectexa.colossal_star_omega"
     }
   },
   "requirements": [

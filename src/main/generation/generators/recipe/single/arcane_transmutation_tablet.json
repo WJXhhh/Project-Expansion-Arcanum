@@ -10,7 +10,7 @@
       "item": "projecte:transmutation_tablet"
     },
     "M": {
-      "item": "projectexpansion:magenta_matter"
+      "item": "projectexa:magenta_matter"
     },
     "W": {
       "tag": "c:player_workstations/crafting_tables"
@@ -19,10 +19,10 @@
       "tag": "c:chests"
     },
     "S": {
-      "item": "projectexpansion:magnum_star_ein"
+      "item": "projectexa:magnum_star_ein"
     }
   },
   "result": {
-    "id": "projectexpansion:arcane_transmutation_tablet"
+    "id": "projectexa:arcane_transmutation_tablet"
   }
 }

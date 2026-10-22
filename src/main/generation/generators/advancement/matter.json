@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:$PREV$_matter",
+  "parent": "projectexa:$PREV$_matter",
   "criteria": {
     "$TIER$_matter": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:$TIER$_matter"
+            "items": "projectexa:$TIER$_matter"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.$TIER$_matter.description"
+      "translate": "advancements.projectexa.$TIER$_matter.description"
     },
     "icon": {
-      "id": "projectexpansion:$TIER$_matter"
+      "id": "projectexa:$TIER$_matter"
     },
     "title": {
-      "translate": "advancements.projectexpansion.$TIER$_matter"
+      "translate": "advancements.projectexa.$TIER$_matter"
     }
   },
   "requirements": [

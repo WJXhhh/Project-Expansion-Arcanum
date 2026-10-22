@@ -20,7 +20,7 @@ function getCore(tier: string) {
             return "projecte:condenser_mk1";
         }
         default: {
-            return "projectexpansion:$PREV$_emc_link";
+            return "projectexa:$PREV$_emc_link";
         }
     }
 }
@@ -35,10 +35,10 @@ function getMatter(tier: string) {
             return "projecte:$TIER$_matter";
         }
         case MATTER_TIERS[15]: {
-            return "projectexpansion:final_star_shard";
+            return "projectexa:final_star_shard";
         }
         default: {
-            return "projectexpansion:$TIER$_matter";
+            return "projectexa:$TIER$_matter";
         }
     }
 }

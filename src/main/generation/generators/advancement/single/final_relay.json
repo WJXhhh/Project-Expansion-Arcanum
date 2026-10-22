@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:relay",
+  "parent": "projectexa:relay",
   "criteria": {
     "final_relay": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:final_relay"
+            "items": "projectexa:final_relay"
           }
         ]
       },
@@ -14,14 +14,14 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.final_relay.description"
+      "translate": "advancements.projectexa.final_relay.description"
     },
     "frame": "goal",
     "icon": {
-      "id": "projectexpansion:final_relay"
+      "id": "projectexa:final_relay"
     },
     "title": {
-      "translate": "advancements.projectexpansion.final_relay"
+      "translate": "advancements.projectexa.final_relay"
     }
   },
   "requirements": [

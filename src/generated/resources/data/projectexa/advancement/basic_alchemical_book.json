@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:philosophers_stone",
+  "criteria": {
+    "basic_alchemical_book": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:basic_alchemical_book"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.basic_alchemical_book.description"
+    },
+    "icon": {
+      "id": "projectexa:basic_alchemical_book"
+    },
+    "title": {
+      "translate": "advancements.projectexa.basic_alchemical_book"
+    }
+  },
+  "requirements": [
+    [
+      "basic_alchemical_book"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

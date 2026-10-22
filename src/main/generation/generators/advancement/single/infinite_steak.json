@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:infinite_steak"
+            "items": "projectexa:infinite_steak"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.infinite_steak.description"
+      "translate": "advancements.projectexa.infinite_steak.description"
     },
     "icon": {
-      "id": "projectexpansion:infinite_steak"
+      "id": "projectexa:infinite_steak"
     },
     "title": {
-      "translate": "advancements.projectexpansion.infinite_steak"
+      "translate": "advancements.projectexa.infinite_steak"
     }
   },
   "requirements": [

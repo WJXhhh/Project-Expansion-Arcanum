@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "projectexpansion:matter/$TIER$",
+  "group": "projectexa:matter/$TIER$",
   "pattern": [
     "CCC",
     "CCC",
@@ -8,10 +8,10 @@
   ],
   "key": {
     "C": {
-      "item": "projectexpansion:$TIER$_collector"
+      "item": "projectexa:$TIER$_collector"
     }
   },
   "result": {
-    "id": "projectexpansion:$TIER$_compressed_collector"
+    "id": "projectexa:$TIER$_compressed_collector"
   }
 }

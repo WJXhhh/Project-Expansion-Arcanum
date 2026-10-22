@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "#projectexpansion:collector"
+            "items": "#projectexa:collector"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.collector.description"
+      "translate": "advancements.projectexa.collector.description"
     },
     "icon": {
-      "id": "projectexpansion:basic_collector"
+      "id": "projectexa:basic_collector"
     },
     "title": {
-      "translate": "advancements.projectexpansion.collector"
+      "translate": "advancements.projectexa.collector"
     }
   },
   "requirements": [

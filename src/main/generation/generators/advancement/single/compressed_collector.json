@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:collector",
+  "parent": "projectexa:collector",
   "criteria": {
     "compressed_collector": {
       "conditions": {
         "items": [
           {
-            "items": "#projectexpansion:compressed_collector"
+            "items": "#projectexa:compressed_collector"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.compressed_collector.description"
+      "translate": "advancements.projectexa.compressed_collector.description"
     },
     "icon": {
-      "id": "projectexpansion:basic_compressed_collector"
+      "id": "projectexa:basic_compressed_collector"
     },
     "title": {
-      "translate": "advancements.projectexpansion.compressed_collector"
+      "translate": "advancements.projectexa.compressed_collector"
     }
   },
   "requirements": [

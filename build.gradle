@@ -1,7 +1,7 @@
-import cool.furry.mc.neoforge.projectexpansion.Data
-import cool.furry.mc.neoforge.projectexpansion.Publish
-import cool.furry.mc.neoforge.projectexpansion.SignJar
-import cool.furry.mc.neoforge.projectexpansion.UpdateJson
+import com.wjx.neoforge.projectexa.Data
+import com.wjx.neoforge.projectexa.Publish
+import com.wjx.neoforge.projectexa.SignJar
+import com.wjx.neoforge.projectexa.UpdateJson
 
 plugins {
     id 'java-library'
@@ -120,7 +120,7 @@ neoForge {
     }
 
     mods {
-        projectexpansion {
+        projectexa {
             sourceSet sourceSets.main
         }
     }

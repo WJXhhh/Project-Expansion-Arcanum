@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "projectexpansion:$TIER$_emc_link"
+          "name": "projectexa:$TIER$_emc_link"
         }
       ],
       "conditions": [

@@ -7,16 +7,16 @@
   ],
   "key": {
     "B": {
-      "item": "projectexpansion:advanced_alchemical_book"
+      "item": "projectexa:advanced_alchemical_book"
     },
     "O": {
-      "item": "projectexpansion:colossal_star_omega"
+      "item": "projectexa:colossal_star_omega"
     },
     "E": {
-      "item": "projectexpansion:colossal_star_ein"
+      "item": "projectexa:colossal_star_ein"
     }
   },
   "result": {
-    "id": "projectexpansion:master_alchemical_book"
+    "id": "projectexa:master_alchemical_book"
   }
 }

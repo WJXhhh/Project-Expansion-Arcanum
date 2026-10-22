@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:colossal_star_omega",
+  "parent": "projectexa:colossal_star_omega",
   "criteria": {
     "final_star_shard": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:final_star_shard"
+            "items": "projectexa:final_star_shard"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.final_star_shard.description"
+      "translate": "advancements.projectexa.final_star_shard.description"
     },
     "icon": {
-      "id": "projectexpansion:final_star_shard"
+      "id": "projectexa:final_star_shard"
     },
     "title": {
-      "translate": "advancements.projectexpansion.final_star_shard"
+      "translate": "advancements.projectexa.final_star_shard"
     }
   },
   "requirements": [

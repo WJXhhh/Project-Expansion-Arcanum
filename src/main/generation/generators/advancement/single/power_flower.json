@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "#projectexpansion:power_flower"
+            "items": "#projectexa:power_flower"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.power_flower.description"
+      "translate": "advancements.projectexa.power_flower.description"
     },
     "icon": {
-      "id": "projectexpansion:basic_power_flower"
+      "id": "projectexa:basic_power_flower"
     },
     "title": {
-      "translate": "advancements.projectexpansion.power_flower"
+      "translate": "advancements.projectexa.power_flower"
     }
   },
   "requirements": [

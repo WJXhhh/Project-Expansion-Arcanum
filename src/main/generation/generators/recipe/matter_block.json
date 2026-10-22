@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "projectexpansion:fuel/$TIER$",
+  "group": "projectexa:fuel/$TIER$",
   "ingredients": [
     {
-      "item": "projectexpansion:$TIER$_matter"
+      "item": "projectexa:$TIER$_matter"
     },
     {
-      "item": "projectexpansion:$TIER$_matter"
+      "item": "projectexa:$TIER$_matter"
     },
     {
-      "item": "projectexpansion:$TIER$_matter"
+      "item": "projectexa:$TIER$_matter"
     },
     {
-      "item": "projectexpansion:$TIER$_matter"
+      "item": "projectexa:$TIER$_matter"
     }
   ],
   "result": {
-    "id": "projectexpansion:$TIER$_matter_block"
+    "id": "projectexa:$TIER$_matter_block"
   }
 }

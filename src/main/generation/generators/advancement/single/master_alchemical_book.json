@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:advanced_alchemical_book",
+  "parent": "projectexa:advanced_alchemical_book",
   "criteria": {
     "master_alchemical_book": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:master_alchemical_book"
+            "items": "projectexa:master_alchemical_book"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.master_alchemical_book.description"
+      "translate": "advancements.projectexa.master_alchemical_book.description"
     },
     "icon": {
-      "id": "projectexpansion:master_alchemical_book"
+      "id": "projectexa:master_alchemical_book"
     },
     "title": {
-      "translate": "advancements.projectexpansion.master_alchemical_book"
+      "translate": "advancements.projectexa.master_alchemical_book"
     }
   },
   "requirements": [

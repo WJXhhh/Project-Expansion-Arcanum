@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "projectexpansion:matter/$TIER$",
+  "group": "projectexa:matter/$TIER$",
   "pattern": [
     "LMH",
     "TCT",
@@ -24,6 +24,6 @@
     }
   },
   "result": {
-    "id": "projectexpansion:$TIER$_emc_link"
+    "id": "projectexa:$TIER$_emc_link"
   }
 }

@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "#projectexpansion:emc_link"
+            "items": "#projectexa:emc_link"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.emc_link.description"
+      "translate": "advancements.projectexa.emc_link.description"
     },
     "icon": {
-      "id": "projectexpansion:basic_emc_link"
+      "id": "projectexa:basic_emc_link"
     },
     "title": {
-      "translate": "advancements.projectexpansion.emc_link"
+      "translate": "advancements.projectexa.emc_link"
     }
   },
   "requirements": [

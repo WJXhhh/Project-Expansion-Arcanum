@@ -7,7 +7,7 @@
   ],
   "key": {
     "V": {
-      "item": "projectexpansion:violet_matter"
+      "item": "projectexa:violet_matter"
     },
     "N": {
       "item": "minecraft:nether_star"
@@ -17,6 +17,6 @@
     }
   },
   "result": {
-    "id": "projectexpansion:knowledge_sharing_book"
+    "id": "projectexa:knowledge_sharing_book"
   }
 }

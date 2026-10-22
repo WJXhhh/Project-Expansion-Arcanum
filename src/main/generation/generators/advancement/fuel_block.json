@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:$TIER$_fuel",
+  "parent": "projectexa:$TIER$_fuel",
   "criteria": {
     "$TIER$_fuel_block": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:$TIER$_fuel_block"
+            "items": "projectexa:$TIER$_fuel_block"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.$TIER$_fuel_block.description"
+      "translate": "advancements.projectexa.$TIER$_fuel_block.description"
     },
     "icon": {
-      "id": "projectexpansion:$TIER$_fuel_block"
+      "id": "projectexa:$TIER$_fuel_block"
     },
     "title": {
-      "translate": "advancements.projectexpansion.$TIER$_fuel_block"
+      "translate": "advancements.projectexa.$TIER$_fuel_block"
     }
   },
   "requirements": [

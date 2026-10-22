@@ -5,7 +5,7 @@
 			"conditions": {
 				"items": [
 					{
-						"items": "projectexpansion:compact_sun"
+						"items": "projectexa:compact_sun"
 					}
 				]
 			},
@@ -15,16 +15,16 @@
 	"display": {
 		"announce_to_chat": true,
 		"description": {
-			"translate": "advancements.projectexpansion.compact_sun.description"
+			"translate": "advancements.projectexa.compact_sun.description"
 		},
 		"frame": "goal",
 		"hidden": true,
 		"icon": {
-			"id": "projectexpansion:compact_sun"
+			"id": "projectexa:compact_sun"
 		},
 		"show_toast": true,
 		"title": {
-			"translate": "advancements.projectexpansion.compact_sun"
+			"translate": "advancements.projectexa.compact_sun"
 		}
 	},
 	"requirements": [

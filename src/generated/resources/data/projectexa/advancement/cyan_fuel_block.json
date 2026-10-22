@@ -1,0 +1,32 @@
+{
+  "parent": "projectexa:cyan_fuel",
+  "criteria": {
+    "cyan_fuel_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:cyan_fuel_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.cyan_fuel_block.description"
+    },
+    "icon": {
+      "id": "projectexa:cyan_fuel_block"
+    },
+    "title": {
+      "translate": "advancements.projectexa.cyan_fuel_block"
+    }
+  },
+  "requirements": [
+    [
+      "cyan_fuel_block"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

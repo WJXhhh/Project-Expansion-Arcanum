@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "projectexa:block/arcane_table",
+      "x": 180
+    },
+    "facing=up": {
+      "model": "projectexa:block/arcane_table"
+    },
+    "facing=north": {
+      "model": "projectexa:block/arcane_table",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "projectexa:block/arcane_table",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "projectexa:block/arcane_table",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "projectexa:block/arcane_table",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

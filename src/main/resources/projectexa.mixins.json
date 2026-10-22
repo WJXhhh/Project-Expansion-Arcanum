@@ -1,0 +1,33 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.wjx.neoforge.projectexa.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "projectexa.refmap.json",
+  "client": [
+    "DeleteWeebShitMixin",
+    "EMCFormatterMixin",
+    "KnowledgeSyncChangePKTMixin",
+    "KnowledgeSyncEmcPKTMixin",
+    "KnowledgeSyncInputsAndLocksPKTMixin",
+    "KnowledgeSyncPKTMixin"
+  ],
+  "mixins": [
+    "AlchemicalBagMixin",
+    "AlchemicalCollectionMixin",
+    "AlchemicalCollectionToggleMixin",
+    "CollectorRecipeCategoryMixin",
+    "EnchantmentProcessorMixin",
+    "PacketHandlerMixin",
+    "PhilosophersStoneMixin",
+    "RemoveEMCCMDMixin",
+    "ResetEMCCMDMixin",
+    "SearchUpdatePKTMixin",
+    "SetEmcCMDMixin",
+    "ShutTheFuckUpMixin",
+    "TomeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}

@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "projectexpansion:block/matter/$TIER$"
+      "model": "projectexa:block/matter/$TIER$"
     }
   }
 }

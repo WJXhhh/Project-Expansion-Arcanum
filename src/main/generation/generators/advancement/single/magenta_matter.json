@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:magenta_matter"
+            "items": "projectexa:magenta_matter"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.magenta_matter.description"
+      "translate": "advancements.projectexa.magenta_matter.description"
     },
     "icon": {
-      "id": "projectexpansion:magenta_matter"
+      "id": "projectexa:magenta_matter"
     },
     "title": {
-      "translate": "advancements.projectexpansion.magenta_matter"
+      "translate": "advancements.projectexa.magenta_matter"
     }
   },
   "requirements": [

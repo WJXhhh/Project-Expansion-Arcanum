@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:magenta_fuel"
+            "items": "projectexa:magenta_fuel"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.magenta_fuel.description"
+      "translate": "advancements.projectexa.magenta_fuel.description"
     },
     "icon": {
-      "id": "projectexpansion:magenta_fuel"
+      "id": "projectexa:magenta_fuel"
     },
     "title": {
-      "translate": "advancements.projectexpansion.magenta_fuel"
+      "translate": "advancements.projectexa.magenta_fuel"
     }
   },
   "requirements": [

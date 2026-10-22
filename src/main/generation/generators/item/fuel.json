@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "projectexpansion:item/fuel/$TIER$"
+    "layer0": "projectexa:item/fuel/$TIER$"
   }
 }

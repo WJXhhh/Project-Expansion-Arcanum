@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:condenser",
+  "criteria": {
+    "emc_link": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#projectexa:emc_link"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.emc_link.description"
+    },
+    "icon": {
+      "id": "projectexa:basic_emc_link"
+    },
+    "title": {
+      "translate": "advancements.projectexa.emc_link"
+    }
+  },
+  "requirements": [
+    [
+      "emc_link"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

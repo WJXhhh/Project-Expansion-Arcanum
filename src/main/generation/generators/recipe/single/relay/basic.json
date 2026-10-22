@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "projectexpansion:matter/basic",
+  "group": "projectexa:matter/basic",
   "pattern": [
     "OSO",
     "OAO",
@@ -18,6 +18,6 @@
     }
   },
   "result": {
-    "id": "projectexpansion:basic_relay"
+    "id": "projectexa:basic_relay"
   }
 }

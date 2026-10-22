@@ -1,6 +1,6 @@
 {
-	"projectexpansion:plugin": {
-		"initializer": "cool.furry.mc.neoforge.projectexpansion.integrations.wthit.WTHITPlugin",
+	"projectexa:plugin": {
+		"initializer": "com.wjx.neoforge.projectexa.integrations.wthit.WTHITPlugin",
 		"required": ["projecte"]
 	}
 }

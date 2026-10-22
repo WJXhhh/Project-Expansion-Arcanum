@@ -1,0 +1,32 @@
+{
+  "parent": "projectexa:violet_fuel",
+  "criteria": {
+    "blue_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectexa:blue_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectexa.blue_fuel.description"
+    },
+    "icon": {
+      "id": "projectexa:blue_fuel"
+    },
+    "title": {
+      "translate": "advancements.projectexa.blue_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "blue_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

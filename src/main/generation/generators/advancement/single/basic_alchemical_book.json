@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:basic_alchemical_book"
+            "items": "projectexa:basic_alchemical_book"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.basic_alchemical_book.description"
+      "translate": "advancements.projectexa.basic_alchemical_book.description"
     },
     "icon": {
-      "id": "projectexpansion:basic_alchemical_book"
+      "id": "projectexa:basic_alchemical_book"
     },
     "title": {
-      "translate": "advancements.projectexpansion.basic_alchemical_book"
+      "translate": "advancements.projectexa.basic_alchemical_book"
     }
   },
   "requirements": [

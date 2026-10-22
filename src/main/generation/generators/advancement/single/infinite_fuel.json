@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:infinite_steak",
+  "parent": "projectexa:infinite_steak",
   "criteria": {
     "infinite_fuel": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:infinite_fuel"
+            "items": "projectexa:infinite_fuel"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.infinite_fuel.description"
+      "translate": "advancements.projectexa.infinite_fuel.description"
     },
     "icon": {
-      "id": "projectexpansion:infinite_fuel"
+      "id": "projectexa:infinite_fuel"
     },
     "title": {
-      "translate": "advancements.projectexpansion.infinite_fuel"
+      "translate": "advancements.projectexa.infinite_fuel"
     }
   },
   "requirements": [

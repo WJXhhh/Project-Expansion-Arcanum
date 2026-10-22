@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:power_flower",
+  "parent": "projectexa:power_flower",
   "criteria": {
     "final_power_flower": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:final_power_flower"
+            "items": "projectexa:final_power_flower"
           }
         ]
       },
@@ -14,14 +14,14 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.final_power_flower.description"
+      "translate": "advancements.projectexa.final_power_flower.description"
     },
     "frame": "goal",
     "icon": {
-      "id": "projectexpansion:final_power_flower"
+      "id": "projectexa:final_power_flower"
     },
     "title": {
-      "translate": "advancements.projectexpansion.final_power_flower"
+      "translate": "advancements.projectexa.final_power_flower"
     }
   },
   "requirements": [

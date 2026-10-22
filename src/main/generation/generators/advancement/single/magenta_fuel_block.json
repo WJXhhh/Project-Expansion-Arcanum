@@ -1,11 +1,11 @@
 {
-  "parent": "projectexpansion:magenta_fuel",
+  "parent": "projectexa:magenta_fuel",
   "criteria": {
     "magenta_fuel_block": {
       "conditions": {
         "items": [
           {
-            "items": "projectexpansion:magenta_fuel_block"
+            "items": "projectexa:magenta_fuel_block"
           }
         ]
       },
@@ -14,13 +14,13 @@
   },
   "display": {
     "description": {
-      "translate": "advancements.projectexpansion.magenta_fuel_block.description"
+      "translate": "advancements.projectexa.magenta_fuel_block.description"
     },
     "icon": {
-      "id": "projectexpansion:magenta_fuel_block"
+      "id": "projectexa:magenta_fuel_block"
     },
     "title": {
-      "translate": "advancements.projectexpansion.magenta_fuel_block"
+      "translate": "advancements.projectexa.magenta_fuel_block"
     }
   },
   "requirements": [

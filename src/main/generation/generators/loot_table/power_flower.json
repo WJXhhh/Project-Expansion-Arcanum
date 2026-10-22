@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "projectexpansion:$TIER$_power_flower"
+          "name": "projectexa:$TIER$_power_flower"
         }
       ],
       "conditions": [

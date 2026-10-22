@@ -3,13 +3,13 @@
   "tag.item.projecte.fuel": "Fuel",
   "tag.item.projecte.matter": "Matter",
   "tag.item.projecte.transmutation_tablets": "Transmutation Tablets",
-  "tag.item.projectexpansion.advanced_alchemical_chest": "Advanced Alchemical Chest",
-  "tag.item.projectexpansion.collector": "Collector",
-  "tag.item.projectexpansion.compressed_collector": "Compressed Collector",
-  "tag.item.projectexpansion.emc_link": "EMC Link",
-  "tag.item.projectexpansion.fuel": "Fuel",
-  "tag.item.projectexpansion.matter": "Matter",
-  "tag.item.projectexpansion.power_flower": "Power Flower",
-  "tag.item.projectexpansion.relay": "Relay",
-  "tag.item.projectexpansion.sun_exposure_protection": "Sun Exposure Protection"
+  "tag.item.projectexa.advanced_alchemical_chest": "Advanced Alchemical Chest",
+  "tag.item.projectexa.collector": "Collector",
+  "tag.item.projectexa.compressed_collector": "Compressed Collector",
+  "tag.item.projectexa.emc_link": "EMC Link",
+  "tag.item.projectexa.fuel": "Fuel",
+  "tag.item.projectexa.matter": "Matter",
+  "tag.item.projectexa.power_flower": "Power Flower",
+  "tag.item.projectexa.relay": "Relay",
+  "tag.item.projectexa.sun_exposure_protection": "Sun Exposure Protection"
 }
