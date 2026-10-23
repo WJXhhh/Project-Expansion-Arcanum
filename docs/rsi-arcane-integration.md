@@ -17,6 +17,17 @@ RS Integration 1.5.0.1（CurseForge 文件 9065984）。RSI 仍然是可选依�
 
 ## 实现与边界
 
+### 仅安装超越维度、不安装 Refined Storage
+
+RSI 的 `ExtractionLedger` 仍包含旧 RS API 字节码。无 RS 时不对这个类应用本模组的
+Mixin，避免 ModLauncher 在重算栈帧时解析不存在的 `IStorageCache`。
+改在 RSI 的 `BeyondDimensionsSession` 合成调用中，将玩家可用的知识/EMC 加入网络材料快照，
+实际从超越维度网络提取不足时再用玩家 EMC 补足并同步。非合成调用不暴露这份虚拟库存。
+取消或失败后的已提取材料由 RSI 按网络来源作为实物返还，不同时返还 EMC。
+无 RS 且没有超越维度网络时，本路径不提供 EMC 补料。
+
+### 安装 Refined Storage 时
+
 `RsiMaterialSourcesMixin.countInventory` 在服务端主线程追加虚拟材料快照，兼容未安装
 Sophisticated Backpacks 的情况；安装该模组时过滤重复的虚拟来源，避免双计数。
 该快照同时进入 RSI 同步规划和异步规划的不可变输入，不在异步线程读取玩家能力。

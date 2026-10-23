@@ -35,6 +35,14 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
             "com.wjx.forge.projectexa.mixin.RsiKeyMappingsMixin",
             "com.wjx.forge.projectexa.mixin.RsiSidePanelModuleMixin",
             "com.wjx.forge.projectexa.mixin.RsiSidePanelClientMixin");
+    private static final Set<String> LEGACY_RSI_INVENTORY_MIXINS = Set.of(
+            "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerAccessor",
+            "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerMixin",
+            "com.wjx.forge.projectexa.mixin.RsiMaterialSourcesMixin");
+    private static final String BD_SESSION_MIXIN =
+            "com.wjx.forge.projectexa.mixin.RsiBeyondDimensionsSessionMixin";
+    private static final String RS_STORAGE_CACHE =
+            "com/refinedmods/refinedstorage/api/storage/cache/IStorageCache.class";
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -50,6 +58,15 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
         // Published RSI mods tolerate early config reads; only userdev runs need these workarounds.
         if (DEVELOPMENT_ONLY_RSI_MIXINS.contains(mixinClassName)) {
             return !FMLEnvironment.production;
+        }
+        // RSI supports Beyond Dimensions without RS. Its ledger still contains
+        // legacy RS bytecode, so transforming it without this API forces
+        // ModLauncher to resolve a class that is intentionally not installed.
+        if (LEGACY_RSI_INVENTORY_MIXINS.contains(mixinClassName)) {
+            return hasResource(RS_STORAGE_CACHE);
+        }
+        if (BD_SESSION_MIXIN.equals(mixinClassName)) {
+            return !hasResource(RS_STORAGE_CACHE);
         }
         if (!RECIPE_TRANSFER_BUTTON.equals(targetClassName)) {
             return true;
@@ -97,6 +114,19 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
                 return found[0];
             } catch (IOException | RuntimeException ignored) {
                 // Try the next class loader. JEI is optional during early startup.
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasResource(String resourceName) {
+        ClassLoader[] classLoaders = {
+                ProjectExaMixinConfigPlugin.class.getClassLoader(),
+                Thread.currentThread().getContextClassLoader()
+        };
+        for (ClassLoader classLoader : classLoaders) {
+            if (classLoader != null && classLoader.getResource(resourceName) != null) {
+                return true;
             }
         }
         return false;

@@ -40,6 +40,7 @@
 		"RsiExtractionLedgerAccessor",
 		"RsiExtractionLedgerMixin",
 		"RsiMaterialSourcesMixin",
+		"RsiBeyondDimensionsSessionMixin",
 		"TouhouLittleMaidEmcWarehouseMixin",
 		"TomeMixin",
 		"ToolHelperMixin",
