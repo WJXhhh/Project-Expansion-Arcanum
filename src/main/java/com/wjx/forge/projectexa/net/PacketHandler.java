@@ -19,6 +19,7 @@ import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutat
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTabletWithRecipe;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketStoneTableAction;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketTaczTransmutation;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketRsiEmcEstimate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -65,6 +66,8 @@ public class PacketHandler {
         registerServerToClient(PacketUpdateWindowLong.class, PacketUpdateWindowLong::decode);
         registerServerToClient(PacketUpdateWindowInt.class, PacketUpdateWindowInt::decode);
         registerServerToClient(PacketUpdateWindowBigInteger.class, PacketUpdateWindowBigInteger::decode);
+        registerClientToServer(PacketRsiEmcEstimate.class, PacketRsiEmcEstimate::decode);
+        registerServerToClient(PacketRsiEmcEstimateResult.class, PacketRsiEmcEstimateResult::decode);
     }
 
     private static <MSG extends IPacket> void registerClientToServer(Class<MSG> type, Function<FriendlyByteBuf, MSG> decoder) {

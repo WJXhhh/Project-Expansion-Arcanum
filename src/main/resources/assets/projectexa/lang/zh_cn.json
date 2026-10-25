@@ -633,5 +633,13 @@
   "item.projectexa.personal_emc_warehouse.invalid_filter": "只能绑定该账户已学习且具有 EMC 值的物品",
   "gui.projectexa.personal_emc_warehouse": "个人 EMC 物品仓",
   "advancements.projectexa.personal_emc_warehouse": "随身万物仓",
-  "advancements.projectexa.personal_emc_warehouse.description": "让任何持有者的工具从绑定账户的个人 EMC 中取用物品。"
+  "advancements.projectexa.personal_emc_warehouse.description": "让任何持有者的工具从绑定账户的个人 EMC 中取用物品。",
+  "gui.projectexa.rsi.emc_material": "（转化 %s 个，%s EMC）",
+  "gui.projectexa.rsi.emc_total": "本次合成预计消耗：%s EMC",
+  "gui.projectexa.rsi.emc_total_insufficient": "本次合成预计消耗：%s EMC（余额不足）",
+  "gui.projectexa.rsi.emc_unavailable": "本次合成预计消耗：暂无法估算 EMC",
+  "gui.projectexa.rsi.emc_unavailable.plan": "本次合成预计消耗：合成计划材料信息不完整",
+  "gui.projectexa.rsi.emc_unavailable.network": "本次合成预计消耗：无法读取所选网络",
+  "gui.projectexa.rsi.emc_unavailable.permission": "本次合成预计消耗：所选网络未授予读取/取料权限",
+  "gui.projectexa.rsi.emc_unavailable.inventory": "本次合成预计消耗：无法读取玩家/精妙背包库存"
 }

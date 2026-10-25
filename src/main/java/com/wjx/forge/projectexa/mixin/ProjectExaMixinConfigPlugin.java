@@ -1,6 +1,6 @@
 package com.wjx.forge.projectexa.mixin;
 
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import com.wjx.forge.projectexa.integrations.rsi.RsiStorageCompat;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
-/** Selects JEI transfer Mixins and limits RSI lifecycle workarounds to development runs. */
+/** Selects compatible JEI transfer and RSI storage integration Mixins. */
 public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
     private static final String RECIPE_TRANSFER_BUTTON = "mezz.jei.gui.recipes.RecipeTransferButton";
     private static final String MODERN_MIXIN =
@@ -31,18 +31,12 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
                     + "Ljava/util/function/Supplier;Ljava/lang/Runnable;)"
                     + "Lmezz/jei/gui/recipes/RecipeTransferButton;";
 
-    private static final Set<String> DEVELOPMENT_ONLY_RSI_MIXINS = Set.of(
-            "com.wjx.forge.projectexa.mixin.RsiKeyMappingsMixin",
-            "com.wjx.forge.projectexa.mixin.RsiSidePanelModuleMixin",
-            "com.wjx.forge.projectexa.mixin.RsiSidePanelClientMixin");
     private static final Set<String> LEGACY_RSI_INVENTORY_MIXINS = Set.of(
             "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerAccessor",
             "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerMixin",
             "com.wjx.forge.projectexa.mixin.RsiMaterialSourcesMixin");
     private static final String BD_SESSION_MIXIN =
             "com.wjx.forge.projectexa.mixin.RsiBeyondDimensionsSessionMixin";
-    private static final String RS_STORAGE_CACHE =
-            "com/refinedmods/refinedstorage/api/storage/cache/IStorageCache.class";
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -55,18 +49,14 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        // Published RSI mods tolerate early config reads; only userdev runs need these workarounds.
-        if (DEVELOPMENT_ONLY_RSI_MIXINS.contains(mixinClassName)) {
-            return !FMLEnvironment.production;
-        }
         // RSI supports Beyond Dimensions without RS. Its ledger still contains
         // legacy RS bytecode, so transforming it without this API forces
         // ModLauncher to resolve a class that is intentionally not installed.
         if (LEGACY_RSI_INVENTORY_MIXINS.contains(mixinClassName)) {
-            return hasResource(RS_STORAGE_CACHE);
+            return RsiStorageCompat.hasLegacyInventory();
         }
         if (BD_SESSION_MIXIN.equals(mixinClassName)) {
-            return !hasResource(RS_STORAGE_CACHE);
+            return !RsiStorageCompat.hasLegacyInventory();
         }
         if (!RECIPE_TRANSFER_BUTTON.equals(targetClassName)) {
             return true;
@@ -114,19 +104,6 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
                 return found[0];
             } catch (IOException | RuntimeException ignored) {
                 // Try the next class loader. JEI is optional during early startup.
-            }
-        }
-        return false;
-    }
-
-    private static boolean hasResource(String resourceName) {
-        ClassLoader[] classLoaders = {
-                ProjectExaMixinConfigPlugin.class.getClassLoader(),
-                Thread.currentThread().getContextClassLoader()
-        };
-        for (ClassLoader classLoader : classLoaders) {
-            if (classLoader != null && classLoader.getResource(resourceName) != null) {
-                return true;
             }
         }
         return false;

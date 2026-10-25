@@ -21,9 +21,9 @@
 		"JeiRecipeTransferButtonLegacyMixin",
 		"TaczGunHudEmcWarehouseMixin",
 		"TaczGunSmithTableScreenMixin",
-		"RsiKeyMappingsMixin",
-		"RsiSidePanelModuleMixin",
-		"RsiSidePanelClientMixin"
+		"RsiCraftingPlanScreenMixin",
+		"RsiPlanRenderEngineMixin",
+		"RsiStripEntryAccessor"
 	],
 	"mixins": [
 		"AlchemicalBagMixin",

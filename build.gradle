@@ -107,6 +107,13 @@ repositories {
         }
     }
     maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeModule "maven.modrinth", "rs-integration"
+        }
+    }
+    maven {
         name "curios"
         url "https://maven.theillusivec4.top/"
         content {
@@ -147,8 +154,8 @@ dependencies {
     runtimeOnly fg.deobf("dev.architectury:architectury-forge:${getProperty("architecturyVersion")}") { transitive = false }
     compileOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
     runtimeOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
-    compileOnly fg.deobf("curse.maven:rs-integration-1630184:${getProperty("rsIntegrationVersion")}")
-    runtimeOnly fg.deobf("curse.maven:rs-integration-1630184:${getProperty("rsIntegrationVersion")}")
+    compileOnly fg.deobf("maven.modrinth:rs-integration:${getProperty("rsIntegrationVersion")}")
+    runtimeOnly fg.deobf("maven.modrinth:rs-integration:${getProperty("rsIntegrationVersion")}")
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}")

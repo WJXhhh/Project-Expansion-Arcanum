@@ -71,19 +71,32 @@ public final class ArcaneCraftingInventory implements IItemHandler {
                 && !protectedStack(stack);
     }
 
+    /** Read-only quote using exactly the same knowledge and NBT policy as extraction. */
+    public static long transmutationValue(ServerPlayer player, ItemStack stack) {
+        if (player.getServer() == null || !player.getServer().isSameThread()
+                || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) return 0;
+        IKnowledgeProvider provider = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).orElse(null);
+        return provider != null && safeTemplate(stack, provider) ? IEMCProxy.INSTANCE.getValue(stack) : 0;
+    }
+
     // RSI's policy class is package-private. Mirror its small vanilla-item predicate;
     // a static invoker would still fail JVM class visibility checks in a real server.
-    private static boolean protectedStack(ItemStack stack) {
+    static boolean protectedStack(ItemStack stack) {
         return stack.isDamageableItem()
                 && (stack.isEnchanted() || stack.getDamageValue() > 0 || stack.hasCustomHoverName());
     }
 
     private long physicalCount(ItemStack template) {
+        return physicalCount(player, physicalBackpacks, template);
+    }
+
+    public static long physicalCount(ServerPlayer player, List<IItemHandler> backpacks, ItemStack template) {
         long total = 0;
         for (ItemStack stack : player.getInventory().items) {
             if (ItemStack.isSameItemSameTags(stack, template)) total += stack.getCount();
         }
-        for (IItemHandler backpack : physicalBackpacks) {
+        for (IItemHandler backpack : backpacks) {
+            if (backpack instanceof ArcaneCraftingInventory) continue;
             for (int slot = 0; slot < backpack.getSlots(); slot++) {
                 ItemStack stack = backpack.getStackInSlot(slot);
                 if (ItemStack.isSameItemSameTags(stack, template)
@@ -113,6 +126,11 @@ public final class ArcaneCraftingInventory implements IItemHandler {
     @Override
     public int getSlots() {
         return templates.size();
+    }
+
+    /** Includes unaffordable templates so a quote can still describe the required EMC. */
+    ItemStack templateForQuote(int slot) {
+        return templates.get(slot).copy();
     }
 
     @Override
