@@ -35,6 +35,8 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
     private Button rotate;
     private Button balance;
     private Button clear;
+    private Button craftingPanelToggle;
+    private boolean craftingPanelVisible = true;
 
     public GUIArcaneTransmutationTablet(ContainerArcaneTransmutationTablet container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
@@ -46,6 +48,7 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
     @Override
     public void init() {
         super.init();
+        menu.setCraftingPanelVisible(craftingPanelVisible);
         filterBox = addWidget(new EditBox(font, leftPos + 7, topPos + 6, 162, 12, Component.empty()));
         filterBox.setValue(inventory.filter);
         filterBox.setResponder(this::updateFilter);
@@ -66,6 +69,18 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
                         ? PacketArcaneTransmutationTabletSmallButton.Action.CLEAR_FORCE
                         : PacketArcaneTransmutationTabletSmallButton.Action.CLEAR))
                 .pos(leftPos - 71, topPos + 61).size(9, 9).build());
+        rotate.visible = craftingPanelVisible;
+        balance.visible = craftingPanelVisible;
+        clear.visible = craftingPanelVisible;
+        craftingPanelToggle = addWidget(Button.builder(
+                        Component.empty(), button -> {
+                            craftingPanelVisible = !craftingPanelVisible;
+                            menu.setCraftingPanelVisible(craftingPanelVisible);
+                            rotate.visible = craftingPanelVisible;
+                            balance.visible = craftingPanelVisible;
+                            clear.visible = craftingPanelVisible;
+                        })
+                .pos(leftPos - 13, topPos + 1).size(9, 9).build());
         updateButtons();
     }
 
@@ -130,16 +145,23 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        graphics.blit(TEXTURE, leftPos - 75, topPos + 10, 180, 32, 76, 89);
+        if (craftingPanelVisible) graphics.blit(TEXTURE, leftPos - 75, topPos + 10, 180, 32, 76, 89);
+        if (craftingPanelToggle != null) {
+            int u = craftingPanelVisible ? 180 : 200;
+            if (craftingPanelToggle.isMouseOver(mouseX, mouseY)) u += 10;
+            graphics.blit(TEXTURE, craftingPanelToggle.getX(), craftingPanelToggle.getY(), u, 124, 9, 9);
+        }
         if (filterBox != null) filterBox.render(graphics, mouseX, mouseY, partialTick);
 
         renderIfHovered(graphics, mouseX, mouseY, previous, 196, 0);
         renderIfHovered(graphics, mouseX, mouseY, next, 215, 0);
-        renderIfHovered(graphics, mouseX, mouseY, rotate, 234, 0);
-        renderIfHovered(graphics, mouseX, mouseY, balance, 234, 0);
-        renderIfHovered(graphics, mouseX, mouseY, clear, 234, 0);
-        if (menu.isCrafting) graphics.blit(TEXTURE, leftPos - 50, topPos + 76, 177, 19, 18, 12);
-        if (Screen.hasShiftDown()) renderIfHovered(graphics, mouseX, mouseY, clear, 234, 10);
+        if (craftingPanelVisible) {
+            renderIfHovered(graphics, mouseX, mouseY, rotate, 234, 0);
+            renderIfHovered(graphics, mouseX, mouseY, balance, 234, 0);
+            renderIfHovered(graphics, mouseX, mouseY, clear, 234, 0);
+            if (menu.isCrafting) graphics.blit(TEXTURE, leftPos - 50, topPos + 76, 177, 19, 18, 12);
+            if (Screen.hasShiftDown()) renderIfHovered(graphics, mouseX, mouseY, clear, 234, 10);
+        }
     }
 
     private void renderIfHovered(GuiGraphics graphics, int mouseX, int mouseY, Button button, int u, int v) {
@@ -232,17 +254,21 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
             setTooltipForNextRenderPass(Component.translatable("gui.projectexa.arcane_transmutation_tablet.consume"));
         } else if (inside(mouseX, mouseY, unlearnX, unlearnY)) {
             setTooltipForNextRenderPass(Component.translatable("gui.projectexa.arcane_transmutation_tablet.unlearn"));
-        } else if (rotate != null && rotate.isMouseOver(mouseX, mouseY)) {
+        } else if (craftingPanelToggle != null && craftingPanelToggle.isMouseOver(mouseX, mouseY)) {
+            setTooltipForNextRenderPass(Component.translatable(craftingPanelVisible
+                    ? "gui.projectexa.arcane_transmutation_tablet.collapse_crafting"
+                    : "gui.projectexa.arcane_transmutation_tablet.expand_crafting"));
+        } else if (craftingPanelVisible && rotate != null && rotate.isMouseOver(mouseX, mouseY)) {
             setTooltipForNextRenderPass(Component.translatable("gui.projectexa.arcane_transmutation_tablet.rotate")
                     .append(Component.literal(": "))
                     .append(Component.translatable(Screen.hasShiftDown()
                             ? "gui.projectexa.arcane_transmutation_tablet.counter_clockwise"
                             : "gui.projectexa.arcane_transmutation_tablet.clockwise").withStyle(ChatFormatting.GRAY)));
-        } else if (balance != null && balance.isMouseOver(mouseX, mouseY)) {
+        } else if (craftingPanelVisible && balance != null && balance.isMouseOver(mouseX, mouseY)) {
             setTooltipForNextRenderPass(Component.translatable(Screen.hasShiftDown()
                     ? "gui.projectexa.arcane_transmutation_tablet.spread"
                     : "gui.projectexa.arcane_transmutation_tablet.balance"));
-        } else if (clear != null && clear.isMouseOver(mouseX, mouseY)) {
+        } else if (craftingPanelVisible && clear != null && clear.isMouseOver(mouseX, mouseY)) {
             MutableComponent clearText = Component.translatable("gui.projectexa.arcane_transmutation_tablet.clear");
             if (Screen.hasShiftDown()) clearText.append(Component.literal(" ")).append(
                     Component.translatable("gui.projectexa.arcane_transmutation_tablet.clear_force").withStyle(ChatFormatting.RED));

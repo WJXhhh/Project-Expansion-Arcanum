@@ -80,6 +80,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     public int unlearnY;
     public boolean isCrafting;
     public boolean skipRefill;
+    private boolean craftingPanelVisible = true;
 
     public static ContainerArcaneTransmutationTablet fromNetwork(int windowId, Inventory playerInv, FriendlyByteBuf buffer) {
         boolean inHand = buffer.readBoolean();
@@ -130,12 +131,26 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         addSlot(new PXOutputSlot(transmutationInventory, 26, 100, 88));
 
         addPlayerInventory(8, 135);
-        addSlot(new PXResultSlot(player, craftSlots, resultSlots, this, 0, -23, 75));
+        addSlot(new PXResultSlot(player, craftSlots, resultSlots, this, 0, -23, 75) {
+            @Override
+            public boolean isActive() {
+                return craftingPanelVisible;
+            }
+        });
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
-                addSlot(new PXCraftingSlot(craftSlots, column + row * 3, -59 + column * 18, 17 + row * 18));
+                addSlot(new PXCraftingSlot(craftSlots, column + row * 3, -59 + column * 18, 17 + row * 18) {
+                    @Override
+                    public boolean isActive() {
+                        return craftingPanelVisible;
+                    }
+                });
             }
         }
+    }
+
+    public void setCraftingPanelVisible(boolean visible) {
+        craftingPanelVisible = visible;
     }
 
     @Override

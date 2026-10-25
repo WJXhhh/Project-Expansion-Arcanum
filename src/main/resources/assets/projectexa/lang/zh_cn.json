@@ -606,6 +606,8 @@
   "gui.projectexa.arcane_transmutation_tablet.spread": "铺开并均分",
   "gui.projectexa.arcane_transmutation_tablet.clear": "清空合成栏",
   "gui.projectexa.arcane_transmutation_tablet.clear_force": "强制返还",
+  "gui.projectexa.arcane_transmutation_tablet.collapse_crafting": "折叠合成台",
+  "gui.projectexa.arcane_transmutation_tablet.expand_crafting": "展开合成台",
   "advancements.projectexa.arcane_transmutation_tablet": "奥术转化桌",
   "advancements.projectexa.arcane_transmutation_tablet.description": "制作一张内置合成台的转化桌。",
   "block.projectexa.stone_table": "石质转化桌",
