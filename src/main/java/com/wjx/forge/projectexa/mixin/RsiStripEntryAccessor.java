@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(targets = "com.huanghuang.rsintegration.crafting.plan.CraftingPlanScreen$StripEntry", remap = false)
 public interface RsiStripEntryAccessor {
     @Accessor("key") IngredientKey projectexa$key();
-    @Accessor("available") int projectexa$available();
-    @Accessor("count") int projectexa$count();
+    @Accessor("available") long projectexa$available();
+    @Accessor("count") long projectexa$count();
 }

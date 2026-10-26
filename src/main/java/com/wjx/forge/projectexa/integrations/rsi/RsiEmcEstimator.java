@@ -1,7 +1,7 @@
 package com.wjx.forge.projectexa.integrations.rsi;
 
 import com.huanghuang.rsintegration.RSIntegrationMod;
-import com.huanghuang.rsintegration.crafting.CraftStorageEndpoints;
+import com.huanghuang.rsintegration.crafting.endpoint.CraftStorageEndpoints;
 import com.huanghuang.rsintegration.crafting.tree.IngredientKey;
 import com.huanghuang.rsintegration.storage.*;
 import com.wjx.forge.projectexa.Main;

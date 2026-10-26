@@ -150,7 +150,7 @@ public abstract class RsiCraftingPlanScreenMixin extends Screen implements RsiEm
 
     @Inject(method = "renderStripRow", at = @At("HEAD"))
     private void projectexa$drawTreeQuote(GuiGraphics graphics, Font font, int centerX, int y, String label,
-                                        int color, List<?> entries, boolean leftover, int mouseX, int mouseY,
+                                        int color, List<?> entries, int page, boolean leftover, int mouseX, int mouseY,
                                         CallbackInfo ci) {
         if (leftover || projectexa$emcTotal().isEmpty()) return;
         int width = font.width(label) + 8;

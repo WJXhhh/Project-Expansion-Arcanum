@@ -59,7 +59,7 @@ public final class RsiEmcPlanInputs {
                 IngredientKey key = IngredientKey.of(input);
                 // Self-amplifying and container-returning recipes need graph source/return edges.
                 if (key.equals(output) || step.inputRole(slot) == DemandRole.CONTAINER_RETURNING) return false;
-                int count = step.totalInputCount(slot, step.batches());
+                long count = step.totalInputCount(slot, step.batches());
                 add(grossInputs, input, count);
                 add(step.inputRole(slot) == DemandRole.CATALYST ? catalysts : consumed, input, count);
             }

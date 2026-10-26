@@ -41,9 +41,9 @@ public abstract class RsiPlanRenderEngineMixin {
     }
 
     @Redirect(method = "renderMaterialArea", at = @At(value = "INVOKE",
-            target = "Lcom/huanghuang/rsintegration/crafting/plan/PlanRenderEngine;formatCompact(I)Ljava/lang/String;",
+            target = "Lcom/huanghuang/rsintegration/crafting/plan/PlanRenderEngine;formatCompact(J)Ljava/lang/String;",
             ordinal = 1))
-    private String projectexa$appendTransmutation(int needed) {
+    private String projectexa$appendTransmutation(long needed) {
         String count = PlanRenderEngine.formatCompact(needed);
         if (projectexa$materialKeys != null && projectexa$materialKeys.hasNext()) {
             IngredientKey key = projectexa$materialKeys.next();
