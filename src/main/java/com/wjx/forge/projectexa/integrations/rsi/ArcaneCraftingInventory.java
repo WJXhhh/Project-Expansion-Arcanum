@@ -23,10 +23,10 @@ public final class ArcaneCraftingInventory implements IItemHandler {
     private final ServerPlayer player;
     private final List<ItemStack> templates;
     private final List<IItemHandler> physicalBackpacks;
-    private final Map<CraftingResolver.StackKey, Integer> pending;
+    private final Map<CraftingResolver.StackKey, Long> pending;
 
     public ArcaneCraftingInventory(ServerPlayer player, List<IItemHandler> backpacks,
-                                  Map<CraftingResolver.StackKey, Integer> pending) {
+                                  Map<CraftingResolver.StackKey, Long> pending) {
         this.player = player;
         this.physicalBackpacks = backpacks.stream()
                 .filter(handler -> !(handler instanceof ArcaneCraftingInventory)).toList();
@@ -49,7 +49,7 @@ public final class ArcaneCraftingInventory implements IItemHandler {
 
     /** Replaces an unbudgeted virtual view with one aware of this ledger's pending reservations. */
     public static List<IItemHandler> append(ServerPlayer player, List<IItemHandler> sources,
-                                           Map<CraftingResolver.StackKey, Integer> pending) {
+                                           Map<CraftingResolver.StackKey, Long> pending) {
         List<IItemHandler> result = new ArrayList<>();
         for (IItemHandler source : sources) {
             if (!(source instanceof ArcaneCraftingInventory)) result.add(source);
@@ -113,7 +113,7 @@ public final class ArcaneCraftingInventory implements IItemHandler {
         for (var entry : pending.entrySet()) {
             if (entry.getKey().equals(current)) continue; // RSI subtracts this key's pending count itself.
             ItemStack other = entry.getKey().toStack();
-            long missing = Math.max(0L, (long) entry.getValue() - physicalCount(other));
+            long missing = Math.max(0L, entry.getValue() - physicalCount(other));
             if (missing > 0) {
                 long price = IEMCProxy.INSTANCE.getValue(other);
                 if (price <= 0 || !safeTemplate(other, provider)) return BigInteger.ZERO;

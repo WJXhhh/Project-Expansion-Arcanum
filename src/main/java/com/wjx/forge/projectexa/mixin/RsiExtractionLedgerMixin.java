@@ -22,7 +22,7 @@ import java.util.Map;
 @Pseudo
 @Mixin(targets = "com.huanghuang.rsintegration.crafting.ExtractionLedger", remap = false)
 public abstract class RsiExtractionLedgerMixin {
-    @Shadow @Final private Map<CraftingResolver.StackKey, Integer> pendingInv;
+    @Shadow @Final private Map<CraftingResolver.StackKey, Long> pendingInv;
 
     @Shadow
     private static List<IItemHandler> findAllBackpackInventories(ServerPlayer player) {
@@ -58,7 +58,7 @@ public abstract class RsiExtractionLedgerMixin {
             ItemStack template = virtual.getStackInSlot(slot);
             if (template.isEmpty() || !ingredient.test(template)
                     || countExactAvailableInInventory(player, template) < needed) continue;
-            pendingInv.merge(ArcaneCraftingInventory.key(template), needed, Integer::sum);
+            pendingInv.merge(ArcaneCraftingInventory.key(template), (long) needed, Long::sum);
             cir.setReturnValue(template.copyWithCount(1));
             return;
         }
