@@ -1,6 +1,7 @@
 package com.wjx.forge.projectexa.integrations.rsi;
 
 import com.huanghuang.rsintegration.crafting.graph.DemandRole;
+import com.huanghuang.rsintegration.crafting.MaterialSources;
 import com.huanghuang.rsintegration.crafting.plan.PlanResponse;
 import com.huanghuang.rsintegration.crafting.plan.PlanStep;
 import com.huanghuang.rsintegration.crafting.tree.IngredientKey;
@@ -77,7 +78,7 @@ public final class RsiEmcPlanInputs {
             long extra = (long) entry.getValue().needed() - grossInputs.getOrDefault(entry.getKey(), 0L);
             if (extra <= 0) continue;
             if (future.containsKey(entry.getKey())) return false;
-            initial.merge(entry.getKey(), extra, Long::sum);
+            initial.merge(entry.getKey(), extra, MaterialSources::saturatedAdd);
         }
         return true;
     }
@@ -91,17 +92,20 @@ public final class RsiEmcPlanInputs {
         if (missing > 0) {
             // An output of a later step cannot fund an earlier input. Do not overcharge a reordered plan.
             if (future.getOrDefault(key, 0L) > 0) return false;
-            initial.merge(key, missing, Long::sum);
+            initial.merge(key, missing, MaterialSources::saturatedAdd);
         }
         produced.put(key, reusable ? Math.max(stock, count) : stock - used);
         return true;
     }
 
     private static long outputCount(PlanStep step) {
-        return (long) step.output().getCount() * Math.max(0, step.batches());
+        long count = step.output().getCount();
+        long batches = Math.max(0L, step.batches());
+        return count <= 0 ? 0 : batches > Long.MAX_VALUE / count ? Long.MAX_VALUE : count * batches;
     }
 
     private static void add(Map<IngredientKey, Long> counts, ItemStack stack, long count) {
-        if (!stack.isEmpty() && count > 0) counts.merge(IngredientKey.of(stack), count, Long::sum);
+        if (!stack.isEmpty() && count > 0) counts.merge(IngredientKey.of(stack), count,
+                MaterialSources::saturatedAdd);
     }
 }

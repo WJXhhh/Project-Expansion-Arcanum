@@ -1,6 +1,7 @@
 package com.wjx.forge.projectexa.mixin;
 
 import com.huanghuang.rsintegration.crafting.CraftingResolver;
+import com.huanghuang.rsintegration.crafting.MaterialSources;
 import com.wjx.forge.projectexa.integrations.rsi.ArcaneCraftingInventory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -31,15 +32,15 @@ public abstract class RsiMaterialSourcesMixin {
 
     @Inject(method = "countInventory", at = @At("RETURN"), cancellable = true)
     private static void projectexa$includeArcaneKnowledge(Player player,
-            CallbackInfoReturnable<Map<CraftingResolver.StackKey, Integer>> cir) {
+            CallbackInfoReturnable<Map<CraftingResolver.StackKey, Long>> cir) {
         if (!(player instanceof ServerPlayer serverPlayer)) return;
-        Map<CraftingResolver.StackKey, Integer> counts = new HashMap<>(cir.getReturnValue());
+        Map<CraftingResolver.StackKey, Long> counts = new HashMap<>(cir.getReturnValue());
         ArcaneCraftingInventory virtual = new ArcaneCraftingInventory(serverPlayer,
                 RsiExtractionLedgerAccessor.projectexa$backpacks(serverPlayer), Map.of());
         for (int slot = 0; slot < virtual.getSlots(); slot++) {
             ItemStack stack = virtual.getStackInSlot(slot);
-            if (!stack.isEmpty()) counts.merge(ArcaneCraftingInventory.key(stack), stack.getCount(),
-                    (left, right) -> (int) Math.min(Integer.MAX_VALUE, (long) left + right));
+            if (!stack.isEmpty()) counts.merge(ArcaneCraftingInventory.key(stack), (long) stack.getCount(),
+                    MaterialSources::saturatedAdd);
         }
         cir.setReturnValue(counts);
     }

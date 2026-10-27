@@ -40,7 +40,8 @@ public abstract class RsiExtractionLedgerMixin {
         cir.setReturnValue(ArcaneCraftingInventory.append(player, cir.getReturnValue(), Map.of()));
     }
 
-    @Redirect(method = {"findAvailableInInventory", "countExactAvailableInInventory"},
+    @Redirect(method = {"findAvailableInInventory", "countExactAvailableInInventory",
+            "countExactAvailableInInventoryLong"},
             at = @At(value = "INVOKE", target = "Lcom/huanghuang/rsintegration/crafting/ExtractionLedger;findAllBackpackInventories(Lnet/minecraft/server/level/ServerPlayer;)Ljava/util/List;"))
     private List<IItemHandler> projectexa$budgetPendingEmc(ServerPlayer player) {
         return ArcaneCraftingInventory.append(player, findAllBackpackInventories(player), pendingInv);
