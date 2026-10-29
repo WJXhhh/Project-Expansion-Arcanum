@@ -142,6 +142,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:create-328085:${getProperty("createVersion")}")
     // runtimeOnly fg.deobf("curse.maven:create-328085:${getProperty("createVersion")}")
     runtimeOnly fg.deobf("curse.maven:patchouli-306770:${getProperty("patchouliVersion")}")
+    compileOnly fg.deobf("curse.maven:polymorph-388800:${getProperty("polymorphVersion")}")
+    runtimeOnly fg.deobf("curse.maven:polymorph-388800:${getProperty("polymorphVersion")}")
 
     // Optional integrations and their development runtime dependencies.
     compileOnly fg.deobf("dev.ftb.mods:ftb-quests-forge:${getProperty("ftbQuestsVersion")}") { transitive = false }

@@ -84,6 +84,10 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
         updateButtons();
     }
 
+    public boolean isCraftingPanelVisible() {
+        return craftingPanelVisible;
+    }
+
     private void updateFilter(String text) {
         String filter = text.toLowerCase(Locale.ROOT);
         if (!inventory.filter.equals(filter)) {

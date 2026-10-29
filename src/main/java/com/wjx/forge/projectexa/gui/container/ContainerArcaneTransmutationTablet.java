@@ -326,7 +326,9 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
                                                  CraftingContainer crafting, ResultContainer result) {
         if (level.isClientSide || level.getServer() == null) return;
         ItemStack output = ItemStack.EMPTY;
-        Optional<CraftingRecipe> recipe = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, crafting, level);
+        Optional<CraftingRecipe> recipe = net.minecraftforge.fml.ModList.get().isLoaded("polymorph")
+                ? com.wjx.forge.projectexa.integrations.polymorph.PolymorphIntegration.getRecipe(menu, level, player, crafting)
+                : level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, crafting, level);
         if (recipe.isPresent()) {
             result.setRecipeUsed(recipe.get());
             output = recipe.get().assemble(crafting, level.registryAccess());
