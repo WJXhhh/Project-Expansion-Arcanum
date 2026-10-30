@@ -25,8 +25,8 @@ public final class PolymorphClientIntegration {
             if (!(screen instanceof GUIArcaneTransmutationTablet tablet)) return null;
             return PolymorphApi.client().findCraftingResultSlot(screen).map(slot ->
                     new PlayerRecipesWidget(screen, slot) {
-                        @Override public int getXPos() { return -73; }
-                        @Override public int getYPos() { return 81; }
+                        @Override public int getXPos() { return -70; }
+                        @Override public int getYPos() { return 78; }
                         @Override public void render(GuiGraphics graphics, int x, int y, float partialTick) {
                             if (tablet.isCraftingPanelVisible()) super.render(graphics, x, y, partialTick);
                         }
