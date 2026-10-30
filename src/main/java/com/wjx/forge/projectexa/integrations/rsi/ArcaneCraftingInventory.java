@@ -37,6 +37,9 @@ public final class ArcaneCraftingInventory implements IItemHandler {
             for (ItemInfo info : provider.hasFullKnowledge()
                     ? EMCMappingHandler.getMappedItems() : provider.getKnowledge()) {
                 ItemStack stack = Util.cleanStack(info.createStack());
+                // RSI reads maximum damage before its strict runtime identity comparison.
+                // Some mods create empty NBT during that read, even for ordinary ingredients.
+                stack.getMaxDamage();
                 if (safeTemplate(stack, provider)) unique.putIfAbsent(key(stack), stack);
             }
         }
@@ -66,7 +69,12 @@ public final class ArcaneCraftingInventory implements IItemHandler {
     }
 
     private static boolean safeTemplate(ItemStack stack, IKnowledgeProvider provider) {
-        return !stack.isEmpty() && ItemStack.isSameItemSameTags(stack, Util.cleanStack(stack))
+        if (stack.isEmpty()) return false;
+        ItemStack clean = Util.cleanStack(stack);
+        // ProjectE treats empty NBT and absent NBT as the same identity. Keep capability
+        // compatibility and every nonempty tag check; only this representation differs.
+        return ItemInfo.fromStack(stack).equals(ItemInfo.fromStack(clean))
+                && stack.areCapsCompatible(clean)
                 && provider.hasKnowledge(stack) && IEMCProxy.INSTANCE.getValue(stack) > 0
                 && !protectedStack(stack);
     }
