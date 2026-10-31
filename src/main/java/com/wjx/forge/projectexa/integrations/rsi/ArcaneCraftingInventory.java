@@ -44,6 +44,12 @@ public final class ArcaneCraftingInventory implements IItemHandler {
             }
         }
         this.templates = List.copyOf(unique.values());
+        RsiCraftingDiagnostics.log(player, "virtual-source", "source",
+                () -> "provider=" + (provider != null) + " templates=" + templates.size()
+                        + " physicalBackpacks=" + physicalBackpacks.stream().map(handler -> handler.getClass().getName()).distinct().limit(12).toList()
+                        + " balance=" + (provider == null ? "unavailable" : provider.getEmc())
+                        + " tablet=" + PacketOpenArcaneTransmutationTablet.hasTablet(player)
+                        + " pending=" + RsiCraftingDiagnostics.pending(pending));
     }
 
     public static CraftingResolver.StackKey key(ItemStack stack) {
@@ -66,6 +72,8 @@ public final class ArcaneCraftingInventory implements IItemHandler {
                     if (!stack.isEmpty() && !protectedStack(stack)) physical.add(stack);
                 }
             } catch (RuntimeException ignored) {
+                RsiCraftingDiagnostics.log(player, "backpack-read-failed", backpack.getClass().getName(),
+                        () -> "handler=" + backpack.getClass().getName() + " error=" + ignored.getClass().getName());
                 // Leave an unreadable handler to the ledger's own error policy.
             }
         }
@@ -177,9 +185,22 @@ public final class ArcaneCraftingInventory implements IItemHandler {
             long missing = Math.max(0L, entry.getValue() - physicalCount(other));
             if (missing > 0) {
                 long price = IEMCProxy.INSTANCE.getValue(other);
-                if (price <= 0 || !safeTemplate(other, provider)) return BigInteger.ZERO;
+                if (price <= 0 || !safeTemplate(other, provider)) {
+                    RsiCraftingDiagnostics.log(player, "emc-budget-blocked", RsiCraftingDiagnostics.item(other),
+                            () -> "request=[" + RsiCraftingDiagnostics.stack(template) + "] pendingOther=["
+                                    + RsiCraftingDiagnostics.stack(other) + "] reserved=" + entry.getValue()
+                                    + " physicalDeficit=" + missing + " price=" + price + " balance=" + provider.getEmc()
+                                    + " pending=" + RsiCraftingDiagnostics.pending(pending));
+                    return BigInteger.ZERO;
+                }
                 budget = budget.subtract(BigInteger.valueOf(price).multiply(BigInteger.valueOf(missing)));
             }
+        }
+        if (budget.signum() <= 0) {
+            BigInteger remaining = budget;
+            RsiCraftingDiagnostics.log(player, "emc-budget-empty", RsiCraftingDiagnostics.item(template),
+                    () -> "template=[" + RsiCraftingDiagnostics.stack(template) + "] balance=" + provider.getEmc()
+                            + " afterReservations=" + remaining + " pending=" + RsiCraftingDiagnostics.pending(pending));
         }
         return budget.max(BigInteger.ZERO);
     }
@@ -197,9 +218,18 @@ public final class ArcaneCraftingInventory implements IItemHandler {
     @Override
     public ItemStack getStackInSlot(int slot) {
         IKnowledgeProvider provider = provider();
-        if (provider == null || slot < 0 || slot >= templates.size()) return ItemStack.EMPTY;
+        if (provider == null || slot < 0 || slot >= templates.size()) {
+            if (provider == null) RsiCraftingDiagnostics.log(player, "virtual-provider-unavailable", "provider",
+                    () -> "serverThread=" + (player.getServer() != null && player.getServer().isSameThread())
+                            + " tablet=" + PacketOpenArcaneTransmutationTablet.hasTablet(player));
+            return ItemStack.EMPTY;
+        }
         ItemStack template = templates.get(slot);
-        if (!safeTemplate(template, provider)) return ItemStack.EMPTY;
+        if (!safeTemplate(template, provider)) {
+            RsiCraftingDiagnostics.log(player, "virtual-template-rejected", RsiCraftingDiagnostics.item(template),
+                    () -> "template=[" + RsiCraftingDiagnostics.stack(template) + "] balance=" + provider.getEmc());
+            return ItemStack.EMPTY;
+        }
         BigInteger count = budgetFor(template, provider).divide(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(template)));
         // RSI adds physical and virtual counts using ints; reserve headroom for physical stock.
         int available = count.min(BigInteger.valueOf(Integer.MAX_VALUE - physicalCount(template))).intValue();
@@ -210,15 +240,34 @@ public final class ArcaneCraftingInventory implements IItemHandler {
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount <= 0) return ItemStack.EMPTY;
         ItemStack available = getStackInSlot(slot);
-        if (available.isEmpty()) return ItemStack.EMPTY;
+        if (available.isEmpty()) {
+            RsiCraftingDiagnostics.log(player, "emc-extract-empty", Integer.toString(slot),
+                    () -> "slot=" + slot + " requested=" + amount + " simulate=" + simulate);
+            return ItemStack.EMPTY;
+        }
         int count = Math.min(amount, available.getCount());
         if (!simulate) {
             IKnowledgeProvider provider = provider();
-            if (provider == null) return ItemStack.EMPTY;
+            if (provider == null) {
+                RsiCraftingDiagnostics.log(player, "emc-extract-no-provider", RsiCraftingDiagnostics.item(available),
+                        () -> "requested=" + amount + " available=[" + RsiCraftingDiagnostics.stack(available) + "]");
+                return ItemStack.EMPTY;
+            }
             BigInteger cost = BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(available)).multiply(BigInteger.valueOf(count));
-            if (provider.getEmc().compareTo(cost) < 0) return ItemStack.EMPTY;
+            if (provider.getEmc().compareTo(cost) < 0) {
+                RsiCraftingDiagnostics.log(player, "emc-extract-insufficient", RsiCraftingDiagnostics.item(available),
+                        () -> "cost=" + cost + " balance=" + provider.getEmc());
+                return ItemStack.EMPTY;
+            }
             provider.setEmc(provider.getEmc().subtract(cost));
             provider.syncEmc(player);
+            RsiCraftingDiagnostics.log(player, "emc-extract-performed", RsiCraftingDiagnostics.item(available),
+                    () -> "requested=" + amount + " extracted=" + count + " cost=" + cost
+                            + " balanceAfter=" + provider.getEmc() + " template=[" + RsiCraftingDiagnostics.stack(available) + "]");
+        } else {
+            RsiCraftingDiagnostics.log(player, "emc-extract-simulated", RsiCraftingDiagnostics.item(available),
+                    () -> "requested=" + amount + " extracted=" + count
+                            + " template=[" + RsiCraftingDiagnostics.stack(available) + "]");
         }
         return available.copyWithCount(count);
     }

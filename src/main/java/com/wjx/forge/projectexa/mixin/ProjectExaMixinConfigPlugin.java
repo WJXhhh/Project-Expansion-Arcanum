@@ -32,6 +32,7 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
                     + "Lmezz/jei/gui/recipes/RecipeTransferButton;";
 
     private static final Set<String> LEGACY_RSI_INVENTORY_MIXINS = Set.of(
+            "com.wjx.forge.projectexa.mixin.RsiAsyncCraftDiagnosticsMixin",
             "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerAccessor",
             "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerMixin",
             "com.wjx.forge.projectexa.mixin.RsiMaterialSourcesMixin");

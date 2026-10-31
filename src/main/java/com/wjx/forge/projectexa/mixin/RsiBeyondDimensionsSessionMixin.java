@@ -8,6 +8,7 @@ import com.huanghuang.rsintegration.storage.StorageSnapshot;
 import com.huanghuang.rsintegration.storage.StorageSnapshotResult;
 import com.huanghuang.rsintegration.storage.StoredItem;
 import com.wjx.forge.projectexa.integrations.rsi.ArcaneCraftingInventory;
+import com.wjx.forge.projectexa.integrations.rsi.RsiCraftingDiagnostics;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +35,10 @@ public abstract class RsiBeyondDimensionsSessionMixin {
             at = @At("RETURN"), cancellable = true)
     private void projectexa$includeEmcInCraftingSnapshot(ServerPlayer player, Set<Item> itemTypes,
             CallbackInfoReturnable<StorageSnapshotResult> cir) {
-        if (!projectexa$isCraftingCall() || !cir.getReturnValue().successful()) return;
+        if (!projectexa$isCraftingCall()) return;
+        RsiCraftingDiagnostics.log(player, "bd-snapshot", "snapshot",
+                () -> "nativeSuccess=" + cir.getReturnValue().successful());
+        if (!cir.getReturnValue().successful()) return;
         ArcaneCraftingInventory virtual = new ArcaneCraftingInventory(player, List.of(), Map.of());
         if (virtual.getSlots() == 0) return;
 
@@ -56,6 +60,8 @@ public abstract class RsiBeyondDimensionsSessionMixin {
             }
         }
         if (virtualCounts.isEmpty()) return;
+        RsiCraftingDiagnostics.log(player, "bd-snapshot-emc", "snapshot",
+                () -> "nativeKeys=" + counts.size() + " emcKeys=" + virtualCounts.size());
         virtualCounts.forEach((key, count) -> counts.merge(key, count,
                 RsiBeyondDimensionsSessionMixin::projectexa$saturatedAdd));
 
@@ -70,6 +76,9 @@ public abstract class RsiBeyondDimensionsSessionMixin {
             long amount, boolean simulate, CallbackInfoReturnable<StorageOperationResult> cir) {
         if (!projectexa$isCraftingCall() || amount <= 0) return;
         StorageOperationResult nativeResult = cir.getReturnValue();
+        RsiCraftingDiagnostics.log(player, "bd-extract-native", simulate ? "simulate" : "perform",
+                () -> "requested=" + amount + " simulate=" + simulate + " status=" + nativeResult.status()
+                        + " transferred=" + nativeResult.transferredAmount().orElse(0));
         if (nativeResult.status() != StorageOperationStatus.NOT_FOUND
                 && nativeResult.status() != StorageOperationStatus.PARTIAL) return;
         long transferred = nativeResult.transferredAmount().orElse(0);
@@ -87,6 +96,9 @@ public abstract class RsiBeyondDimensionsSessionMixin {
             }
             ItemStack extracted = virtual.extractItem(slot, (int) Math.min(missing, Integer.MAX_VALUE), simulate);
             if (extracted.isEmpty()) return;
+            RsiCraftingDiagnostics.log(player, "bd-extract-emc", RsiCraftingDiagnostics.item(candidate),
+                    () -> "requested=" + amount + " nativeTransferred=" + transferred + " missing=" + missing
+                            + " simulate=" + simulate + " emcExtracted=[" + RsiCraftingDiagnostics.stack(extracted) + "]");
             List<ItemStack> stacks = new ArrayList<>(nativeResult.extractedStacks());
             int maxStack = Math.max(1, extracted.getMaxStackSize());
             for (int remaining = extracted.getCount(); remaining > 0; remaining -= Math.min(remaining, maxStack)) {
@@ -97,6 +109,8 @@ public abstract class RsiBeyondDimensionsSessionMixin {
                     amount, stacks));
             return;
         }
+        RsiCraftingDiagnostics.log(player, "bd-extract-no-match", simulate ? "simulate" : "perform",
+                () -> "requested=" + amount + " missing=" + missing + " virtualSlots=" + virtual.getSlots());
     }
 
     private static long projectexa$saturatedAdd(long left, long right) {
