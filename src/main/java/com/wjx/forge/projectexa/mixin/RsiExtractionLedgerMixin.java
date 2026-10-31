@@ -1,7 +1,9 @@
 package com.wjx.forge.projectexa.mixin;
 
 import com.huanghuang.rsintegration.crafting.CraftingResolver;
+import com.huanghuang.rsintegration.crafting.endpoint.CraftStorageEndpoint;
 import com.wjx.forge.projectexa.integrations.rsi.ArcaneCraftingInventory;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -12,6 +14,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -45,6 +48,15 @@ public abstract class RsiExtractionLedgerMixin {
             at = @At(value = "INVOKE", target = "Lcom/huanghuang/rsintegration/crafting/ExtractionLedger;findAllBackpackInventories(Lnet/minecraft/server/level/ServerPlayer;)Ljava/util/List;"))
     private List<IItemHandler> projectexa$budgetPendingEmc(ServerPlayer player) {
         return ArcaneCraftingInventory.append(player, findAllBackpackInventories(player), pendingInv);
+    }
+
+    @ModifyVariable(method = "reserveExactAcrossNetworkAndInventory", at = @At("HEAD"),
+            argsOnly = true, ordinal = 0)
+    private ItemStack projectexa$adaptArcaneExactTemplate(ItemStack original, ItemStack template, int needed,
+            CraftStorageEndpoint endpoint, ServerPlayer player) {
+        if (!PacketOpenArcaneTransmutationTablet.hasTablet(player)) return original;
+        return ArcaneCraftingInventory.exactReservationTemplate(player, original, needed,
+                findAllBackpackInventories(player));
     }
 
     @Inject(method = "findAvailableInInventory", at = @At("RETURN"), cancellable = true)
