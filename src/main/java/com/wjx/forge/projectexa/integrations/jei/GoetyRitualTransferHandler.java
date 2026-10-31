@@ -64,6 +64,7 @@ public final class GoetyRitualTransferHandler
         return RecipeType.create("goety", "ritual", RitualRecipe.class);
     }
 
+    @SuppressWarnings("removal") // JEI 15 still requires the legacy abstract overload.
     @Override
     public @Nullable IRecipeTransferError transferRecipe(AbstractContainerMenu container, RitualRecipe recipe,
                                                           IRecipeSlotsView slots, Player player, boolean transferAll,

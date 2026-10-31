@@ -56,6 +56,7 @@ public class PlayerCraftingTransferHandler implements IRecipeTransferHandler<Inv
         return RecipeTypes.CRAFTING;
     }
 
+    @SuppressWarnings("removal") // JEI 15 still requires the legacy abstract overload.
     @Override
     public @Nullable IRecipeTransferError transferRecipe(InventoryMenu container, CraftingRecipe recipe,
                                                           IRecipeSlotsView slots, Player player, boolean transferAll,

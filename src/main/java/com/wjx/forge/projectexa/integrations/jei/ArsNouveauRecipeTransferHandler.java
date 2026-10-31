@@ -72,6 +72,7 @@ public final class ArsNouveauRecipeTransferHandler
         return (RecipeType) APPARATUS_RECIPE_TYPE;
     }
 
+    @SuppressWarnings("removal") // JEI 15 still requires the legacy abstract overload.
     @Override
     public @Nullable IRecipeTransferError transferRecipe(AbstractContainerMenu container, Object recipe,
                                                           IRecipeSlotsView slots, Player player, boolean transferAll,

@@ -78,6 +78,7 @@ public final class ArcaneCraftingRecipeTransferHandler<C extends AbstractContain
         return RecipeTypes.CRAFTING;
     }
 
+    @SuppressWarnings("removal") // JEI 15 still requires the legacy abstract overload.
     @Override
     public @Nullable IRecipeTransferError transferRecipe(C container, CraftingRecipe recipe,
                                                           IRecipeSlotsView slots, Player player, boolean transferAll,

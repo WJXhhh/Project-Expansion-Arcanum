@@ -16,7 +16,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -34,9 +33,9 @@ public class Main {
     @SuppressWarnings("unused")
     public static final org.apache.logging.log4j.Logger Logger = LogManager.getLogger();
 
-    public Main() {
+    public Main(FMLJavaModLoadingContext context) {
         PacketHandler.register();
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus bus = context.getModEventBus();
         BlockEntityTypes.Registry.register(bus);
         Blocks.Registry.register(bus);
         Enchantments.Registry.register(bus);
@@ -45,7 +44,7 @@ public class Main {
         MenuTypes.Registry.register(bus);
         CreativeTabs.Registry.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::serverTick);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.Spec, "project-expansion.toml");
+        context.registerConfig(ModConfig.Type.COMMON, Config.Spec, "project-expansion.toml");
 
         Fuel.registerAll();
         Matter.registerAll();
