@@ -32,6 +32,7 @@
 		"CollectorRecipeCategoryMixin",
 		"EnchantmentProcessorMixin",
 		"LegacyBlockEntityNbtMixin",
+		"LegacyAlchemicalBookLocationsMixin",
 		"NBTManagerPersistentEMCMixin",
 		"PhilosophersStoneMixin",
 		"PlayerEmcWarehouseMixin",
