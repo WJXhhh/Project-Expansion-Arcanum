@@ -18,6 +18,7 @@
 		"JeiRecipeTransferManagerMixin",
 		"JeiRecipesGuiMixin",
 		"JeiRecipeTransferButtonMixin",
+		"JeiRecipeTransferButtonControllerMixin",
 		"JeiRecipeTransferButtonLegacyMixin",
 		"TaczGunHudEmcWarehouseMixin",
 		"TaczGunSmithTableScreenMixin",

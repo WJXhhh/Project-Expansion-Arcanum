@@ -32,6 +32,14 @@ to 1.1.10 to 1.1.11 in the repository, so 1.1.5, 1.1.6 and 1.1.8 have no recorde
 
 ### Fixed
 
+- Avoid capturing recipe transfer arguments at JEI method returns, where optimized JEI
+  releases reuse the original parameter slots. Preserve JEI's existing handler priority
+  and apply ProjectExA's fallback through a method wrapper instead.
+- Support JEI's controller-based transfer button icons alongside the existing legacy
+  button variants. The TACZ transfer button now uses Minecraft's button background
+  instead of version-dependent private JEI texture paths.
+- Bundle the MixinExtras runtime required by the compatibility wrappers in the release
+  jar; keep the unbundled development jar separately named with a `-slim` suffix.
 - Fixed a crash when syncing or clicking Touhou Little Maid inventory slots while a bound
   Personal EMC Warehouse is present. Direct writes now delegate to the physical inventory;
   virtual warehouse slots continue to require EMC-accounted insertion and extraction.

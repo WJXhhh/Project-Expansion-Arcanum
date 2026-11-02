@@ -15,6 +15,8 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
+jarJar.enable()
+
 group = 'furry.cool.mc.forge'
 version = getProperty("minecraft_version") + "-" + getProperty("mod_version")
 
@@ -26,7 +28,12 @@ java {
 def releaseArchiveVersion = getProperty("mod_version").replaceFirst(/-arcanum\.\d+$/, "")
 def releaseArchiveFileName = "projectex-arcanum-${getProperty("minecraft_version")}-${releaseArchiveVersion}.jar"
 
-tasks.withType(org.gradle.api.tasks.bundling.Jar).configureEach {
+// Keep the unbundled development jar separate from the distributable
+// jar, which bundles the MixinExtras runtime required by the compatibility mixins.
+tasks.named('jar', Jar).configure {
+    archiveFileName = releaseArchiveFileName.replace('.jar', '-slim.jar')
+}
+tasks.named('jarJar', Jar).configure {
     archiveFileName = releaseArchiveFileName
 }
 
@@ -89,6 +96,9 @@ mixin {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    mavenCentral {
+        content { includeGroup "io.github.llamalad7" }
+    }
     maven {
         name = "FTB"
         url = "https://maven.ftb.dev/releases"
@@ -132,6 +142,10 @@ dependencies {
     compileOnly fg.deobf("curse.maven:inventory-profiles-next-495267:7565992")
     implementation "com.mojang:brigadier:1.0.18"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.5"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.5.5")) {
+        jarJar.ranged(it, "[0.5.5,)")
+    }
 
     compileOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
     // runtimeOnly fg.deobf("curse.maven:goety-586095:${getProperty("goetyVersion")}")
@@ -182,6 +196,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:${getProperty("taczVersion")}")
     runtimeOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:${getProperty("taczVersion")}")
     runtimeOnly fg.deobf("curse.maven:touhou-little-maid-355044:${getProperty("touhouLittleMaidVersion")}")
+    runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:8765179")
 
     // https://github.com/McJtyMods/TheOneProbe/issues/548
     compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${getProperty("topVersion")}:api") {
@@ -207,3 +222,14 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+
+// Reobfuscate the bundled release jar as well as the slim development jar.
+reobf {
+    jarJar {}
+}
+tasks.named('jarJar').configure {
+    finalizedBy 'reobfJarJar'
+}
+tasks.named('assemble').configure {
+    dependsOn 'jarJar'
+}

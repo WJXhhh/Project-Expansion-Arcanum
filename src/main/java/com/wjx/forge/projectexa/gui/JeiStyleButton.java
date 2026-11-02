@@ -1,18 +1,13 @@
 package com.wjx.forge.projectexa.gui;
 
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-/** A small JEI-looking button with the ProjectExA transfer icon. */
+/** An icon-only transfer button independent of JEI's private textures. */
 public class JeiStyleButton extends Button {
-    private static final ResourceLocation ENABLED_TEXTURE =
-            new ResourceLocation("jei", "textures/jei/atlas/gui/button_enabled.png");
-    private static final ResourceLocation HIGHLIGHT_TEXTURE =
-            new ResourceLocation("jei", "textures/jei/atlas/gui/button_highlight.png");
-    private static final ResourceLocation DISABLED_TEXTURE =
-            new ResourceLocation("jei", "textures/jei/atlas/gui/button_disabled.png");
     private static final ResourceLocation TRANSFER_ICON =
             new ResourceLocation("projectexa", "textures/gui/arcanum_transfer.png");
 
@@ -21,11 +16,15 @@ public class JeiStyleButton extends Button {
     }
 
     @Override
+    public void renderString(GuiGraphics graphics, Font font, int color) {
+        // Icon-only button. Keep the message for screen-reader narration.
+    }
+
+    @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        ResourceLocation background = !active
-                ? DISABLED_TEXTURE
-                : isHoveredOrFocused() ? HIGHLIGHT_TEXTURE : ENABLED_TEXTURE;
-        graphics.blit(background, getX(), getY(), 0, 0, getWidth(), getHeight(), 20, 20);
+        // Use Minecraft's button background rather than JEI's private assets,
+        // whose resource paths differ between JEI releases.
+        super.renderWidget(graphics, mouseX, mouseY, partialTick);
         graphics.blit(TRANSFER_ICON, getX() + 3, getY() + 3, 0, 0, 14, 14, 14, 14);
     }
 }
