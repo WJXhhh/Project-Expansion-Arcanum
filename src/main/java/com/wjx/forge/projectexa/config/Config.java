@@ -39,6 +39,7 @@ public final class Config {
     public static final ForgeConfigSpec.ConfigValue<Boolean> finalStarCopyNBT = Builder.comment("If false, the Final Star will remove ordinary item NBT when copying items. ProjectE's NBT whitelist is preserved.").define("finalStarCopyNBT", false);
     public static final ForgeConfigSpec.ConfigValue<Integer> finalStarUpdateInterval = Builder.comment("How often the Final Star checks for dropped items, in ticks. Set to 0 to disable item copying.").defineInRange("finalStarUpdateInterval", 20, 0, Integer.MAX_VALUE);
     public static final ForgeConfigSpec.ConfigValue<Boolean> persistentNbtEmcFallback = Builder.comment("If an item whose exact NBT has no EMC value should fall back to the value registered for its persistent NBT form (the form stored in transmutation knowledge) before falling back to the bare item. Required for mods that keep the item identity in NBT, such as TACZ guns, ammunition and attachments.").define("persistentNbtEmcFallback", true);
+    public static final ForgeConfigSpec.ConfigValue<Boolean> rsiCraftingAutoLearn = Builder.comment("Automatically learn the actual intermediate and final products of a successful RSI recursive craft while carrying an Arcane Transmutation Tablet. Only items with a positive EMC value can be learned.").define("rsiCraftingAutoLearn", true);
     static { Spec = Builder.build(); }
     public static AlchemicalBookEditLevel editOthersAlchemicalBooks() {
         try {

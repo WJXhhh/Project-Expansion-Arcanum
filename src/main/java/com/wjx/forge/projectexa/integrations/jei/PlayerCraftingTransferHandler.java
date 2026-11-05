@@ -16,7 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 
 import javax.annotation.Nullable;
@@ -72,9 +71,11 @@ public class PlayerCraftingTransferHandler implements IRecipeTransferHandler<Inv
                     Component.translatable("jei.tooltip.error.recipe.transfer.too.large.player.inventory"));
         }
 
-        if (doTransfer) {
-            PacketHandler.sendToServer(new PacketOpenArcaneTransmutationTabletWithRecipe(toPossibilities(inputs), transferAll));
+        ArcaneCraftingTransferSupport.Status status = ArcaneCraftingTransferSupport.check(slots, player, container);
+        if (!doTransfer || !status.canTransfer()) {
+            return status;
         }
+        PacketHandler.sendToServer(new PacketOpenArcaneTransmutationTabletWithRecipe(status.recipe(transferAll), transferAll));
         return null;
     }
 
@@ -104,14 +105,5 @@ public class PlayerCraftingTransferHandler implements IRecipeTransferHandler<Inv
             if (index == playerGridSlot) return true;
         }
         return false;
-    }
-
-    private static List<List<ItemStack>> toPossibilities(List<IRecipeSlotView> inputs) {
-        List<List<ItemStack>> possibilities = new ArrayList<>(9);
-        for (int index = 0; index < 9; index++) {
-            List<ItemStack> items = index < inputs.size() ? inputs.get(index).getItemStacks().toList() : List.of();
-            possibilities.add(items.isEmpty() ? List.of(ItemStack.EMPTY) : items);
-        }
-        return possibilities;
     }
 }

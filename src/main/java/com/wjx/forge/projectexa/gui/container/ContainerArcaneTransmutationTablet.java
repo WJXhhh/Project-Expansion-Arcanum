@@ -371,14 +371,14 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
             ItemStack clean = Util.cleanStack(possibility);
             if (!provider.hasKnowledge(clean)) continue;
             long value = IEMCProxy.INSTANCE.getValue(clean);
-            if (value <= 0 || provider.getEmc().compareTo(BigInteger.valueOf(value)) < 0) continue;
+            if (value <= 0 || transmutationInventory.getAvailableEmc().compareTo(BigInteger.valueOf(value)) < 0) continue;
 
             ItemStack existing = craftSlots.getItem(index);
             if (existing.isEmpty()) craftSlots.setItem(index, clean);
             else if (existing.getCount() < existing.getMaxStackSize() && Util.areStacksEqual(player.level().registryAccess(), existing, clean)) existing.grow(1);
             else continue;
 
-            provider.setEmc(provider.getEmc().subtract(BigInteger.valueOf(value)));
+            transmutationInventory.removeEmc(BigInteger.valueOf(value));
             return true;
         }
         return false;
@@ -405,11 +405,16 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     }
 
     private void transferItems(List<List<ItemStack>> recipe, int max) {
+        boolean[] supplied = new boolean[max];
         for (int i = 0; i < max; i++) {
-            if (i < recipe.size() && recipe.get(i) != null && !recipe.get(i).isEmpty()) transferFromInventory(i, recipe.get(i));
+            if (i < recipe.size() && recipe.get(i) != null && !recipe.get(i).isEmpty()) {
+                supplied[i] = transferFromInventory(i, recipe.get(i));
+            }
         }
         for (int i = 0; i < max; i++) {
-            if (i < recipe.size() && recipe.get(i) != null && !recipe.get(i).isEmpty()) transferFromTablet(i, recipe.get(i));
+            if (!supplied[i] && i < recipe.size() && recipe.get(i) != null && !recipe.get(i).isEmpty()) {
+                transferFromTablet(i, recipe.get(i));
+            }
         }
     }
 
