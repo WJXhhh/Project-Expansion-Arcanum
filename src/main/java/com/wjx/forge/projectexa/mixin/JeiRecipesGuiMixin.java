@@ -1,5 +1,7 @@
 package com.wjx.forge.projectexa.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.wjx.forge.projectexa.integrations.jei.JeiArcaneTransferScreen;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import net.minecraft.client.Minecraft;
@@ -9,9 +11,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 
@@ -22,28 +21,29 @@ public class JeiRecipesGuiMixin {
     @Unique
     private @Nullable JeiArcaneTransferScreen projectexa$transferContext;
 
-    // Older JEI versions only request the menu; modern versions also require
-    // a screen for both transfer validation and the actual button click.
-    @Inject(method = "getParentContainerMenu", at = @At("RETURN"), cancellable = true, remap = false)
-    private void projectexa$provideTransferMenu(CallbackInfoReturnable<AbstractContainerMenu> callback) {
-        if (callback.getReturnValue() == null) {
-            JeiArcaneTransferScreen context = projectexa$getTransferContext();
-            if (context != null) {
-                callback.setReturnValue(context.getMenu());
-            }
+    // Newer JEI jars can reuse slot 0 (this) before these methods return.
+    // Wrap the complete methods so our receiver remains valid outside their
+    // optimized bodies, and keep real parent containers ahead of our fallback.
+    @WrapMethod(method = "getParentContainerMenu()Lnet/minecraft/world/inventory/AbstractContainerMenu;",
+            remap = false)
+    private @Nullable AbstractContainerMenu projectexa$provideTransferMenu(
+            Operation<AbstractContainerMenu> original) {
+        AbstractContainerMenu menu = original.call();
+        if (menu != null) {
+            return menu;
         }
+        JeiArcaneTransferScreen context = projectexa$getTransferContext();
+        return context == null ? null : context.getMenu();
     }
 
-    @Inject(method = "getParentContainerScreen", at = @At("RETURN"), cancellable = true,
+    // Older JEI versions do not expose a parent screen accessor.
+    @WrapMethod(method = "getParentContainerScreen()"
+            + "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;",
             remap = false, require = 0)
-    private void projectexa$provideTransferScreen(
-            CallbackInfoReturnable<AbstractContainerScreen<?>> callback) {
-        if (callback.getReturnValue() == null) {
-            JeiArcaneTransferScreen context = projectexa$getTransferContext();
-            if (context != null) {
-                callback.setReturnValue(context);
-            }
-        }
+    private @Nullable AbstractContainerScreen<?> projectexa$provideTransferScreen(
+            Operation<AbstractContainerScreen<?>> original) {
+        AbstractContainerScreen<?> screen = original.call();
+        return screen != null ? screen : projectexa$getTransferContext();
     }
 
     @Unique

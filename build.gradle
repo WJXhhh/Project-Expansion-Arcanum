@@ -171,7 +171,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
     runtimeOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
     compileOnly fg.deobf("maven.modrinth:rs-integration:${getProperty("rsIntegrationVersion")}")
-    runtimeOnly fg.deobf("maven.modrinth:rs-integration:${getProperty("rsIntegrationVersion")}")
+    // Temporarily excluded from the dev runtime to isolate JEI 15.74.0.232.
+    // runtimeOnly fg.deobf("maven.modrinth:rs-integration:${getProperty("rsIntegrationVersion")}")
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${getProperty("curiosVersion")}")
