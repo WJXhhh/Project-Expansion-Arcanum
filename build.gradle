@@ -28,7 +28,7 @@ java {
 def releaseArchiveVersion = getProperty("mod_version").replaceFirst(/-arcanum\.\d+$/, "")
 def releaseArchiveFileName = "projectex-arcanum-${getProperty("minecraft_version")}-${releaseArchiveVersion}.jar"
 
-// Keep the unbundled development jar separate from the distributable
+// Keep the unbundled intermediate jar separate from the distributable
 // jar, which bundles the MixinExtras runtime required by the compatibility mixins.
 tasks.named('jar', Jar).configure {
     archiveFileName = releaseArchiveFileName.replace('.jar', '-slim.jar')
@@ -230,6 +230,17 @@ reobf {
 tasks.named('jarJar').configure {
     finalizedBy 'reobfJarJar'
 }
+
+def cleanupSlimJar = tasks.register('cleanupSlimJar', Delete) {
+    description = 'Deletes the current slim jar after packaging.'
+    delete tasks.named('jar', Jar).flatMap { it.archiveFile }
+    mustRunAfter 'assemble', 'build', 'reobfJar', 'reobfJarJar'
+}
+
 tasks.named('assemble').configure {
     dependsOn 'jarJar'
+    finalizedBy cleanupSlimJar
+}
+tasks.named('build').configure {
+    finalizedBy cleanupSlimJar
 }
