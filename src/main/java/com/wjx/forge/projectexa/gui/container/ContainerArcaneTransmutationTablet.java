@@ -23,6 +23,7 @@ import moze_intel.projecte.gameObjs.registration.impl.ContainerTypeRegistryObjec
 import moze_intel.projecte.utils.ItemHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -346,10 +347,20 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         return slot.container != resultSlots && super.canTakeItemForPickAll(stack, slot);
     }
 
-    public void onRecipeTransfer(List<List<ItemStack>> recipe, boolean transferAll) {
+    public void onRecipeTransfer(ResourceLocation recipeId, List<List<ItemStack>> recipe, boolean transferAll) {
         if (!player.level().isClientSide) {
             clearCrafting(false);
             fillCraftingSlots(recipe, transferAll);
+            // Select after filling so intermediate grid changes cannot restore the old choice.
+            if (net.minecraftforge.fml.ModList.get().isLoaded("polymorph")) {
+                player.level().getRecipeManager().byKey(recipeId).ifPresent(selected -> {
+                    if (selected instanceof CraftingRecipe craftingRecipe
+                            && craftingRecipe.matches(craftSlots, player.level())) {
+                        com.wjx.forge.projectexa.integrations.polymorph.PolymorphIntegration.selectRecipe(player, craftingRecipe);
+                        slotsChanged(craftSlots);
+                    }
+                });
+            }
         }
     }
 

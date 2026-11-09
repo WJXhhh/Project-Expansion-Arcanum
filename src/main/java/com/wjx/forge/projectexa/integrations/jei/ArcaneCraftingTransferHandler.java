@@ -52,7 +52,8 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
             return status;
         }
 
-        PacketHandler.sendToServer(new PacketArcaneTransmutationTabletRecipeTransfer(status.recipe(transferAll), transferAll));
+        PacketHandler.sendToServer(new PacketArcaneTransmutationTabletRecipeTransfer(
+                recipe.getId(), status.recipe(transferAll), transferAll));
         return null;
     }
 }

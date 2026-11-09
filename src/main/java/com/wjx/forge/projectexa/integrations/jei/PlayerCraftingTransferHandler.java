@@ -75,7 +75,8 @@ public class PlayerCraftingTransferHandler implements IRecipeTransferHandler<Inv
         if (!doTransfer || !status.canTransfer()) {
             return status;
         }
-        PacketHandler.sendToServer(new PacketOpenArcaneTransmutationTabletWithRecipe(status.recipe(transferAll), transferAll));
+        PacketHandler.sendToServer(new PacketOpenArcaneTransmutationTabletWithRecipe(
+                recipe.getId(), status.recipe(transferAll), transferAll));
         return null;
     }
 

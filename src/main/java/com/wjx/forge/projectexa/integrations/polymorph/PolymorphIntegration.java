@@ -1,5 +1,6 @@
 package com.wjx.forge.projectexa.integrations.polymorph;
 
+import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import com.illusivesoulworks.polymorph.common.crafting.RecipeSelection;
 import com.wjx.forge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import net.minecraft.world.entity.player.Player;
@@ -16,5 +17,9 @@ public final class PolymorphIntegration {
     public static Optional<CraftingRecipe> getRecipe(ContainerArcaneTransmutationTablet menu, Level level,
                                                       Player player, CraftingContainer crafting) {
         return RecipeSelection.getPlayerRecipe(menu, RecipeType.CRAFTING, crafting, level, player);
+    }
+
+    public static void selectRecipe(Player player, CraftingRecipe recipe) {
+        PolymorphApi.common().getRecipeData(player).ifPresent(data -> data.selectRecipe(recipe));
     }
 }

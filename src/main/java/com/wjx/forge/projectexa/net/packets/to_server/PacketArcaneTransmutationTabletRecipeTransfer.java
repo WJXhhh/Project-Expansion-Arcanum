@@ -3,6 +3,7 @@ package com.wjx.forge.projectexa.net.packets.to_server;
 import com.wjx.forge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.net.packets.IPacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
@@ -10,14 +11,15 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public record PacketArcaneTransmutationTabletRecipeTransfer(List<List<ItemStack>> recipe, boolean transferAll) implements IPacket {
+public record PacketArcaneTransmutationTabletRecipeTransfer(ResourceLocation recipeId, List<List<ItemStack>> recipe,
+                                                            boolean transferAll) implements IPacket {
     @Override
     public void handle(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
         if (player != null && player.containerMenu instanceof ContainerArcaneTransmutationTablet container
                 && container.getPlayer() == player && container.stillValid(player)
                 && validRecipe(recipe)) {
-            container.onRecipeTransfer(recipe, transferAll);
+            container.onRecipeTransfer(recipeId, recipe, transferAll);
         }
     }
 
@@ -34,12 +36,14 @@ public record PacketArcaneTransmutationTabletRecipeTransfer(List<List<ItemStack>
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
+        buffer.writeResourceLocation(recipeId);
         writeRecipe(buffer, recipe);
         buffer.writeBoolean(transferAll);
     }
 
     public static PacketArcaneTransmutationTabletRecipeTransfer decode(FriendlyByteBuf buffer) {
-        return new PacketArcaneTransmutationTabletRecipeTransfer(readRecipe(buffer), buffer.readBoolean());
+        return new PacketArcaneTransmutationTabletRecipeTransfer(
+                buffer.readResourceLocation(), readRecipe(buffer), buffer.readBoolean());
     }
 
     static void writeRecipe(FriendlyByteBuf buffer, List<List<ItemStack>> recipe) {

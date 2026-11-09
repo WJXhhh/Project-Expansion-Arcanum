@@ -35,7 +35,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public class PacketHandler {
 
-    private static final String PROTOCOL_VERSION = Integer.toString(1);
+    private static final String PROTOCOL_VERSION = Integer.toString(2);
     private static final SimpleChannel HANDLER = NetworkRegistry.ChannelBuilder
             .named(Main.rl("primary"))
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)

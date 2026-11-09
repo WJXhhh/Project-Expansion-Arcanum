@@ -66,7 +66,8 @@ public final class ArcaneCraftingRecipeTransferHandler<C extends AbstractContain
             return status;
         }
 
-        PacketHandler.sendToServer(new PacketOpenArcaneTransmutationTabletWithRecipe(status.recipe(transferAll), transferAll));
+        PacketHandler.sendToServer(new PacketOpenArcaneTransmutationTabletWithRecipe(
+                recipe.getId(), status.recipe(transferAll), transferAll));
         return null;
     }
 }
