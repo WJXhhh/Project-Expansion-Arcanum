@@ -176,7 +176,7 @@ public final class ArcaneCraftingTransferSupport {
 
         @Override
         public int getButtonHighlightColor() {
-            return missing.isEmpty() ? 0 : 0xA0806000;
+            return 0;
         }
 
         @Override

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 
-/** Keep JEI's disabled-button semantics, but render our missing-material tint. */
+/** Keep JEI's disabled-button semantics while preserving its normal button appearance. */
 @Pseudo
 @Mixin(targets = {
         "mezz.jei.gui.recipes.RecipeTransferButton",
@@ -25,7 +25,7 @@ public abstract class ArcaneTransferButtonHighlightMixin {
             require = 0,
             remap = false
     )
-    private IRecipeTransferError.Type projectexa$renderMissingMaterialTint(
+    private IRecipeTransferError.Type projectexa$renderNormalButtonAppearance(
             IRecipeTransferError error, Operation<IRecipeTransferError.Type> original) {
         return error instanceof ArcaneCraftingTransferSupport.Status
                 ? IRecipeTransferError.Type.COSMETIC : original.call(error);
