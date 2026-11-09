@@ -13,7 +13,6 @@ import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.container.PEHandContainer;
-import moze_intel.projecte.gameObjs.container.inventory.TransmutationInventory;
 import moze_intel.projecte.gameObjs.container.slots.transmutation.SlotConsume;
 import moze_intel.projecte.gameObjs.container.slots.transmutation.SlotInput;
 import moze_intel.projecte.gameObjs.container.slots.transmutation.SlotLock;
@@ -65,7 +64,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
     private final List<SlotInput> inputSlots = new ArrayList<>();
     private final List<PXOutputSlot> outputSlots = new ArrayList<>();
-    public final TransmutationInventory transmutationInventory;
+    public final ArcaneTransmutationInventory transmutationInventory;
     private final TransientCraftingContainer craftSlots;
     private final ResultContainer resultSlots;
     private SlotUnlearn unlearn;
@@ -94,7 +93,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         this.player = playerInv.player;
         this.provider = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY)
                 .orElseThrow(() -> new IllegalStateException("Player does not have ProjectE knowledge capability"));
-        this.transmutationInventory = new TransmutationInventory(player);
+        this.transmutationInventory = new ArcaneTransmutationInventory(player);
         this.craftSlots = new TransientCraftingContainer(this, 3, 3);
         this.resultSlots = new ResultContainer();
         initSlots();

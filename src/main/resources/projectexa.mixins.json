@@ -15,6 +15,8 @@
 		"KnowledgeSyncInputsAndLocksPKTMixin",
 		"KnowledgeClearPKTMixin",
 		"UpdateTransmutationTargetsPktMixin",
+		"TransmutationInventoryAccessor",
+		"TransmutationMappingSyncMixin",
 		"JeiRecipeTransferManagerMixin",
 		"JeiRecipesGuiMixin",
 		"JeiRecipeTransferButtonMixin",

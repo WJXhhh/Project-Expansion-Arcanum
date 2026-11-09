@@ -16,7 +16,7 @@ public class KnowledgeSyncChangePKTMixin {
     private void projectexa$refreshTargets(NetworkEvent.Context context, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && player.containerMenu instanceof ContainerArcaneTransmutationTablet container) {
-            container.transmutationInventory.updateClientTargets();
+            container.transmutationInventory.invalidateKnowledge();
         }
     }
 }
