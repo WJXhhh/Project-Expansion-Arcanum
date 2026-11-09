@@ -4,6 +4,7 @@ import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.gui.GUIStoneTable;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.inventory.StonecutterMenu;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraftforge.fml.ModList;
 
 @mezz.jei.api.JeiPlugin
 public class JeiPlugin implements IModPlugin {
@@ -27,6 +30,12 @@ public class JeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
         registration.addRecipeTransferHandler(new ArcaneCraftingTransferHandler(), RecipeTypes.CRAFTING);
+        if (ModList.get().isLoaded("enigmaticaddons")) {
+            // Enigmatic Addons displays Legacy's 3x3 hidden recipes in its own JEI category.
+            RecipeType<CraftingRecipe> hiddenCrafting = RecipeType.create(
+                    "enigmaticlegacy", "hidden_crafting", CraftingRecipe.class);
+            registration.addRecipeTransferHandler(new ArcaneCraftingTransferHandler(hiddenCrafting), hiddenCrafting);
+        }
         registration.addRecipeTransferHandler(new PlayerCraftingTransferHandler(registration.getTransferHelper()), RecipeTypes.CRAFTING);
 
         registerCraftingHandler(registration, FurnaceMenu.class, MenuType.FURNACE);

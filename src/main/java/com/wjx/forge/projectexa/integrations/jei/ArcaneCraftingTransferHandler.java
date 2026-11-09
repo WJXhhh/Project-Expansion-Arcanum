@@ -17,6 +17,16 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<ContainerArcaneTransmutationTablet, CraftingRecipe> {
+    private final RecipeType<CraftingRecipe> recipeType;
+
+    public ArcaneCraftingTransferHandler() {
+        this(RecipeTypes.CRAFTING);
+    }
+
+    public ArcaneCraftingTransferHandler(RecipeType<CraftingRecipe> recipeType) {
+        this.recipeType = recipeType;
+    }
+
     @Override
     public Class<? extends ContainerArcaneTransmutationTablet> getContainerClass() {
         return ContainerArcaneTransmutationTablet.class;
@@ -29,7 +39,7 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 
     @Override
     public RecipeType<CraftingRecipe> getRecipeType() {
-        return RecipeTypes.CRAFTING;
+        return recipeType;
     }
 
     @SuppressWarnings("removal") // JEI 15 still requires the legacy abstract overload.
