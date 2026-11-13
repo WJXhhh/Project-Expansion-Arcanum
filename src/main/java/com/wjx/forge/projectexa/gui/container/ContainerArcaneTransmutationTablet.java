@@ -165,6 +165,11 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         super.removed(player);
         if (player.level().isClientSide) return;
 
+        // The result is only a preview; ingredients are consumed by ResultSlot.onTake.
+        // Discard it on every close path instead of returning or dropping a free output.
+        resultSlots.clearContent();
+        resultSlots.setRecipeUsed(null);
+
         ItemStack unlearnStack = unlearn.getItem().copy();
         unlearn.set(ItemStack.EMPTY);
         ItemStack carriedStack = getCarried().copy();
@@ -175,7 +180,6 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
             for (int i = 0; i < craftSlots.getContainerSize(); i++) {
                 dropStack(player, craftSlots.removeItemNoUpdate(i));
             }
-            dropStack(player, resultSlots.removeItemNoUpdate(0));
             return;
         }
 
@@ -187,7 +191,6 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         for (int i = 0; i < craftSlots.getContainerSize(); i++) {
             Util.returnToInventoryOrTransmutation(playerInv, player, provider, craftSlots.removeItemNoUpdate(i), false, true);
         }
-        Util.returnToInventoryOrTransmutation(playerInv, player, provider, resultSlots.removeItemNoUpdate(0), false, true);
     }
 
     private static void dropStack(Player player, ItemStack stack) {
