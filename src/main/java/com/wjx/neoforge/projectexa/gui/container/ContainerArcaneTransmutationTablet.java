@@ -148,6 +148,10 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         super.removed(player);
         if (player.level().isClientSide) return;
 
+        // The result is only a preview; ingredients are consumed by ResultSlot.onTake.
+        resultSlots.clearContent();
+        resultSlots.setRecipeUsed(null);
+
         ItemStack unlearnStack = unlearn.getItem().copy();
         unlearn.set(ItemStack.EMPTY);
         ItemStack carriedStack = getCarried().copy();
@@ -167,8 +171,6 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
                 Util.returnToInventoryOrTransmutation(playerInv, player, provider, craftSlots.removeItemNoUpdate(i), false, true);
             }
         }
-        // The result slot is only a preview; no ingredients were consumed for it.
-        resultSlots.removeItemNoUpdate(0);
     }
 
     @Override

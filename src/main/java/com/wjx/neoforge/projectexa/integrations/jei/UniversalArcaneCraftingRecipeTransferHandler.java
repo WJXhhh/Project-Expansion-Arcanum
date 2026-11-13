@@ -9,8 +9,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -48,14 +46,13 @@ public final class UniversalArcaneCraftingRecipeTransferHandler
         }
 
         @Override
-        public void showError(GuiGraphics graphics, int mouseX, int mouseY, IRecipeSlotsView slots,
-                              int recipeX, int recipeY) {
-            graphics.renderTooltip(
-                    Minecraft.getInstance().font,
-                    Component.translatable("jei.projectexa.transfer.to_arcane_transmutation_table"),
-                    mouseX,
-                    mouseY
-            );
+        public int getButtonHighlightColor() {
+            return 0;
+        }
+
+        @Override
+        public List<Component> getTooltip() {
+            return List.of(Component.translatable("jei.projectexa.transfer.to_arcane_transmutation_table"));
         }
     };
 

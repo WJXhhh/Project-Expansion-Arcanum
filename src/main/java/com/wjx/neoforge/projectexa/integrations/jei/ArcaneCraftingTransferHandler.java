@@ -13,6 +13,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -103,6 +104,11 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 
         public int getButtonHighlightColor() {
             return 0;
+        }
+
+        @Override
+        public List<Component> getTooltip() {
+            return List.of(Component.translatable("jei.tooltip.transfer"));
         }
 
         public void showError(GuiGraphics guiGraphics, int mouseX, int mouseY, IRecipeSlotsView slots, int recipeX, int recipeY) {

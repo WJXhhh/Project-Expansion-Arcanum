@@ -23,6 +23,6 @@ public class RemoveEMCCMDMixin {
     )
     private static Supplier<Component> pex$removeEmc(Supplier<Component> original) {
         if (!Config.server.enableReloadEMCCommand.get()) return original;
-        return () -> Lang.Commands.RELOAD_NOTICE.translate(Component.literal("/px reloademc").withStyle(Style.EMPTY.withColor(ChatFormatting.RED).withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/px reloademc"))));
+        return () -> Lang.Commands.RELOAD_NOTICE.translate(Component.literal("/projectexa reloademc").withStyle(Style.EMPTY.withColor(ChatFormatting.RED).withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/projectexa reloademc"))));
     }
 }

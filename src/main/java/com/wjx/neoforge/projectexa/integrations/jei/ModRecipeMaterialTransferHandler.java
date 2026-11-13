@@ -145,12 +145,14 @@ public final class ModRecipeMaterialTransferHandler implements IRecipeTransferHa
     }
     private record StatusRenderer(List<IRecipeSlotView> slots, List<Status> statuses) implements IRecipeTransferError {
         @Override public Type getType() { return Type.COSMETIC; }
-        @Override public int getButtonHighlightColor() { return 0x6600AADD; }
+        @Override public int getButtonHighlightColor() { return 0; }
         @Override public void showError(GuiGraphics graphics, int mouseX, int mouseY, IRecipeSlotsView view, int recipeX, int recipeY) {
             graphics.pose().pushPose(); graphics.pose().translate(recipeX, recipeY, 0);
             for (int i = 0; i < slots.size(); i++) if (statuses.get(i) != Status.NONE) slots.get(i).drawHighlight(graphics, statuses.get(i).color);
             graphics.pose().popPose();
-            graphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("jei.projectexa.transfer.materials_only"), mouseX, mouseY);
+        }
+        @Override public List<Component> getTooltip() {
+            return List.of(Component.translatable("jei.projectexa.transfer.materials_only"));
         }
     }
 }
