@@ -30,11 +30,17 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.SmithingMenu;
+import net.minecraft.world.inventory.StonecutterMenu;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -49,6 +55,30 @@ import java.util.List;
 import java.util.Optional;
 
 public class ContainerArcaneTransmutationTablet extends PEHandContainer {
+    public static final int STATION_PANEL_X = -144;
+    public static final int STATION_PANEL_Y = 10;
+    public static final int STATION_PANEL_WIDTH = 140;
+    public static final int STATION_PANEL_HEIGHT = 124;
+    public static final int STONE_RECIPE_X = STATION_PANEL_X + 37;
+    public static final int STONE_RECIPE_Y = STATION_PANEL_Y + 23;
+    public static final int STONE_COLUMNS = 4;
+    public static final int STONE_ROWS = 3;
+    public static final int STONE_CELL = 18;
+
+    public static int stationSlotX(int station, int slot) {
+        if (station == 1) return STATION_PANEL_X + (slot == 3 ? 115 : 11 + slot * 18);
+        if (station == 2) return STATION_PANEL_X + (slot == 0 ? 11 : 115);
+        return STATION_PANEL_X + 11 + slot * 52;
+    }
+
+    public static int stationSlotY(int station, int slot) {
+        return STATION_PANEL_Y + switch (station) {
+            case 1 -> 99;
+            case 2 -> slot == 0 ? 31 : 101;
+            default -> 65;
+        };
+    }
+
     private static final int[] ROTATION_SLOTS = {0, 1, 2, 5, 8, 7, 6, 3};
     private static final int INPUT = 0;
     private static final int INPUT_COUNT = 8;
@@ -62,6 +92,9 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     private static final int RESULT = 63;
     private static final int CRAFTING = 64;
     private static final int CRAFTING_COUNT = 9;
+    public static final int SMITHING = 73;
+    private static final int STONECUTTING = 77;
+    private static final int ANVIL = 79;
 
     private final List<SlotInput> inputSlots = new ArrayList<>();
     private final List<PXOutputSlot> outputSlots = new ArrayList<>();
@@ -70,6 +103,10 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     private final ResultContainer resultSlots;
     private SlotUnlearn unlearn;
     private final Player player;
+    private final SmithingMenu smithing;
+    private final StonecutterMenu stonecutter;
+    private final AnvilMenu anvil;
+    private int station;
     private final IKnowledgeProvider provider;
 
     public int lockX;
@@ -97,7 +134,14 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         this.transmutationInventory = new ArcaneTransmutationInventory(player);
         this.craftSlots = new TransientCraftingContainer(this, 3, 3);
         this.resultSlots = new ResultContainer();
+        this.smithing = new SmithingMenu(windowId, playerInv);
+        this.stonecutter = new StonecutterMenu(windowId, playerInv);
+        this.anvil = new AnvilMenu(windowId, playerInv);
         initSlots();
+        addDataSlot(new DataSlot() {
+            public int get() { return anvil.getCost(); }
+            public void set(int value) { anvil.setMaximumCost(value); }
+        });
     }
 
     private void initSlots() {
@@ -147,6 +191,62 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
                 });
             }
         }
+        for (int i = 0; i < 4; i++) addStationSlot(smithing.getSlot(i), 1, i);
+        for (int i = 0; i < 2; i++) addStationSlot(stonecutter.getSlot(i), 2, i);
+        for (int i = 0; i < 3; i++) addStationSlot(anvil.getSlot(i), 3, i);
+    }
+
+    private void addStationSlot(Slot original, int stationId, int stationSlot) {
+        addSlot(new Slot(original.container, original.getSlotIndex(), stationSlotX(stationId, stationSlot), stationSlotY(stationId, stationSlot)) {
+            @Override public boolean isActive() { return isStation(stationId); }
+            @Override public boolean mayPlace(ItemStack stack) { return original.mayPlace(stack); }
+            @Override public boolean mayPickup(Player player) { return original.mayPickup(player); }
+            @Override public void onTake(Player player, ItemStack stack) { original.onTake(player, stack); }
+            @Override public void onQuickCraft(ItemStack stack, ItemStack originalStack) { original.onQuickCraft(stack, originalStack); }
+        });
+    }
+
+    public void selectStation(int value) {
+        // -1 closes every side panel while preserving its ingredients.
+        if (value < -1 || value > 3 || value >= 0 && !canUseStation(value)) return;
+        station = value;
+        craftingPanelVisible = value == 0;
+    }
+
+    public static Item stationItem(int value) {
+        return switch (value) {
+            case 0 -> Items.CRAFTING_TABLE;
+            case 1 -> Items.SMITHING_TABLE;
+            case 2 -> Items.STONECUTTER;
+            case 3 -> Items.ANVIL;
+            default -> Items.AIR;
+        };
+    }
+
+    public boolean canUseStation(int value) {
+        return value == 0 || value > 0 && value <= 3
+                && provider.hasKnowledge(new ItemStack(stationItem(value)));
+    }
+
+    public boolean isStation(int value) { return station == value && canUseStation(value); }
+
+    public List<Slot> getStationSlots(int value) {
+        return switch (value) {
+            case 0 -> slots.subList(RESULT, SMITHING);
+            case 1 -> slots.subList(SMITHING, STONECUTTING);
+            case 2 -> slots.subList(STONECUTTING, ANVIL);
+            case 3 -> slots.subList(ANVIL, slots.size());
+            default -> List.of();
+        };
+    }
+
+    public StonecutterMenu getStonecutter() { return stonecutter; }
+    public AnvilMenu getAnvil() { return anvil; }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        return isStation(2) && id >= 0 && id < stonecutter.getNumRecipes()
+                && stonecutter.clickMenuButton(player, id);
     }
 
     public void setCraftingPanelVisible(boolean visible) {
@@ -164,6 +264,15 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     public void removed(Player player) {
         super.removed(player);
         if (player.level().isClientSide) return;
+
+        for (int index : new int[] {SMITHING, SMITHING + 1, SMITHING + 2, STONECUTTING, ANVIL, ANVIL + 1}) {
+            ItemStack stack = slots.get(index).remove(Integer.MAX_VALUE);
+            if (!player.isAlive() || player instanceof ServerPlayer serverPlayer && serverPlayer.hasDisconnected()) {
+                dropStack(player, stack);
+            } else {
+                Util.returnToInventory(playerInv, player, stack, true);
+            }
+        }
 
         // The result is only a preview; ingredients are consumed by ResultSlot.onTake.
         // Discard it on every close path instead of returning or dropping a free output.
@@ -200,8 +309,20 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
         Slot currentSlot = tryGetSlot(slotIndex);
-        if (currentSlot == null || !currentSlot.hasItem()) return ItemStack.EMPTY;
+        if (currentSlot == null || !currentSlot.isActive() || !currentSlot.hasItem()) return ItemStack.EMPTY;
 
+        if (slotIndex >= SMITHING && slotIndex < slots.size()) {
+            if (!currentSlot.isActive()) return ItemStack.EMPTY;
+            ItemStack before = currentSlot.getItem().copy();
+            ItemStack moving = before.copy();
+            if (!currentSlot.mayPickup(player) || !moveItemStackTo(moving, PLAYER, PLAYER + PLAYER_COUNT, true)) return ItemStack.EMPTY;
+            currentSlot.onQuickCraft(moving, before);
+            if (moving.isEmpty()) currentSlot.set(ItemStack.EMPTY);
+            else currentSlot.setChanged();
+            if (moving.getCount() == before.getCount()) return ItemStack.EMPTY;
+            currentSlot.onTake(player, moving);
+            return before;
+        }
         if (slotIndex >= CRAFTING && slotIndex < CRAFTING + CRAFTING_COUNT) {
             ItemStack original = currentSlot.getItem().copy();
             ItemStack remainder = original.copy();
@@ -308,12 +429,13 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
     @Override
     public boolean canDragTo(Slot slot) {
-        return !(slot instanceof SlotConsume || slot instanceof SlotUnlearn || slot instanceof SlotInput
+        return slot.isActive() && !(slot instanceof SlotConsume || slot instanceof SlotUnlearn || slot instanceof SlotInput
                 || slot instanceof SlotLock || slot instanceof SlotOutput);
     }
 
     @Override
     public void clicked(int slotId, int dragType, ClickType clickType, Player player) {
+        if (slotId >= 0 && slotId < slots.size() && !slots.get(slotId).isActive()) return;
         if (clickType == ClickType.QUICK_MOVE) skipRefill = true;
         super.clicked(slotId, dragType, clickType, player);
         if (clickType == ClickType.QUICK_MOVE) skipRefill = false;
@@ -347,7 +469,8 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
     @Override
     public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
-        return slot.container != resultSlots && super.canTakeItemForPickAll(stack, slot);
+        return slot.isActive() && slot.index != SMITHING + 3 && slot.index != STONECUTTING + 1
+                && slot.index != ANVIL + 2 && slot.container != resultSlots && super.canTakeItemForPickAll(stack, slot);
     }
 
     public void onRecipeTransfer(ResourceLocation recipeId, List<List<ItemStack>> recipe, boolean transferAll) {

@@ -2,12 +2,15 @@ package com.wjx.forge.projectexa.integrations.jei;
 
 import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.gui.GUIStoneTable;
+import com.wjx.forge.projectexa.gui.GUIArcaneTransmutationTablet;
+import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.BlastFurnaceMenu;
@@ -19,6 +22,8 @@ import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraftforge.fml.ModList;
+
+import java.util.List;
 
 @mezz.jei.api.JeiPlugin
 public class JeiPlugin implements IModPlugin {
@@ -58,5 +63,11 @@ public class JeiPlugin implements IModPlugin {
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGuiContainerHandler(GUIStoneTable.class, new StoneTableJeiHandler());
+        registration.addGuiContainerHandler(GUIArcaneTransmutationTablet.class, new IGuiContainerHandler<GUIArcaneTransmutationTablet>() {
+            @Override
+            public List<Rect2i> getGuiExtraAreas(GUIArcaneTransmutationTablet screen) {
+                return screen.getStationExtraAreas();
+            }
+        });
     }
 }

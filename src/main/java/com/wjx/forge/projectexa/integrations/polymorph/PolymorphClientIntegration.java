@@ -28,10 +28,23 @@ public final class PolymorphClientIntegration {
                         @Override public int getXPos() { return -70; }
                         @Override public int getYPos() { return 78; }
                         @Override public void render(GuiGraphics graphics, int x, int y, float partialTick) {
-                            if (tablet.isCraftingPanelVisible()) super.render(graphics, x, y, partialTick);
+                            if (tablet.isCraftingPanelVisible()) {
+                                // Leave popups and tooltips unrestricted at rest.
+                                if (tablet.isStationPanelInteractive()) {
+                                    super.render(graphics, x, y, partialTick);
+                                    return;
+                                }
+                                tablet.beginStationPanelRender(graphics);
+                                try {
+                                    super.render(graphics, x, y, partialTick);
+                                } finally {
+                                    tablet.endStationPanelRender(graphics);
+                                }
+                            }
                         }
                         @Override public boolean mouseClicked(double x, double y, int button) {
-                            return tablet.isCraftingPanelVisible() && super.mouseClicked(x, y, button);
+                            return tablet.isCraftingPanelVisible() && tablet.isStationPanelInteractive()
+                                    && super.mouseClicked(x, y, button);
                         }
                     }).orElse(null);
         });

@@ -6,6 +6,7 @@
 	"compatibilityLevel": "JAVA_17",
 	"refmap": "projectexa.refmap.json",
 	"client": [
+		"ArcaneStationSlotAnimationMixin",
 		"DeleteWeebShitMixin",
 		"EMCFormatterMixin",
 		"ShutTheFuckUpMixin",

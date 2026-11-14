@@ -19,6 +19,11 @@ public record PacketArcaneTransmutationTabletSmallButton(Action action) implemen
                 case SPREAD -> container.spreadCrafting();
                 case CLEAR -> container.clearCrafting(false);
                 case CLEAR_FORCE -> container.clearCrafting(true);
+                case STATION_CRAFTING -> container.selectStation(0);
+                case STATION_SMITHING -> container.selectStation(1);
+                case STATION_STONECUTTING -> container.selectStation(2);
+                case STATION_ANVIL -> container.selectStation(3);
+                case STATION_COLLAPSE -> container.selectStation(-1);
             }
         }
     }
@@ -38,6 +43,11 @@ public record PacketArcaneTransmutationTabletSmallButton(Action action) implemen
         BALANCE,
         SPREAD,
         CLEAR,
-        CLEAR_FORCE
+        CLEAR_FORCE,
+        STATION_CRAFTING,
+        STATION_SMITHING,
+        STATION_STONECUTTING,
+        STATION_ANVIL,
+        STATION_COLLAPSE
     }
 }
