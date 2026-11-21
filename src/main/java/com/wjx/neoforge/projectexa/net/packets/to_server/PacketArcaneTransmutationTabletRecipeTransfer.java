@@ -26,7 +26,7 @@ public record PacketArcaneTransmutationTabletRecipeTransfer(ResourceLocation rec
     public static final CustomPacketPayload.Type<PacketArcaneTransmutationTabletRecipeTransfer> TYPE = new CustomPacketPayload.Type<>(Main.rl("arcane_transmutation_recipe_transfer"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PacketArcaneTransmutationTabletRecipeTransfer> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC, PacketArcaneTransmutationTabletRecipeTransfer::recipeId,
-            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list(256)).apply(ByteBufCodecs.list(9)), PacketArcaneTransmutationTabletRecipeTransfer::recipe,
+            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()).apply(ByteBufCodecs.list(9)), PacketArcaneTransmutationTabletRecipeTransfer::recipe,
             ByteBufCodecs.BOOL, PacketArcaneTransmutationTabletRecipeTransfer::transferAll,
             ByteBufCodecs.VAR_INT, PacketArcaneTransmutationTabletRecipeTransfer::transferId,
             PacketArcaneTransmutationTabletRecipeTransfer::new
