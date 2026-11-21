@@ -26,7 +26,7 @@ public record PacketArcaneSmithingTransfer(int containerId, ResourceLocation rec
     public static final StreamCodec<RegistryFriendlyByteBuf, PacketArcaneSmithingTransfer> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, PacketArcaneSmithingTransfer::containerId,
             ResourceLocation.STREAM_CODEC, PacketArcaneSmithingTransfer::recipeId,
-            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list(256)).apply(ByteBufCodecs.list(3)), PacketArcaneSmithingTransfer::choices,
+            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()).apply(ByteBufCodecs.list(3)), PacketArcaneSmithingTransfer::choices,
             ByteBufCodecs.BOOL, PacketArcaneSmithingTransfer::transferAll,
             ByteBufCodecs.VAR_INT, PacketArcaneSmithingTransfer::transferId,
             PacketArcaneSmithingTransfer::new);

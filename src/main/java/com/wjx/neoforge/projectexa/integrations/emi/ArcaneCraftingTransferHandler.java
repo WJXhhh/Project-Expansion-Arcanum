@@ -2,6 +2,7 @@ package com.wjx.neoforge.projectexa.integrations.emi;
 
 import com.wjx.neoforge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import com.wjx.neoforge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
+import com.wjx.neoforge.projectexa.util.RecipeTransferUtil;
 import dev.emi.emi.api.recipe.EmiPlayerInventory;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.handler.EmiCraftContext;
@@ -76,13 +77,19 @@ public class ArcaneCraftingTransferHandler implements StandardRecipeHandler<Cont
         if (backingRecipe == null || !(backingRecipe.value() instanceof CraftingRecipe)) return false;
         List<List<ItemStack>> itemStacks = new ArrayList<>();
         List<ItemStack> emptyStack = List.of(ItemStack.EMPTY);
+        ContainerArcaneTransmutationTablet container = context.getScreenHandler();
+        var player = container.getPlayer();
 
         for (EmiIngredient ingredient : recipe.getInputs()) {
             List<ItemStack> stacks = ingredient.getEmiStacks().stream()
                     .map(EmiStack::getItemStack)
                     .filter(s -> !s.isEmpty())
                     .toList();
-            itemStacks.add(stacks.isEmpty() ? emptyStack : stacks);
+            if (stacks.isEmpty()) {
+                itemStacks.add(emptyStack);
+            } else {
+                itemStacks.add(RecipeTransferUtil.filterAvailableCandidates(stacks, container, player));
+            }
         }
 
         boolean transferAll = context.getDestination() == EmiCraftContext.Destination.INVENTORY;

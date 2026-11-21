@@ -240,7 +240,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     public boolean transferSmithingRecipe(SmithingRecipe recipe, List<List<ItemStack>> choices, boolean transferAll) {
         if (!(player instanceof ServerPlayer serverPlayer) || !stillValid(player)
                 || !canUseStation(1) || choices.size() != 3
-                || choices.stream().anyMatch(options -> options == null || options.size() > 256)) return false;
+                || choices.stream().anyMatch(options -> options == null)) return false;
         selectStation(1);
         smithingTransferSequence = (smithingTransferSequence + 1) & 0x7FFF;
         for (int index = 0; index < 3; index++) {
@@ -547,7 +547,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
     public boolean onRecipeTransfer(ResourceLocation recipeId, List<List<ItemStack>> recipe, boolean transferAll) {
         if (!(player instanceof ServerPlayer) || !stillValid(player) || recipe == null || recipe.size() > 9
-                || recipe.stream().anyMatch(items -> items == null || items.size() > 256)) return false;
+                || recipe.stream().anyMatch(items -> items == null)) return false;
         var selected = player.level().getRecipeManager().byKey(recipeId).orElse(null);
         if (selected == null || !(selected.value() instanceof CraftingRecipe craftingRecipe)
                 || !craftingRecipe.canCraftInDimensions(3, 3)) return false;
