@@ -31,7 +31,10 @@ import java.util.Locale;
 import java.util.Map;
 
 /** The schematic stays on the client. The server authorizes and prices each requested item. */
-public record PacketForgematicaTransmute(List<Demand> demands) implements IPacket {
+public record PacketForgematicaTransmute(List<Demand> demands, boolean easyPlace) implements IPacket {
+    public PacketForgematicaTransmute(List<Demand> demands) {
+        this(demands, false);
+    }
     public static final int MAX_MATERIALS = 4096;
     private static final String MESSAGE_PREFIX = "text.projectexa.forgematica.";
 
@@ -59,12 +62,16 @@ public record PacketForgematicaTransmute(List<Demand> demands) implements IPacke
 
         IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
         if (provider == null) {
-            reply(player, Component.translatable("text.projectexa.jei_transmute.provider_unavailable"));
+            if (easyPlace) {
+                PacketHandler.sendTo(new PacketForgematicaTransmuteResult(Component.translatable("text.projectexa.jei_transmute.provider_unavailable"), true, false), player);
+            } else {
+                reply(player, Component.translatable("text.projectexa.jei_transmute.provider_unavailable"));
+            }
             return;
         }
 
         Inventory inventory = player.getInventory();
-        Map<MaterialKey, Long> available = countAvailable(inventory);
+        Map<MaterialKey, Long> available = easyPlace ? countDirectAvailable(inventory) : countAvailable(inventory);
 
         BigInteger startingEmc = provider.getEmc();
         BigInteger remainingEmc = startingEmc;
@@ -148,13 +155,27 @@ public record PacketForgematicaTransmute(List<Demand> demands) implements IPacke
                 message.append("\n  ").append(material);
             }
         }
-        reply(player, message);
+        if (easyPlace) {
+            PacketHandler.sendTo(new PacketForgematicaTransmuteResult(incompleteMaterials > 0 ? message : null, true, incompleteMaterials == 0), player);
+        } else {
+            reply(player, message);
+        }
     }
 
     private static void recordFailure(Map<Failure, FailureSummary> failures, Failure reason, ItemStack stack) {
         failures.compute(reason, (key, summary) -> summary == null
                 ? new FailureSummary(1, stack.getHoverName())
                 : new FailureSummary(summary.count() + 1, summary.firstMaterial()));
+    }
+
+    private static Map<MaterialKey, Long> countDirectAvailable(Inventory inventory) {
+        Map<MaterialKey, Long> counts = new HashMap<>();
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            if (slot >= 36 && slot != 40) continue;
+            ItemStack stack = inventory.getItem(slot);
+            if (!stack.isEmpty()) counts.merge(new MaterialKey(stack), (long) stack.getCount(), Long::sum);
+        }
+        return counts;
     }
 
     // Forgematica counts the inventory slots and the contents of carried shulker boxes.
@@ -192,6 +213,7 @@ public record PacketForgematicaTransmute(List<Demand> demands) implements IPacke
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
+        buffer.writeBoolean(easyPlace);
         buffer.writeVarInt(demands.size());
         for (Demand demand : demands) {
             // The default stack codec can omit tags even for a material whose tag determines its identity.
@@ -203,6 +225,7 @@ public record PacketForgematicaTransmute(List<Demand> demands) implements IPacke
     }
 
     public static PacketForgematicaTransmute decode(FriendlyByteBuf buffer) {
+        boolean easyPlace = buffer.readBoolean();
         int size = buffer.readVarInt();
         if (size < 1 || size > MAX_MATERIALS) {
             throw new DecoderException("Invalid Forgematica material list size");
@@ -223,6 +246,9 @@ public record PacketForgematicaTransmute(List<Demand> demands) implements IPacke
             stack.setTag(tag);
             demands.add(new Demand(stack, needed, shortage));
         }
-        return new PacketForgematicaTransmute(List.copyOf(demands));
+        if (easyPlace && (demands.size() != 1 || demands.get(0).needed() != 1 || demands.get(0).shortage() != 1)) {
+            throw new DecoderException("Invalid easy place demand");
+        }
+        return new PacketForgematicaTransmute(List.copyOf(demands), easyPlace);
     }
 }

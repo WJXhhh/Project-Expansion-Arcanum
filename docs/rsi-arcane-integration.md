@@ -31,7 +31,8 @@ Gradle 默认从 `libs/rs_integration-1.6.1-test.jar` 加载开发依赖，通�
 
 - `RSIPlanExtensions` 提供计划快照、外部材料需求、网络引用和来源开关。ProjectExA 从服务端读取 EMC 报价，RSI 负责展示并过滤过期计划的响应。
 - `RecursiveCraftSucceededEvent` 提供成功结算后实际产出的物品，包含已被后续步骤消耗的中间产物。自动学习通过 ProjectE 的 `PlayerAttemptLearnEvent`，并同步新增知识。
-- `RSIItemRetrievalFallback` 在原生取物确认缺货后调用。JEI 取物交付到主物品栏，世界选块交付到当前空快捷栏槽，按原生请求数量和玩家可用 EMC 结算。原生请求未确认缺货或后备处理无法交付时，由 RSI 继续原来的提示或收藏流程。
+- 携带奥术转化桌并启用对应功能时，与 RSI 冲突的 JEI 中键及世界选块各发一次请求。服务端先尝试 RSI 网络取物。明确未取得物品时（包括没有可用网络），按 ProjectExA 原有规则转化。JEI 沿用取物模式和数量配置，世界选块保留普通单取、Shift 整组和补齐。两边都取不到时保留 RSI 的失败提示或收藏。
+- 由 RSI 单独发起的取物仍可通过 `RSIItemRetrievalFallback` 在确认缺货后请求 EMC 补料，交付位置和数量由 RSI 请求指定。
 
 接口见 [RSI 1.6.1 扩展提交](https://github.com/Elten-huanghuang/rs_integration/commit/6dbfe6f765)。
 

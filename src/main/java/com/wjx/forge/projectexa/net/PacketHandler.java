@@ -41,7 +41,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public class PacketHandler {
 
-    private static final String PROTOCOL_VERSION = Integer.toString(12);
+    private static final String PROTOCOL_VERSION = Integer.toString(14);
     private static final SimpleChannel HANDLER = NetworkRegistry.ChannelBuilder
             .named(Main.rl("primary"))
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)
@@ -80,6 +80,7 @@ public class PacketHandler {
         registerServerToClient(PacketJeiCreativeCursor.class, PacketJeiCreativeCursor::decode);
         registerServerToClient(PacketJeiEmcConfig.class, PacketJeiEmcConfig::decode);
         registerClientToServer(PacketWorldEmcPick.class, PacketWorldEmcPick::decode);
+        registerServerToClient(PacketWorldPickRsiFailure.class, PacketWorldPickRsiFailure::decode);
         registerClientToServer(PacketArcaneSmithingTransfer.class, PacketArcaneSmithingTransfer::decode);
         registerClientToServer(PacketForgematicaTransmute.class, PacketForgematicaTransmute::decode);
         registerServerToClient(PacketForgematicaTransmuteResult.class, PacketForgematicaTransmuteResult::decode);

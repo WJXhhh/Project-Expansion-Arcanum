@@ -1,4 +1,6 @@
 {
+  "config.projectexa.easy_place_arcane_transmute.name": "easyPlaceArcaneTransmute | Easy Place Arcane Transmutation",
+  "config.comment.easyplacearcanetransmute": "Transmute missing blocks using the Arcane Transmutation Tablet during Easy Place.",
 	"advancements.projecte.alchemical_coal": "Alchemical Coal",
 	"advancements.projecte.alchemical_coal.description": "Obtain alchemical coal.",
 	"advancements.projecte.alchemical_coal_block": "Alchemical Coal Block",

@@ -7,8 +7,11 @@ import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Destination;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Request;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Result;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Scene;
+import com.huanghuang.rsintegration.mods.jei.JeiStoragePullPacket;
 import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.config.Config;
+import com.wjx.forge.projectexa.mixin.RsiJeiStoragePullInvoker;
+import com.wjx.forge.projectexa.mixin.RsiWorldPickInvoker;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.util.Util;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
@@ -21,16 +24,69 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import java.math.BigInteger;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public final class RsiItemRetrieval {
+    private static final ThreadLocal<NativeAttempt> NATIVE_ATTEMPT = new ThreadLocal<>();
+
     private RsiItemRetrieval() {}
 
     public static void register() {
         RSIItemRetrievalFallback.register(Main.rl("emc_retrieval"), RsiItemRetrieval::tryDeliver);
     }
 
+    public static void pullJei(ServerPlayer player, ItemStack stack, BooleanSupplier transmute) {
+        NativeAttempt attempt = new NativeAttempt(player, Scene.JEI);
+        Component failure = runNative(attempt, () -> {
+            RsiJeiStoragePullInvoker.projectexa$handlePull(new JeiStoragePullPacket(stack), player);
+            return attempt.failure;
+        });
+        if (failure != null && (!attempt.canTransmute || !transmute.getAsBoolean())) {
+            player.sendSystemMessage(failure);
+        }
+    }
+
+    public static boolean captureJeiFailure(ServerPlayer player, String key, Object[] args) {
+        NativeAttempt attempt = NATIVE_ATTEMPT.get();
+        if (attempt == null || attempt.player != player || attempt.scene != Scene.JEI) return false;
+        attempt.failure = Component.translatable(key, args);
+        attempt.canTransmute = switch (key) {
+            case "rsi.jei.pull.no_network", "rsi.jei.pull.no_permission",
+                 "rsi.jei.pull.inventory_full", "rsi.jei.pull.not_found" -> true;
+            default -> false;
+        };
+        return true;
+    }
+
+    public static boolean tryWorldPick(ServerPlayer player, ItemStack stack) {
+        try {
+            return runNative(new NativeAttempt(player, Scene.WORLD_PICK),
+                    () -> !RsiWorldPickInvoker.projectexa$pickBlock(player, stack).isEmpty());
+        } catch (RuntimeException exception) {
+            // An extraction that threw may already have affected storage or the selected slot.
+            Main.Logger.warn("RSI world pick failed for {}", player.getGameProfile().getName(), exception);
+            player.displayClientMessage(Component.translatable("rsi.world_pick.failed", stack.getHoverName()), true);
+            return true;
+        }
+    }
+
+    private static <T> T runNative(NativeAttempt attempt, Supplier<T> action) {
+        NativeAttempt previous = NATIVE_ATTEMPT.get();
+        NATIVE_ATTEMPT.set(attempt);
+        try {
+            return action.get();
+        } finally {
+            if (previous == null) NATIVE_ATTEMPT.remove();
+            else NATIVE_ATTEMPT.set(previous);
+        }
+    }
+
     private static Result tryDeliver(Request request) {
         ServerPlayer player = request.player();
+        NativeAttempt attempt = NATIVE_ATTEMPT.get();
+        // The coordinated packet already has its own fallback, with the original delivery options.
+        if (attempt != null && attempt.player == player && attempt.scene == request.scene()) return Result.PASS;
         Inventory inventory = player.getInventory();
         boolean worldPick = request.scene() == Scene.WORLD_PICK;
         if (worldPick) {
@@ -73,5 +129,17 @@ public final class RsiItemRetrieval {
         player.sendSystemMessage(Component.translatable("text.projectexa.jei_transmuted",
                 delivered, output.getHoverName(), cost.toString()));
         return new Delivered(delivered);
+    }
+
+    private static final class NativeAttempt {
+        private final ServerPlayer player;
+        private final Scene scene;
+        private Component failure;
+        private boolean canTransmute;
+
+        private NativeAttempt(ServerPlayer player, Scene scene) {
+            this.player = player;
+            this.scene = scene;
+        }
     }
 }

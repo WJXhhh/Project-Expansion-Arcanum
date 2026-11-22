@@ -4,6 +4,7 @@ import com.wjx.forge.projectexa.mixin.JeiCommandUtilAccessor;
 import com.wjx.forge.projectexa.config.JeiEmcClientState;
 import com.wjx.forge.projectexa.util.Util;
 import com.mojang.blaze3d.platform.InputConstants;
+import mezz.jei.common.Internal;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import mezz.jei.common.config.GiveMode;
@@ -27,6 +28,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
 
 import java.math.BigInteger;
 import java.util.Optional;
@@ -91,13 +93,43 @@ public final class JeiEmcInput {
                 .map(clicked -> {
                     if (!input.isSimulate()) {
                         ItemStack stack = clicked.getCheatItemStack(ingredients);
-                        PacketHandler.sendToServer(new PacketJeiTransmute(stack.copyWithCount(1),
-                                minecraft.player.containerMenu.containerId, target, one,
-                                target == -1 && screen instanceof CreativeModeInventoryScreen,
-                                target == -1 && screen instanceof CreativeModeInventoryScreen
-                                        ? minecraft.player.containerMenu.getCarried().copy() : ItemStack.EMPTY));
+                        sendTransmutation(screen, stack, target, one, false);
                     }
                     return new SameElementInputHandler(handler, clicked::isMouseOver);
                 });
+    }
+
+    public static boolean tryRsiMiddleClick(Screen screen, ItemStack stack) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!JeiEmcClientState.isEnabled() || !(screen instanceof AbstractContainerScreen<?>)
+                || minecraft.player == null || !PacketOpenArcaneTransmutationTablet.hasTablet(minecraft.player)) {
+            return false;
+        }
+        IClientToggleState toggleState = Internal.getClientToggleState();
+        if (toggleState.isCheatItemsEnabled()) return false;
+        var keys = Internal.getKeyMappings();
+        var middle = InputConstants.Type.MOUSE.getOrCreate(GLFW.GLFW_MOUSE_BUTTON_MIDDLE);
+        boolean stackKey;
+        boolean oneKey;
+        toggleState.setCheatItemsEnabled(true);
+        try {
+            stackKey = keys.getCheatItemStack().isActiveAndMatches(middle);
+            oneKey = !stackKey && keys.getCheatOneItem().isActiveAndMatches(middle);
+        } finally {
+            toggleState.setCheatItemsEnabled(false);
+        }
+        if (!stackKey && !oneKey) return false;
+        GiveMode giveMode = Internal.getJeiClientConfigs().getClientConfig().getGiveMode();
+        sendTransmutation(screen, stack, giveMode == GiveMode.MOUSE_PICKUP ? -1 : -2, oneKey, true);
+        return true;
+    }
+
+    private static void sendTransmutation(Screen screen, ItemStack stack, int destination,
+                                           boolean single, boolean pullFromRsi) {
+        var menu = Minecraft.getInstance().player.containerMenu;
+        boolean creativeCursor = destination == -1 && screen instanceof CreativeModeInventoryScreen;
+        ItemStack carried = creativeCursor ? menu.getCarried().copy() : ItemStack.EMPTY;
+        PacketHandler.sendToServer(new PacketJeiTransmute(stack.copyWithCount(1), menu.containerId,
+                destination, single, creativeCursor, carried, pullFromRsi));
     }
 }

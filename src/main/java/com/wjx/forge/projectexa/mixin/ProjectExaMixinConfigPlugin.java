@@ -61,6 +61,9 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
         if (mixinClassName.endsWith(".JeiEmcLegacyInputMixin")) {
             return !hasClass("mezz.jei.gui.input.handlers.CheatInputHandler");
         }
+        if (mixinClassName.endsWith(".RsiWorldPickInvoker")) {
+            return hasClass(RSI_EXTENSION_API) && RsiStorageCompat.hasRefinedStorageApi();
+        }
         // RSI supports Beyond Dimensions without RS. Its ledger still contains
         // legacy RS bytecode, so transforming it without this API forces
         // ModLauncher to resolve a class that is intentionally not installed.

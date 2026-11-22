@@ -1,4 +1,6 @@
 {
+  "config.projectexa.easy_place_arcane_transmute.name": "easyPlaceArcaneTransmute | 简单放置可自动从奥术转化桌转化",
+  "config.comment.easyplacearcanetransmute": "简单放置缺少方块时，尝试使用奥术转化桌转化。",
   "advancements.projecte.alchemical_coal": "炼金煤炭",
   "advancements.projecte.alchemical_coal.description": "获得炼金煤炭。",
   "advancements.projecte.alchemical_coal_block": "炼金煤炭块",
