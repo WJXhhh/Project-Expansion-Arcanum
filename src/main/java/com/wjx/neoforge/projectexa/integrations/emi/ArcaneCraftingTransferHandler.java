@@ -76,20 +76,14 @@ public class ArcaneCraftingTransferHandler implements StandardRecipeHandler<Cont
         var backingRecipe = recipe.getBackingRecipe();
         if (backingRecipe == null || !(backingRecipe.value() instanceof CraftingRecipe)) return false;
         List<List<ItemStack>> itemStacks = new ArrayList<>();
-        List<ItemStack> emptyStack = List.of(ItemStack.EMPTY);
         ContainerArcaneTransmutationTablet container = context.getScreenHandler();
-        var player = container.getPlayer();
 
         for (EmiIngredient ingredient : recipe.getInputs()) {
             List<ItemStack> stacks = ingredient.getEmiStacks().stream()
                     .map(EmiStack::getItemStack)
                     .filter(s -> !s.isEmpty())
                     .toList();
-            if (stacks.isEmpty()) {
-                itemStacks.add(emptyStack);
-            } else {
-                itemStacks.add(RecipeTransferUtil.filterAvailableCandidates(stacks, container, player));
-            }
+            itemStacks.add(RecipeTransferUtil.filterAvailableCandidates(stacks, container));
         }
 
         boolean transferAll = context.getDestination() == EmiCraftContext.Destination.INVENTORY;

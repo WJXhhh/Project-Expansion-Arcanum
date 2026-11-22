@@ -2,58 +2,53 @@ package com.wjx.neoforge.projectexa.util;
 
 import com.wjx.neoforge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import moze_intel.projecte.api.proxy.IEMCProxy;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackLinkedSet;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public final class RecipeTransferUtil {
+    public static final int MAX_CANDIDATES_PER_SLOT = 256;
+
     private RecipeTransferUtil() {}
 
-    /**
-     * Filters candidate ingredients for a recipe slot by prioritizing items the player actually
-     * has in their inventory or has learned in their transmutation knowledge with sufficient EMC.
-     * If no feasible items exist, limits the candidate list to a small representative sample
-     * to avoid blowing up the network packet when large tags (e.g. #c:ingots with 250+ variants)
-     * are transferred.
-     */
-    public static List<ItemStack> filterAvailableCandidates(List<ItemStack> candidates, ContainerArcaneTransmutationTablet container, Player player) {
-        if (candidates == null || candidates.isEmpty()) {
-            return List.of(ItemStack.EMPTY);
+    public static List<ItemStack> filterAvailableCandidates(List<ItemStack> candidates, ContainerArcaneTransmutationTablet container) {
+        if (candidates.isEmpty()) return List.of(ItemStack.EMPTY);
+        if (candidates.size() <= MAX_CANDIDATES_PER_SLOT) return candidates;
+
+        var owned = ItemStackLinkedSet.createTypeAndComponentsSet();
+        var inventory = container.getPlayer().getInventory();
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            ItemStack stack = inventory.getItem(slot);
+            if (!stack.isEmpty()) owned.add(Util.cleanStack(stack));
+        }
+        // Clearing the grid can return ingredients to inventory or convert them into EMC.
+        for (ItemStack stack : container.getCraftingInputs()) {
+            if (!stack.isEmpty()) owned.add(Util.cleanStack(stack));
         }
 
-        List<ItemStack> available = new ArrayList<>();
-        long availableEmc = container.transmutationInventory.getAvailableEmcAsLong();
+        var seen = ItemStackLinkedSet.createTypeAndComponentsSet();
+        List<ItemStack> options = new ArrayList<>(MAX_CANDIDATES_PER_SLOT);
+        List<EmcCandidate> learned = new ArrayList<>();
         var provider = container.getProvider();
-
-        // 1. Prioritize items physically present in the player's inventory
         for (ItemStack candidate : candidates) {
-            if (!candidate.isEmpty() && player.getInventory().contains(candidate)) {
-                available.add(candidate);
+            ItemStack cleaned = Util.cleanStack(candidate);
+            if (cleaned.isEmpty() || !seen.add(cleaned)) continue;
+            if (owned.contains(cleaned)) {
+                options.add(cleaned);
+            } else if (provider.hasKnowledge(cleaned)) {
+                long value = IEMCProxy.INSTANCE.getValue(cleaned);
+                if (value > 0) learned.add(new EmcCandidate(cleaned, value));
             }
         }
-
-        // 2. Next, include items learned in the tablet that the player can afford with current EMC
-        if (provider != null) {
-            for (ItemStack candidate : candidates) {
-                if (candidate.isEmpty() || available.contains(candidate)) continue;
-                ItemStack cleaned = Util.cleanStack(candidate);
-                if (provider.hasKnowledge(cleaned)) {
-                    long emc = IEMCProxy.INSTANCE.getValue(cleaned);
-                    if (emc > 0 && emc <= availableEmc) {
-                        available.add(candidate);
-                    }
-                }
-            }
-        }
-
-        // If feasible items were found, only send those (capped at 64 to guard against pathological cases)
-        if (!available.isEmpty()) {
-            return available.size() > 64 ? available.subList(0, 64) : available;
-        }
-
-        // If no feasible items exist, only send a small prefix rather than hundreds of useless variants
-        return candidates.size() > 16 ? candidates.subList(0, 16) : candidates;
+        // The server checks affordability after clearing the grid and consuming other inputs.
+        learned.sort(Comparator.comparingLong(EmcCandidate::value));
+        learned.stream().limit(MAX_CANDIDATES_PER_SLOT - options.size())
+                .map(EmcCandidate::stack).forEachOrdered(options::add);
+        return options.isEmpty() ? candidates.subList(0, 16) : options;
     }
+
+    private record EmcCandidate(ItemStack stack, long value) {}
 }

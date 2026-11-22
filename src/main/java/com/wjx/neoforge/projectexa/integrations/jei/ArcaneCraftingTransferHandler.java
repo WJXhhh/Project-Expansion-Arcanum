@@ -77,16 +77,8 @@ public class ArcaneCraftingTransferHandler extends ArcaneRecipeTransferHandler<C
     protected @Nullable IRecipeTransferError transferRecipe(ContainerArcaneTransmutationTablet container, RecipeHolder<CraftingRecipe> recipe, IRecipeSlotsView iRecipeSlotsView, Player player, boolean transferAll, boolean doTransfer, int transferId) {
         if (doTransfer) {
             List<List<ItemStack>> itemStack = new ArrayList<>();
-            List<ItemStack> emptyStack = new ArrayList<>();
-            emptyStack.add(ItemStack.EMPTY);
-
             for (IRecipeSlotView input : iRecipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT)) {
-                List<ItemStack> candidates = input.getItemStacks().toList();
-                if (candidates.isEmpty()) {
-                    itemStack.add(emptyStack);
-                } else {
-                    itemStack.add(RecipeTransferUtil.filterAvailableCandidates(candidates, container, player));
-                }
+                itemStack.add(RecipeTransferUtil.filterAvailableCandidates(input.getItemStacks().toList(), container));
             }
 
             PacketDistributor.sendToServer(new PacketArcaneTransmutationTabletRecipeTransfer(recipe.id(), itemStack, transferAll, transferId));
