@@ -1,6 +1,5 @@
 import com.wjx.neoforge.projectexa.Data
 import com.wjx.neoforge.projectexa.Publish
-import com.wjx.neoforge.projectexa.SignJar
 import com.wjx.neoforge.projectexa.UpdateJson
 
 plugins {
@@ -277,13 +276,6 @@ tasks.named("jar", Jar) {
             file.delete()
         }
     }
-
-    finalizedBy(signJar)
-}
-
-tasks.register("signJar", SignJar) {
-    dependsOn(jar)
-    setGroup("build")
 }
 
 tasks.register("releaseJar") {
