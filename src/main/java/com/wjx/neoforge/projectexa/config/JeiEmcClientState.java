@@ -11,16 +11,20 @@ import net.neoforged.fml.common.EventBusSubscriber;
 public final class JeiEmcClientState {
     private static volatile boolean enabled;
     private static volatile boolean worldPickEnabled;
+    private static volatile boolean largeRecipeTransferCandidatesAllowed;
 
     private JeiEmcClientState() { }
     public static boolean isEnabled() { return enabled; }
     public static void setEnabled(boolean value) { enabled = value; }
     public static boolean isWorldPickEnabled() { return worldPickEnabled; }
     public static void setWorldPickEnabled(boolean value) { worldPickEnabled = value; }
+    public static boolean allowsLargeRecipeTransferCandidates() { return largeRecipeTransferCandidatesAllowed; }
+    public static void setAllowLargeRecipeTransferCandidates(boolean value) { largeRecipeTransferCandidatesAllowed = value; }
 
     @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         enabled = false;
         worldPickEnabled = false;
+        largeRecipeTransferCandidatesAllowed = false;
     }
 }

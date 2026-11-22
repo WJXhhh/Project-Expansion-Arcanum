@@ -754,5 +754,6 @@
   "text.projectexa.jei_transmute.no_space": "转化失败：目标位置没有足够空间。",
   "text.projectexa.jei_transmuted": "已转化 %s 个 %s，消耗 %s EMC",
   "projectexa.configuration.enableJeiEmcRetrieval": "启用 JEI EMC 取物",
-  "projectexa.configuration.enableWorldEmcPick": "启用生存模式 EMC 取块"
+  "projectexa.configuration.enableWorldEmcPick": "启用生存模式 EMC 取块",
+  "projectexa.configuration.allowLargeRecipeTransferCandidates": "允许配方转移每槽超过 256 个候选"
 }

@@ -56,6 +56,7 @@
   "text.projectexa.jei_transmuted": "Transmuted %s %s for %s EMC",
   "projectexa.configuration.enableJeiEmcRetrieval": "Enable JEI EMC Retrieval",
   "projectexa.configuration.enableWorldEmcPick": "Enable Survival EMC Pick Block",
+  "projectexa.configuration.allowLargeRecipeTransferCandidates": "Allow More Than 256 Candidates Per Recipe Slot",
   "gui.projectexa.arcane_transmutation_tablet.clockwise": "Clockwise",
   "gui.projectexa.arcane_transmutation_tablet.counter_clockwise": "Counter Clockwise",
   "gui.projectexa.arcane_transmutation_tablet.clear_force": "Force Return"

@@ -1,6 +1,7 @@
 package com.wjx.neoforge.projectexa.integrations.jei;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.wjx.neoforge.projectexa.config.JeiEmcClientState;
 import com.wjx.neoforge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import com.wjx.neoforge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
 import com.wjx.neoforge.projectexa.registries.MenuTypes;
@@ -77,8 +78,10 @@ public class ArcaneCraftingTransferHandler extends ArcaneRecipeTransferHandler<C
     protected @Nullable IRecipeTransferError transferRecipe(ContainerArcaneTransmutationTablet container, RecipeHolder<CraftingRecipe> recipe, IRecipeSlotsView iRecipeSlotsView, Player player, boolean transferAll, boolean doTransfer, int transferId) {
         if (doTransfer) {
             List<List<ItemStack>> itemStack = new ArrayList<>();
+            boolean allowLargeCandidates = JeiEmcClientState.allowsLargeRecipeTransferCandidates();
             for (IRecipeSlotView input : iRecipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT)) {
-                itemStack.add(RecipeTransferUtil.filterAvailableCandidates(input.getItemStacks().toList(), container));
+                itemStack.add(RecipeTransferUtil.filterAvailableCandidates(input.getItemStacks().toList(), container,
+                        allowLargeCandidates));
             }
 
             PacketDistributor.sendToServer(new PacketArcaneTransmutationTabletRecipeTransfer(recipe.id(), itemStack, transferAll, transferId));

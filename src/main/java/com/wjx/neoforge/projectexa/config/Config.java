@@ -55,6 +55,9 @@ public final class Config {
         public final ModConfigSpec.ConfigValue<Boolean> enableStoneTableWhitelist = Builder.define("enableStoneTableWhitelist", false);
         public final ModConfigSpec.ConfigValue<Boolean> enableJeiEmcRetrieval = Builder.comment("Allow players carrying an Arcane Transmutation Tablet to buy learned items through JEI using EMC. Synchronized to clients.").define("enableJeiEmcRetrieval", true);
         public final ModConfigSpec.ConfigValue<Boolean> enableWorldEmcPick = Builder.comment("Allow survival players carrying an Arcane Transmutation Tablet to buy learned blocks using pick block. Synchronized to clients.").define("enableWorldEmcPick", true);
+        public final ModConfigSpec.ConfigValue<Boolean> allowLargeRecipeTransferCandidates = Builder
+                .comment("Remove the 256-candidate limit per slot for Arcane Tablet crafting and smithing transfers. Applies after restarting the server or reopening the world.")
+                .worldRestart().define("allowLargeRecipeTransferCandidates", false);
         public final ModConfigSpec.ConfigValue<Boolean> finalStarCopyAnyItem = Builder.define("finalStarCopyAnyItem", true);
         public final ModConfigSpec.ConfigValue<Boolean> finalStarCopyNBT = Builder.comment("Copy all item data components instead of only default components.").define("finalStarCopyNBT", false);
         public final ModConfigSpec.ConfigValue<Integer> finalStarUpdateInterval = Builder.defineInRange("finalStarUpdateInterval", 20, 0, Integer.MAX_VALUE);

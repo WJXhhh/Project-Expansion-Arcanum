@@ -239,10 +239,11 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     public int getSmithingTransferSequence() { return smithingTransferSequence; }
 
     public boolean transferSmithingRecipe(SmithingRecipe recipe, List<List<ItemStack>> choices, boolean transferAll) {
+        boolean allowLargeCandidates = RecipeTransferUtil.serverAllowsLargeCandidates();
         if (!(player instanceof ServerPlayer serverPlayer) || !stillValid(player)
                 || !canUseStation(1) || choices == null || choices.size() != 3
                 || choices.stream().anyMatch(options -> options == null
-                        || options.size() > RecipeTransferUtil.MAX_CANDIDATES_PER_SLOT)) return false;
+                        || !allowLargeCandidates && options.size() > RecipeTransferUtil.MAX_CANDIDATES_PER_SLOT)) return false;
         selectStation(1);
         smithingTransferSequence = (smithingTransferSequence + 1) & 0x7FFF;
         for (int index = 0; index < 3; index++) {

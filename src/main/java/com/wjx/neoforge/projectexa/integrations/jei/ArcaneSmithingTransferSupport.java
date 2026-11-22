@@ -1,5 +1,6 @@
 package com.wjx.neoforge.projectexa.integrations.jei;
 
+import com.wjx.neoforge.projectexa.config.JeiEmcClientState;
 import com.wjx.neoforge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import com.wjx.neoforge.projectexa.util.RecipeTransferUtil;
 import com.wjx.neoforge.projectexa.util.Util;
@@ -27,7 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /** Read-only, single-craft availability shared by the arcane tablet smithing transfer. */
 public final class ArcaneSmithingTransferSupport {
@@ -35,8 +35,7 @@ public final class ArcaneSmithingTransferSupport {
     }
 
     public static Status check(IRecipeSlotsView slots, Player player, AbstractContainerMenu container, SmithingRecipe recipe) {
-        List<Predicate<ItemStack>> ingredients = List.of(
-                recipe::isTemplateIngredient, recipe::isBaseIngredient, recipe::isAdditionIngredient);
+        List<Predicate<ItemStack>> ingredients = ingredients(recipe);
         List<IRecipeSlotView> inputs = slots.getSlotViews(RecipeIngredientRole.INPUT);
         List<List<ItemStack>> options = new ArrayList<>(3);
         int emptyMask = 0;
@@ -62,22 +61,11 @@ public final class ArcaneSmithingTransferSupport {
             }
         }
 
-        List<ItemStack> inventory = new ArrayList<>();
-        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
-            inventory.add(player.getInventory().getItem(index));
-        }
-        // Existing smithing inputs are returned to the inventory before filling the recipe.
-        if (container instanceof ContainerArcaneTransmutationTablet) {
-            for (int index = 0; index < 3; index++) {
-                inventory.add(container.getSlot(ContainerArcaneTransmutationTablet.SMITHING + index).getItem());
-            }
-        }
-
         // At most three inputs: subset matching avoids both double-counting a stack and
         // spending a scarce alternative on a slot that could use a different item.
         ItemStack[][] assignments = new ItemStack[1 << size][];
         assignments[emptyMask] = new ItemStack[size];
-        for (ItemStack stack : inventory) {
+        for (ItemStack stack : availableItems(player, container)) {
             if (stack.isEmpty()) continue;
             int matches = 0;
             for (int index = 0; index < size; index++) {
@@ -148,6 +136,25 @@ public final class ArcaneSmithingTransferSupport {
         return new Status(missing, choices, plannedRecipe);
     }
 
+    private static List<Predicate<ItemStack>> ingredients(SmithingRecipe recipe) {
+        return List.of(recipe::isTemplateIngredient, recipe::isBaseIngredient, recipe::isAdditionIngredient);
+    }
+
+    private static List<ItemStack> availableItems(Player player, AbstractContainerMenu container) {
+        List<ItemStack> items = new ArrayList<>();
+        var inventory = player.getInventory();
+        for (int index = 0; index < inventory.getContainerSize(); index++) {
+            items.add(inventory.getItem(index));
+        }
+        // Existing smithing inputs are returned to inventory before filling the recipe.
+        if (container instanceof ContainerArcaneTransmutationTablet) {
+            for (int index = 0; index < 3; index++) {
+                items.add(container.getSlot(ContainerArcaneTransmutationTablet.SMITHING + index).getItem());
+            }
+        }
+        return items;
+    }
+
     private static BigInteger availableEmc(IKnowledgeProvider provider) {
         BigInteger available = provider.getEmc();
         var inputLocks = provider.getInputAndLocks();
@@ -163,15 +170,19 @@ public final class ArcaneSmithingTransferSupport {
 
     public record Status(List<Integer> missing, List<List<ItemStack>> recipe,
                          List<List<ItemStack>> plannedRecipe) implements IRecipeTransferError {
-        public List<List<ItemStack>> recipe(boolean transferAll) {
+        public List<List<ItemStack>> recipe(boolean transferAll, Player player, AbstractContainerMenu container,
+                SmithingRecipe smithingRecipe) {
             // A normal click must follow the exact feasible allocation, otherwise a
             // broad ingredient can steal the only item reserved for a narrower one.
             // Shift keeps the existing best-effort bulk/partial transfer behavior.
             if (!transferAll && missing.isEmpty()) return plannedRecipe;
-            // Keep a feasible choice first even when a large modded tag exceeds the packet limit.
-            return IntStream.range(0, 3).mapToObj(index -> Stream.concat(
-                    plannedRecipe.get(index).stream(), recipe.get(index).stream())
-                    .filter(stack -> !stack.isEmpty()).limit(RecipeTransferUtil.MAX_CANDIDATES_PER_SLOT).toList()).toList();
+            var items = availableItems(player, container);
+            var ingredients = ingredients(smithingRecipe);
+            var provider = Util.getKnowledgeProvider(player);
+            boolean allowLargeCandidates = JeiEmcClientState.allowsLargeRecipeTransferCandidates();
+            return IntStream.range(0, 3).mapToObj(index -> RecipeTransferUtil.prioritizeSmithingCandidates(
+                    recipe.get(index), plannedRecipe.get(index).getFirst(), items, ingredients.get(index), provider,
+                    allowLargeCandidates)).toList();
         }
 
         public boolean canTransfer(boolean transferAll) {

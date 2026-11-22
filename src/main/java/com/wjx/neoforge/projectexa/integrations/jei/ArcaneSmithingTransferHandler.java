@@ -67,7 +67,7 @@ public final class ArcaneSmithingTransferHandler implements
         var status = ArcaneSmithingTransferSupport.check(slots, player, menu, recipe.value());
         if (!doTransfer || !status.canTransfer(transferAll)) return status;
         PacketDistributor.sendToServer(new PacketArcaneSmithingTransfer(
-                menu.containerId, recipe.id(), status.recipe(transferAll), transferAll, transferId));
+                menu.containerId, recipe.id(), status.recipe(transferAll, player, menu, recipe.value()), transferAll, transferId));
         return null;
     }
 }

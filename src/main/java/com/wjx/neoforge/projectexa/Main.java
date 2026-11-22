@@ -66,7 +66,8 @@ public class Main {
 
     private void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            PacketDistributor.sendToPlayer(player, new PacketJeiEmcConfig(Config.server.enableJeiEmcRetrieval.get(), Config.server.enableWorldEmcPick.get()));
+            PacketDistributor.sendToPlayer(player, new PacketJeiEmcConfig(Config.server.enableJeiEmcRetrieval.get(),
+                    Config.server.enableWorldEmcPick.get(), Config.server.allowLargeRecipeTransferCandidates.get()));
         }
     }
 
@@ -78,7 +79,8 @@ public class Main {
             lastJeiEmcSetting = jeiEmcEnabled;
             lastWorldEmcPickSetting = worldPickEnabled;
             for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
-                PacketDistributor.sendToPlayer(player, new PacketJeiEmcConfig(jeiEmcEnabled, worldPickEnabled));
+                PacketDistributor.sendToPlayer(player, new PacketJeiEmcConfig(jeiEmcEnabled, worldPickEnabled,
+                        Config.server.allowLargeRecipeTransferCandidates.get()));
             }
         }
         AlchemicalCollectionCollector.process();

@@ -16,7 +16,7 @@ public final class PacketHandler {
     public PacketHandler(IEventBus modEventBus, ArtifactVersion version) {
         modEventBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
             // Station slots, input actions, and EMC retrieval require the same protocol on both sides.
-            PayloadRegistrar registrar = event.registrar(version + "-arcane-features-5");
+            PayloadRegistrar registrar = event.registrar(version + "-arcane-features-6");
             register(registrar);
         });
     }
