@@ -64,6 +64,11 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+def recipeTransferGameTests = providers.gradleProperty('recipeTransferGameTests').isPresent()
+if (recipeTransferGameTests) {
+    sourceSets.main.java.srcDir 'src/recipeTransferGameTest/java'
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
@@ -104,6 +109,10 @@ neoForge {
         gameTestServer {
             type = "gameTestServer"
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            if (recipeTransferGameTests) {
+                gameDirectory = layout.buildDirectory.dir('recipe-transfer-gametest')
+                systemProperty 'neoforge.enabledGameTestNamespaces', 'minecraft'
+            }
         }
 
         data {

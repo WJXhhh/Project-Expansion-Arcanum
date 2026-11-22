@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.wjx.neoforge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import com.wjx.neoforge.projectexa.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
 import com.wjx.neoforge.projectexa.registries.MenuTypes;
+import com.wjx.neoforge.projectexa.util.RecipeTransferUtil;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -76,15 +77,8 @@ public class ArcaneCraftingTransferHandler extends ArcaneRecipeTransferHandler<C
     protected @Nullable IRecipeTransferError transferRecipe(ContainerArcaneTransmutationTablet container, RecipeHolder<CraftingRecipe> recipe, IRecipeSlotsView iRecipeSlotsView, Player player, boolean transferAll, boolean doTransfer, int transferId) {
         if (doTransfer) {
             List<List<ItemStack>> itemStack = new ArrayList<>();
-            List<ItemStack> emptyStack = new ArrayList<>();
-            emptyStack.add(ItemStack.EMPTY);
-
             for (IRecipeSlotView input : iRecipeSlotsView.getSlotViews(RecipeIngredientRole.INPUT)) {
-                if (input.getItemStacks().toList().isEmpty()) {
-                    itemStack.add(emptyStack);
-                } else {
-                    itemStack.add(input.getItemStacks().toList());
-                }
+                itemStack.add(RecipeTransferUtil.filterAvailableCandidates(input.getItemStacks().toList(), container));
             }
 
             PacketDistributor.sendToServer(new PacketArcaneTransmutationTabletRecipeTransfer(recipe.id(), itemStack, transferAll, transferId));

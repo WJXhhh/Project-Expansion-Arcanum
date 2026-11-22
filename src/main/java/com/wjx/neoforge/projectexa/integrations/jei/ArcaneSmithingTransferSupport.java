@@ -1,6 +1,7 @@
 package com.wjx.neoforge.projectexa.integrations.jei;
 
 import com.wjx.neoforge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
+import com.wjx.neoforge.projectexa.util.RecipeTransferUtil;
 import com.wjx.neoforge.projectexa.util.Util;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
@@ -170,7 +171,7 @@ public final class ArcaneSmithingTransferSupport {
             // Keep a feasible choice first even when a large modded tag exceeds the packet limit.
             return IntStream.range(0, 3).mapToObj(index -> Stream.concat(
                     plannedRecipe.get(index).stream(), recipe.get(index).stream())
-                    .filter(stack -> !stack.isEmpty()).limit(256).toList()).toList();
+                    .filter(stack -> !stack.isEmpty()).limit(RecipeTransferUtil.MAX_CANDIDATES_PER_SLOT).toList()).toList();
         }
 
         public boolean canTransfer(boolean transferAll) {

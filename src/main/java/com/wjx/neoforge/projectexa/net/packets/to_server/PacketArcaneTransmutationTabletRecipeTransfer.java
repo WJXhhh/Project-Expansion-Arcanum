@@ -4,6 +4,7 @@ import com.wjx.neoforge.projectexa.Main;
 import com.wjx.neoforge.projectexa.gui.container.ContainerArcaneTransmutationTablet;
 import com.wjx.neoforge.projectexa.net.packets.IPacket;
 import com.wjx.neoforge.projectexa.net.packets.to_client.PacketArcaneRecipeTransferResult;
+import com.wjx.neoforge.projectexa.util.RecipeTransferUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -26,7 +27,8 @@ public record PacketArcaneTransmutationTabletRecipeTransfer(ResourceLocation rec
     public static final CustomPacketPayload.Type<PacketArcaneTransmutationTabletRecipeTransfer> TYPE = new CustomPacketPayload.Type<>(Main.rl("arcane_transmutation_recipe_transfer"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PacketArcaneTransmutationTabletRecipeTransfer> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC, PacketArcaneTransmutationTabletRecipeTransfer::recipeId,
-            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list(256)).apply(ByteBufCodecs.list(9)), PacketArcaneTransmutationTabletRecipeTransfer::recipe,
+            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list(RecipeTransferUtil.MAX_CANDIDATES_PER_SLOT))
+                    .apply(ByteBufCodecs.list(9)), PacketArcaneTransmutationTabletRecipeTransfer::recipe,
             ByteBufCodecs.BOOL, PacketArcaneTransmutationTabletRecipeTransfer::transferAll,
             ByteBufCodecs.VAR_INT, PacketArcaneTransmutationTabletRecipeTransfer::transferId,
             PacketArcaneTransmutationTabletRecipeTransfer::new
