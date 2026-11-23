@@ -13,6 +13,7 @@ import com.wjx.neoforge.projectexa.registries.MenuTypes;
 import com.wjx.neoforge.projectexa.util.ContainerData;
 import com.wjx.neoforge.projectexa.util.RecipeTransferUtil;
 import com.wjx.neoforge.projectexa.util.Util;
+import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -656,15 +657,20 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
     /** @apiNote only call on server */
     public void clearCrafting(boolean force) {
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
         boolean emcUpdate = false;
         for (int i = 0; i < craftSlots.getContainerSize(); i++) {
             ItemStack stack = craftSlots.getItem(i);
             if (stack.isEmpty()) continue;
 
             if (ProjectEConfig.server.difficulty.covalenceLoss.get() >= 1D && IEMCProxy.INSTANCE.hasValue(stack)) {
-                Util.AddKnowledgeResult result = Util.addKnowledge(player, provider, stack);
+                ItemInfo clean = ItemInfo.fromStack(Util.cleanStack(stack));
+                Util.AddKnowledgeResult result = Util.addKnowledge(player, provider, ItemInfo.fromStack(stack), clean);
 
-                if (!result.fail()) {
+                if (!result.fail() && provider.hasKnowledge(clean)) {
+                    if (result == Util.AddKnowledgeResult.SUCCESS) {
+                        provider.syncKnowledgeChange(serverPlayer, clean, true);
+                    }
                     BigInteger emc = provider.getEmc().add(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(stack)).multiply(BigInteger.valueOf(stack.getCount())));
                     provider.setEmc(emc);
                     emcUpdate = true;
@@ -677,7 +683,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
             craftSlots.setItem(i, result);
         }
 
-        if (emcUpdate && player instanceof ServerPlayer serverPlayer) provider.syncEmc(serverPlayer);
+        if (emcUpdate) provider.syncEmc(serverPlayer);
         slotsChanged(craftSlots);
         craftSlots.setChanged();
     }

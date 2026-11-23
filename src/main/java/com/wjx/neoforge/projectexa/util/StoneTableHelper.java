@@ -79,7 +79,7 @@ public final class StoneTableHelper {
             if (!ModList.get().isLoaded("jecharacters")) return null;
             try {
                 Class<?> type = Class.forName("me.towdium.jecharacters.utils.Match");
-                return type.getMethod("contains", String.class, String.class);
+                return type.getMethod("contains", String.class, CharSequence.class);
             } catch (ReflectiveOperationException | LinkageError error) {
                 Main.Logger.warn("JEC matching API is unavailable; stone-table search uses literal matching", error);
                 return null;
