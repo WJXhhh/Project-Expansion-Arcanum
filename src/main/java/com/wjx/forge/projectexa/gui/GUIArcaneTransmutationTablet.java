@@ -47,6 +47,7 @@ import static com.wjx.forge.projectexa.gui.container.ContainerArcaneTransmutatio
 @IPNIgnore
 public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArcaneTransmutationTablet> {
     private static final ResourceLocation TEXTURE = Main.rl("textures/gui/arcane_transmutation_tablet.png");
+    private static final long KNOWLEDGE_NOTICE_DURATION_MS = 5_000;
     private static final int SMITHING_PREVIEW_X = 110;
     private static final int SMITHING_PREVIEW_Y = 80;
     private static final int SMITHING_PREVIEW_SCALE = 25;
@@ -59,6 +60,8 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
     private ArmorStand smithingArmorStand;
     private ItemStack lastSmithingResult = ItemStack.EMPTY;
     private final TransmutationInventory inventory;
+    private long knowledgeNoticeUntil;
+    private boolean knowledgeNoticeLearned;
     private EditBox filterBox;
     private EditBox anvilName;
     private ItemStack lastAnvilInput = ItemStack.EMPTY;
@@ -612,15 +615,19 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
         String emcText = EMCFormat.format(emc);
         graphics.drawString(font, emcText, (imageWidth - font.width(emcText)) / 2, -9, 0xFFB5B5B5);
 
-        if (inventory.learnFlag > 0) {
-            Component learned = Component.translatable("gui.projectexa.arcane_transmutation_tablet.learned");
-            graphics.drawString(font, learned, 170 - font.width(learned), 60, 0xFFB5B5B5, false);
-            inventory.learnFlag--;
+        long now = Util.getMillis();
+        if (inventory.learnFlag > 0 || inventory.unlearnFlag > 0) {
+            knowledgeNoticeLearned = inventory.learnFlag > 0;
+            knowledgeNoticeUntil = now + KNOWLEDGE_NOTICE_DURATION_MS;
+            inventory.learnFlag = 0;
+            inventory.unlearnFlag = 0;
         }
-        if (inventory.unlearnFlag > 0) {
-            Component unlearned = Component.translatable("gui.projectexa.arcane_transmutation_tablet.unlearned");
-            graphics.drawString(font, unlearned, 6, 60, 0xFFB5B5B5, false);
-            inventory.unlearnFlag--;
+        if (now < knowledgeNoticeUntil) {
+            Component notice = Component.translatable(knowledgeNoticeLearned
+                    ? "gui.projectexa.arcane_transmutation_tablet.learned"
+                    : "gui.projectexa.arcane_transmutation_tablet.unlearned");
+            int x = knowledgeNoticeLearned ? 170 - font.width(notice) : 6;
+            graphics.drawString(font, notice, x, 60, 0xFFB5B5B5, false);
         }
 
         PoseStack pose = graphics.pose();
@@ -759,6 +766,7 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
     @Override
     public void removed() {
         super.removed();
+        knowledgeNoticeUntil = 0;
         inventory.learnFlag = 0;
         inventory.unlearnFlag = 0;
     }
