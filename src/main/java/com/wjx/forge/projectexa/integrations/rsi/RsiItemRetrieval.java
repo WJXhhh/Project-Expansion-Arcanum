@@ -7,11 +7,15 @@ import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Destination;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Request;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Result;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Scene;
-import com.huanghuang.rsintegration.mods.jei.JeiStoragePullPacket;
+import com.huanghuang.rsintegration.crafting.endpoint.CraftStorageEndpoint;
+import com.huanghuang.rsintegration.storage.StorageOperationResult;
+import com.huanghuang.rsintegration.storage.StoragePermission;
+import com.huanghuang.rsintegration.storage.StorageReference;
+import com.huanghuang.rsintegration.storage.StorageRestockSupport;
+import com.huanghuang.rsintegration.storage.rs.RefinedStorageBackend;
+import com.refinedmods.refinedstorage.RS;
 import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.config.Config;
-import com.wjx.forge.projectexa.mixin.RsiJeiStoragePullInvoker;
-import com.wjx.forge.projectexa.mixin.RsiWorldPickInvoker;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
 import com.wjx.forge.projectexa.util.Util;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
@@ -24,69 +28,86 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import java.math.BigInteger;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 public final class RsiItemRetrieval {
-    private static final ThreadLocal<NativeAttempt> NATIVE_ATTEMPT = new ThreadLocal<>();
-
     private RsiItemRetrieval() {}
 
     public static void register() {
         RSIItemRetrievalFallback.register(Main.rl("emc_retrieval"), RsiItemRetrieval::tryDeliver);
     }
 
-    public static void pullJei(ServerPlayer player, ItemStack stack, BooleanSupplier transmute) {
-        NativeAttempt attempt = new NativeAttempt(player, Scene.JEI);
-        Component failure = runNative(attempt, () -> {
-            RsiJeiStoragePullInvoker.projectexa$handlePull(new JeiStoragePullPacket(stack), player);
-            return attempt.failure;
-        });
-        if (failure != null && (!attempt.canTransmute || !transmute.getAsBoolean())) {
-            player.sendSystemMessage(failure);
+    public enum PullResult {
+        DELIVERED, NO_NETWORK, NO_PERMISSION, NO_SPACE, NOT_FOUND, FAILED;
+
+        public boolean canTransmute() {
+            return this != DELIVERED && this != FAILED;
         }
     }
 
-    public static boolean captureJeiFailure(ServerPlayer player, String key, Object[] args) {
-        NativeAttempt attempt = NATIVE_ATTEMPT.get();
-        if (attempt == null || attempt.player != player || attempt.scene != Scene.JEI) return false;
-        attempt.failure = Component.translatable(key, args);
-        attempt.canTransmute = switch (key) {
-            case "rsi.jei.pull.no_network", "rsi.jei.pull.no_permission",
-                 "rsi.jei.pull.inventory_full", "rsi.jei.pull.not_found" -> true;
-            default -> false;
-        };
-        return true;
+    public static PullResult pullJei(ServerPlayer player, ItemStack stack, int amount,
+                                     ToIntFunction<ItemStack> deliver) {
+        return pull(player, stack, amount, deliver, false);
     }
 
-    public static boolean tryWorldPick(ServerPlayer player, ItemStack stack) {
+    public static PullResult pullWorldPick(ServerPlayer player, ItemStack stack, int amount,
+                                           ToIntFunction<ItemStack> deliver) {
+        return pull(player, stack, amount, deliver, true);
+    }
+
+    private static PullResult pull(ServerPlayer player, ItemStack stack, int amount,
+                                   ToIntFunction<ItemStack> deliver, boolean worldPick) {
+        if (amount <= 0) return PullResult.NO_SPACE;
+        ItemStack template = stack.copyWithCount(1);
         try {
-            return runNative(new NativeAttempt(player, Scene.WORLD_PICK),
-                    () -> !RsiWorldPickInvoker.projectexa$pickBlock(player, stack).isEmpty());
-        } catch (RuntimeException exception) {
-            // An extraction that threw may already have affected storage or the selected slot.
-            Main.Logger.warn("RSI world pick failed for {}", player.getGameProfile().getName(), exception);
-            player.displayClientMessage(Component.translatable("rsi.world_pick.failed", stack.getHoverName()), true);
-            return true;
+            CraftStorageEndpoint endpoint = StorageRestockSupport.resolve(player).orElse(null);
+            if (endpoint == null) return PullResult.NO_NETWORK;
+            if (!StorageRestockSupport.canExtract(endpoint, player)
+                    || worldPick && !endpoint.session().hasPermission(player, StoragePermission.VIEW)) {
+                return PullResult.NO_PERMISSION;
+            }
+            if (worldPick) {
+                StorageOperationResult simulated = endpoint.extractExact(player, template, amount, true);
+                long available = simulated.transferredAmount().orElse(0L);
+                if (available <= 0) {
+                    return StorageRestockSupport.confirmedMissing(simulated) ? PullResult.NOT_FOUND : PullResult.FAILED;
+                }
+                amount = (int) Math.min(amount, available);
+            }
+
+            var extraction = StorageRestockSupport.extractOutcome(endpoint, player, template, amount);
+            ItemStack extracted = extraction.stack();
+            if (extracted.isEmpty()) {
+                return extraction.confirmedMissing() ? PullResult.NOT_FOUND : PullResult.FAILED;
+            }
+            int delivered = deliver.applyAsInt(extracted.copyWithCount(Math.min(amount, extracted.getCount())));
+            if (delivered < extracted.getCount()) {
+                returnToNetwork(endpoint, player, extracted.copyWithCount(extracted.getCount() - delivered));
+            }
+            if (delivered <= 0) return PullResult.FAILED;
+            if (worldPick && RsiStorageCompat.RS.equals(endpoint.session().reference().backendId().value())) {
+                RefinedStorageEnergy.drain(player, endpoint.session().reference());
+            }
+            return PullResult.DELIVERED;
+        } catch (RuntimeException | LinkageError exception) {
+            // Failed calls may already have changed storage or delivered items.
+            Main.Logger.warn("RSI coordinated retrieval failed for {}", player.getGameProfile().getName(), exception);
+            return PullResult.FAILED;
         }
     }
 
-    private static <T> T runNative(NativeAttempt attempt, Supplier<T> action) {
-        NativeAttempt previous = NATIVE_ATTEMPT.get();
-        NATIVE_ATTEMPT.set(attempt);
-        try {
-            return action.get();
-        } finally {
-            if (previous == null) NATIVE_ATTEMPT.remove();
-            else NATIVE_ATTEMPT.set(previous);
+    private static void returnToNetwork(CraftStorageEndpoint endpoint, ServerPlayer player, ItemStack stack) {
+        var remainder = endpoint.insert(player, stack, false).remainder();
+        if (remainder.isEmpty()) {
+            Main.Logger.warn("RSI could not confirm the return of {} for {}", stack, player.getGameProfile().getName());
+            return;
         }
+        ItemStack unreturned = remainder.get();
+        if (!unreturned.isEmpty()) player.drop(unreturned, false);
     }
 
     private static Result tryDeliver(Request request) {
         ServerPlayer player = request.player();
-        NativeAttempt attempt = NATIVE_ATTEMPT.get();
-        // The coordinated packet already has its own fallback, with the original delivery options.
-        if (attempt != null && attempt.player == player && attempt.scene == request.scene()) return Result.PASS;
         Inventory inventory = player.getInventory();
         boolean worldPick = request.scene() == Scene.WORLD_PICK;
         if (worldPick) {
@@ -131,15 +152,17 @@ public final class RsiItemRetrieval {
         return new Delivered(delivered);
     }
 
-    private static final class NativeAttempt {
-        private final ServerPlayer player;
-        private final Scene scene;
-        private Component failure;
-        private boolean canTransmute;
-
-        private NativeAttempt(ServerPlayer player, Scene scene) {
-            this.player = player;
-            this.scene = scene;
+    // Keep Refined Storage types out of the shared JEI and BD retrieval path.
+    private static final class RefinedStorageEnergy {
+        private static void drain(ServerPlayer player, StorageReference reference) {
+            try {
+                var network = RefinedStorageBackend.resolveNativeNetwork(reference, player);
+                if (network == null) return;
+                var manager = network.getNetworkItemManager();
+                if (manager != null) manager.drainEnergy(player, RS.SERVER_CONFIG.getWirelessGrid().getExtractUsage());
+            } catch (RuntimeException | LinkageError exception) {
+                Main.Logger.warn("RSI world pick could not drain Refined Storage wireless energy", exception);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.wjx.forge.projectexa.net.packets.to_server;
 
 import com.wjx.forge.projectexa.config.Config;
 import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval;
+import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval.PullResult;
 import com.wjx.forge.projectexa.net.JeiCreativeDelivery;
 import com.wjx.forge.projectexa.net.packets.IPacket;
 import com.wjx.forge.projectexa.util.Util;
@@ -13,6 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.math.BigInteger;
@@ -24,13 +27,35 @@ public record PacketJeiTransmute(ItemStack requested, int menuId, int destinatio
     @Override
     public void handle(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
-        if (player == null || player.containerMenu.containerId != menuId || requested.isEmpty()
+        if (player == null || player.isSpectator() || player.containerMenu.containerId != menuId || requested.isEmpty()
                 || destination < -2 || destination > 8) return;
         boolean useCreativeCursor = creativeCursor && destination == -1 && player.isCreative()
                 && player.containerMenu == player.inventoryMenu;
         if (creativeCursor && !useCreativeCursor) return;
+        if (!Config.enableJeiEmcRetrieval.get() || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) return;
+        if (useCreativeCursor && JeiCreativeDelivery.hasPending(player)) {
+            fail(player, "pending");
+            return;
+        }
         if (pullFromRsi && ModList.get().isLoaded("rs_integration")) {
-            RsiItemRetrieval.pullJei(player, requested, () -> transmute(player, useCreativeCursor));
+            int amount = single ? 1 : requested.getMaxStackSize();
+            ItemStack candidate = requested.copyWithCount(amount);
+            PullResult result = RsiItemRetrieval.pullJei(player, requested,
+                    deliverableCount(player, candidate, useCreativeCursor),
+                    stack -> deliver(player, stack, useCreativeCursor));
+            if (result == PullResult.DELIVERED) {
+                player.containerMenu.broadcastChanges();
+                return;
+            }
+            if (result.canTransmute() && transmute(player, useCreativeCursor)) return;
+            String failureKey = switch (result) {
+                case NO_NETWORK -> "rsi.jei.pull.no_network";
+                case NO_PERMISSION -> "rsi.jei.pull.no_permission";
+                case NO_SPACE -> "text.projectexa.jei_transmute.no_space";
+                case NOT_FOUND -> "rsi.jei.pull.not_found";
+                default -> "rsi.jei.pull.failed";
+            };
+            player.sendSystemMessage(Component.translatable(failureKey, requested.getHoverName()));
         } else {
             transmute(player, useCreativeCursor);
         }
@@ -38,10 +63,6 @@ public record PacketJeiTransmute(ItemStack requested, int menuId, int destinatio
 
     private boolean transmute(ServerPlayer player, boolean useCreativeCursor) {
         if (!Config.enableJeiEmcRetrieval.get() || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) return false;
-        if (useCreativeCursor && JeiCreativeDelivery.hasPending(player)) {
-            fail(player, "pending");
-            return false;
-        }
         ItemStack output = Util.cleanStack(requested);
         IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
         if (output.isEmpty()) return false;
@@ -61,43 +82,11 @@ public record PacketJeiTransmute(ItemStack requested, int menuId, int destinatio
             fail(player, "insufficient_emc", cost.toString());
             return false;
         }
-        int delivered;
-        if (useCreativeCursor) {
-            ItemStack existing = expectedCursor;
-            if (!existing.isEmpty() && !ItemStack.isSameItemSameTags(existing, output)) {
-                fail(player, "different_item");
-                return false;
-            }
-            int space = existing.isEmpty() ? output.getMaxStackSize() : existing.getMaxStackSize() - existing.getCount();
-            delivered = Math.min(amount, Math.max(0, space));
-            if (delivered == 0) {
-                fail(player, "no_space");
-                return false;
-            }
-            ItemStack result = existing.isEmpty() ? output.copyWithCount(delivered) : existing.copy();
-            if (!existing.isEmpty()) result.grow(delivered);
-            JeiCreativeDelivery.begin(player, output.copyWithCount(delivered), existing, result);
-        } else if (destination == -2) {
-            ItemStack stack = output.copyWithCount(amount);
-            player.getInventory().add(stack);
-            delivered = amount - stack.getCount();
-        } else {
-            ItemStack existing = destination == -1 ? player.containerMenu.getCarried() : player.getInventory().getItem(destination);
-            if (!existing.isEmpty() && !ItemStack.isSameItemSameTags(existing, output)) {
-                fail(player, "different_item");
-                return false;
-            }
-            int space = existing.isEmpty() ? output.getMaxStackSize() : existing.getMaxStackSize() - existing.getCount();
-            delivered = Math.min(amount, Math.max(0, space));
-            if (delivered == 0) {
-                fail(player, "no_space");
-                return false;
-            }
-            if (existing.isEmpty()) {
-                if (destination == -1) player.containerMenu.setCarried(output.copyWithCount(delivered));
-                else player.getInventory().setItem(destination, output.copyWithCount(delivered));
-            } else existing.grow(delivered);
+        if (destination != -2 && !canStack(destinationStack(player, useCreativeCursor), output)) {
+            fail(player, "different_item");
+            return false;
         }
+        int delivered = deliver(player, output.copyWithCount(amount), useCreativeCursor);
         if (delivered == 0) {
             fail(player, "no_space");
             return false;
@@ -109,6 +98,53 @@ public record PacketJeiTransmute(ItemStack requested, int menuId, int destinatio
         player.sendSystemMessage(Component.translatable("text.projectexa.jei_transmuted",
                 delivered, output.getHoverName(), totalCost.toString()));
         return true;
+    }
+
+    private int deliverableCount(ServerPlayer player, ItemStack stack, boolean useCreativeCursor) {
+        if (destination == -2) return insertIntoInventory(player, stack, true);
+        return Math.min(stack.getCount(), slotSpace(destinationStack(player, useCreativeCursor), stack));
+    }
+
+    private int deliver(ServerPlayer player, ItemStack stack, boolean useCreativeCursor) {
+        if (player.containerMenu.containerId != menuId) return 0;
+        if (destination == -2) return insertIntoInventory(player, stack, false);
+        if (useCreativeCursor && (!player.isCreative() || player.containerMenu != player.inventoryMenu
+                || JeiCreativeDelivery.hasPending(player))) return 0;
+
+        ItemStack existing = destinationStack(player, useCreativeCursor);
+        int count = Math.min(stack.getCount(), slotSpace(existing, stack));
+        if (count <= 0) return 0;
+
+        ItemStack delivered = stack.copyWithCount(count);
+        ItemStack result = existing.isEmpty() ? delivered : existing.copyWithCount(existing.getCount() + count);
+        if (useCreativeCursor) {
+            JeiCreativeDelivery.begin(player, delivered, existing, result);
+        } else if (destination == -1) {
+            player.containerMenu.setCarried(result);
+        } else {
+            player.getInventory().setItem(destination, result);
+        }
+        return count;
+    }
+
+    private ItemStack destinationStack(ServerPlayer player, boolean useCreativeCursor) {
+        if (useCreativeCursor) return expectedCursor;
+        return destination == -1 ? player.containerMenu.getCarried() : player.getInventory().getItem(destination);
+    }
+
+    private static int slotSpace(ItemStack existing, ItemStack stack) {
+        if (existing.isEmpty()) return stack.getMaxStackSize();
+        return canStack(existing, stack) ? Math.max(0, existing.getMaxStackSize() - existing.getCount()) : 0;
+    }
+
+    private static boolean canStack(ItemStack existing, ItemStack stack) {
+        return existing.isEmpty() || ItemStack.isSameItemSameTags(existing, stack) && existing.areCapsCompatible(stack);
+    }
+
+    private static int insertIntoInventory(ServerPlayer player, ItemStack stack, boolean simulate) {
+        ItemStack remainder = ItemHandlerHelper.insertItemStacked(
+                new PlayerMainInvWrapper(player.getInventory()), stack.copy(), simulate);
+        return stack.getCount() - remainder.getCount();
     }
 
     private static void fail(ServerPlayer player, String reason, Object... args) {

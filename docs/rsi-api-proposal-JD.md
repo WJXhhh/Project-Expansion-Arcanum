@@ -4,7 +4,7 @@
 
 ## RSI 1.6.1 已提供的接口
 
-这三个接口都已被 ProjectExA 使用。当前仍有 [9 个直接针对 RSI 的 Mixin](../src/main/resources/projectexa.mixins.json)，对应下文的三个缺口。
+这三个接口都已被 ProjectExA 使用。当前仍有 [5 个直接针对 RSI 的 Mixin](../src/main/resources/projectexa.mixins.json)，对应材料源与客户端输入协调两个缺口。
 
 | 接口 | 已提供的行为与边界 |
 | --- | --- |
@@ -33,7 +33,6 @@
 | `RsiTypedMaterialSourcesMixin` | 在合成规划和执行前校验的材料快照中计入虚拟库存。 |
 | `RsiExtractionLedgerAccessor` | RSI 负责读取精妙背包等原生来源并分配实物，扩展可直接获得分配给自身的数量。 |
 | `RsiExtractionLedgerMixin` | 管理跨材料的共享预留、实物与 EMC 混合取料，以及提交和返还。 |
-| `RsiBeyondDimensionsSessionMixin` | 只装超越维度时也使用相同的合成材料源，现有会话 Mixin 可退役，无需从调用栈推断是不是合成取料。 |
 
 ## 2. 协调 JEI 取物和世界选块的客户端输入
 
@@ -51,14 +50,8 @@ RSI 在识别取物动作后、发送请求前调用可注册的客户端处理�
 - 返回实际交付数量和明确状态，至少区分成功、部分交付、缺货、无网络、无权限、空间不足和后端失败。若后端失败后无法确认是否已提取或交付，应能区分这种情况与确定交付为零。
 - 允许调用方选择是否调用已注册的缺货兜底，并在结果确定后统一决定提示或收藏。确认交付为零且符合自身规则时，ProjectExA 可以用玩家自己的 EMC 补料，例如没有可用网络时。已经部分交付或转移结果不明时按原取物结果处理，避免重复取物。RSI 自己发起的取物仍可使用现有缺货兜底。
 
-现有 `RSIStorageApi` 提供存储访问和精确提取。这里需要的是包含交付校验、交付结果和反馈时机的完整取物操作。当前协同流程里，ProjectExA 的数量和交付选项用于 EMC 兜底，RSI 原生取物成功时仍使用自身的数量和目标规则。 [RSI 存储 API](https://github.com/Elten-huanghuang/rs_integration/blob/00e533253e6a200b63eeefe3ea1660e3ab901480/docs/api/README.md#172-存储访问入口) · [ProjectExA 取物协调](../src/main/java/com/wjx/forge/projectexa/integrations/rsi/RsiItemRetrieval.java)
-
-| 可替换的 Mixin | 由 API 接管的行为 |
-| --- | --- |
-| `RsiJeiStoragePullInvoker` | 通过公开方法调用服务端 JEI 取物。 |
-| `RsiJeiStoragePullMixin` | 读取结构化结果并延后反馈，取代对失败提示及其翻译键的拦截。 |
-| `RsiWorldPickInvoker` | 通过公开方法调用服务端世界选块，并按结果决定是否兜底或提示收藏。 |
+现有 `RSIStorageApi` 提供存储访问和精确提取。这里需要的是包含交付校验、交付结果和反馈时机的完整取物操作。ProjectExA 已用 RSI 内部的 `StorageRestockSupport` 和存储端点实现协同取物，并按请求中的数量和交付位置结算。原先调用私有取物处理器和拦截失败提示的三个 Mixin 已移除。公开 API 可替换这些内部调用，并让扩展直接使用 RSI 的交付和结果契约。 [RSI 存储 API](https://github.com/Elten-huanghuang/rs_integration/blob/00e533253e6a200b63eeefe3ea1660e3ab901480/docs/api/README.md#172-存储访问入口) · [ProjectExA 取物协调](../src/main/java/com/wjx/forge/projectexa/integrations/rsi/RsiItemRetrieval.java)
 
 ## 1.6.1 兼容性观察
 
-正式版 JAR 的 `ExtractionLedger` 字节码已无旧 RS 类型引用，可以重新评估只装超越维度时的旧账本开关。世界选块 Invoker 的目标类 `RSSidePanelClickPacket` 仍引用旧 RS 类型，应独立评估。该结论来自静态检查。 [ProjectExA 的 Mixin 开关](../src/main/java/com/wjx/forge/projectexa/mixin/ProjectExaMixinConfigPlugin.java) · [RSI 的取料账本](https://github.com/Elten-huanghuang/rs_integration/blob/00e533253e6a200b63eeefe3ea1660e3ab901480/src/main/java/com/huanghuang/rsintegration/crafting/ExtractionLedger.java) · [RSI 的世界选块入口](https://github.com/Elten-huanghuang/rs_integration/blob/00e533253e6a200b63eeefe3ea1660e3ab901480/src/main/java/com/huanghuang/rsintegration/feature/sidepanel/RSSidePanelClickPacket.java)
+1.6.1 正式版 JAR 的 `ExtractionLedger` 字节码已无旧 RS 类型引用。ProjectExA 已让只安装超越维度的环境共用取料账本，并移除 `RsiBeyondDimensionsSessionMixin`。协同世界选块通过存储端点取物，保留原有的 Refined Storage 启用条件。 [ProjectExA 的 Mixin 开关](../src/main/java/com/wjx/forge/projectexa/mixin/ProjectExaMixinConfigPlugin.java) · [RSI 的取料账本](https://github.com/Elten-huanghuang/rs_integration/blob/00e533253e6a200b63eeefe3ea1660e3ab901480/src/main/java/com/huanghuang/rsintegration/crafting/ExtractionLedger.java)

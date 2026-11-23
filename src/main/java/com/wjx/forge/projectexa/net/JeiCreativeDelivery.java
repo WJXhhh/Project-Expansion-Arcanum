@@ -7,12 +7,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/** Holds purchased items until the creative client confirms that it received them. */
+/** Holds items until the creative client confirms that it received them. */
 @Mod.EventBusSubscriber(modid = Main.MOD_ID)
 public final class JeiCreativeDelivery {
     private record Pending(UUID id, ItemStack purchased) { }
@@ -46,8 +48,8 @@ public final class JeiCreativeDelivery {
     }
 
     private static void returnToInventory(ServerPlayer player, ItemStack stack) {
-        ItemStack remaining = stack.copy();
-        player.getInventory().add(remaining);
+        ItemStack remaining = ItemHandlerHelper.insertItemStacked(
+                new PlayerMainInvWrapper(player.getInventory()), stack.copy(), false);
         if (!remaining.isEmpty()) player.drop(remaining, false);
         player.containerMenu.broadcastChanges();
     }

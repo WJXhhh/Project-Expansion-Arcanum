@@ -1,7 +1,5 @@
 package com.wjx.forge.projectexa.mixin;
 
-import com.wjx.forge.projectexa.integrations.rsi.RsiStorageCompat;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -37,8 +35,6 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
             "com.wjx.forge.projectexa.mixin.RsiTypedMaterialSourcesMixin");
     private static final String RSI_EXTENSION_API =
             "com.huanghuang.rsintegration.api.RSIItemRetrievalFallback";
-    private static final String BD_SESSION_MIXIN =
-            "com.wjx.forge.projectexa.mixin.RsiBeyondDimensionsSessionMixin";
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -61,17 +57,8 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
         if (mixinClassName.endsWith(".JeiEmcLegacyInputMixin")) {
             return !hasClass("mezz.jei.gui.input.handlers.CheatInputHandler");
         }
-        if (mixinClassName.endsWith(".RsiWorldPickInvoker")) {
-            return hasClass(RSI_EXTENSION_API) && RsiStorageCompat.hasRefinedStorageApi();
-        }
-        // RSI supports Beyond Dimensions without RS. Its ledger still contains
-        // legacy RS bytecode, so transforming it without this API forces
-        // ModLauncher to resolve a class that is intentionally not installed.
         if (RSI_INVENTORY_MIXINS.contains(mixinClassName)) {
-            return hasClass(RSI_EXTENSION_API) && RsiStorageCompat.hasRefinedStorageApi();
-        }
-        if (BD_SESSION_MIXIN.equals(mixinClassName)) {
-            return hasClass(RSI_EXTENSION_API) && !RsiStorageCompat.hasRefinedStorageApi();
+            return hasClass(RSI_EXTENSION_API);
         }
         if (!RECIPE_TRANSFER_BUTTON.equals(targetClassName)) {
             return true;

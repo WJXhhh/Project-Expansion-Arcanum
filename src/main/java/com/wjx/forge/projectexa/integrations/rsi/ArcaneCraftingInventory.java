@@ -133,11 +133,6 @@ public final class ArcaneCraftingInventory implements IItemHandler {
         return templates.size();
     }
 
-    /** Includes unaffordable templates so a quote can still describe the required EMC. */
-    ItemStack templateForQuote(int slot) {
-        return templates.get(slot).copy();
-    }
-
     @Override
     public ItemStack getStackInSlot(int slot) {
         IKnowledgeProvider provider = provider();

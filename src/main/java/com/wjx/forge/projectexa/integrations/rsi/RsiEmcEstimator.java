@@ -13,6 +13,7 @@ import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutat
 import com.wjx.forge.projectexa.net.packets.to_server.PacketRsiEmcEstimate;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.math.BigInteger;
@@ -57,13 +58,12 @@ public final class RsiEmcEstimator {
 
     private static void quote(ServerPlayer player, PacketRsiEmcEstimate request, BigInteger balance) {
         MaterialSourceSelection sources = MaterialSourceSelection.fromMask(request.sourceMask());
-        boolean hasRefinedStorage = RsiStorageCompat.hasRefinedStorageApi();
-        boolean inventoryEmc = hasRefinedStorage && sources.backpacks();
         StorageSession session = null;
         if (sources.storageNetwork() && request.storageReference() != null) {
             try {
                 StorageReference reference = StorageReferenceCodec.decode(request.storageReference()).orElseThrow();
-                if (RsiStorageCompat.RS.equals(reference.backendId().value()) && hasRefinedStorage) {
+                if (RsiStorageCompat.RS.equals(reference.backendId().value())
+                        && RsiStorageCompat.hasRefinedStorageApi()) {
                     session = CraftStorageEndpoints.resolve(reference, player).orElseThrow().session();
                 } else {
                     // Resolve the selected backend, not whichever mod happens to be installed.
@@ -81,17 +81,14 @@ public final class RsiEmcEstimator {
                         "Selected storage session did not grant view/extract access", null);
             }
         }
-        boolean networkEmc = session != null && RsiStorageCompat.hasNetworkEmc(
-                session.reference().backendId().value());
-        if (!inventoryEmc && !networkEmc) {
+        if (!sources.backpacks()) {
             reply(player, request, PacketRsiEmcEstimateResult.READY, balance, List.of());
             return;
         }
-        Set<net.minecraft.world.item.Item> types = new HashSet<>();
+        Set<Item> types = new HashSet<>();
         request.demands().forEach(demand -> types.add(demand.stack().getItem()));
         Map<StorageItemKey, Long> network = new HashMap<>();
         if (session != null) {
-            // Outside RSI's crafting stack: the BD Mixin does not add virtual EMC stock here.
             StorageSnapshot snapshot;
             try {
                 StorageSnapshotResult result = session.snapshotItems(player, types);
@@ -112,8 +109,6 @@ public final class RsiEmcEstimator {
             throw new QuoteUnavailable(PacketRsiEmcEstimateResult.INVENTORY_UNAVAILABLE,
                     "Player/backpack stock could not be read", exception);
         }
-        Map<StorageItemKey, NetworkOffer> virtualNetwork = networkEmc
-                ? networkOffers(player, session, types) : new HashMap<>();
         Map<IngredientKey, Integer> demands = new LinkedHashMap<>();
         for (var demand : request.demands()) {
             demands.merge(IngredientKey.of(demand.stack()), demand.count(),
@@ -123,75 +118,28 @@ public final class RsiEmcEstimator {
         for (var demand : demands.entrySet()) {
             ItemStack stack = demand.getKey().stack(1);
             long remaining = demand.getValue();
-            StorageItemKey key = null;
             if (session != null) {
-                key = session.itemKey(stack);
-                long stock = network.getOrDefault(key, 0L);
-                long used = Math.min(stock, remaining);
-                remaining -= used;
-                network.put(key, stock - used);
-            }
-            long value = ArcaneCraftingInventory.transmutationValue(player, stack);
-            long converted;
-            if (networkEmc) {
-                // RSI's allocateExactAcrossSources takes NETWORK first. On BD-only setups that
-                // includes EMC stock, so subtracting all player items first would underquote the cost.
-                NetworkOffer offer = virtualNetwork.get(key);
-                long fromEmc = offer == null ? 0 : Math.min(remaining, offer.available());
-                remaining -= fromEmc;
-                remaining -= physical.allocateUpTo(stack, remaining);
-                converted = fromEmc;
-                if (offer != null) {
-                    value = offer.unitValue();
-                    virtualNetwork.put(key, new NetworkOffer(offer.available() - fromEmc, value));
-                    // Keep an unfunded shortfall visible as required EMC, rather than reporting
-                    // a falsely affordable plan after the balance or physical inventory changes.
-                    converted += remaining;
+                try {
+                    StorageItemKey key = session.itemKey(stack);
+                    long stock = network.getOrDefault(key, 0L);
+                    long used = Math.min(stock, remaining);
+                    remaining -= used;
+                    network.put(key, stock - used);
+                } catch (IllegalArgumentException ignored) {
+                    // The ledger can still supply a stack that the selected network cannot represent.
                 }
-            } else {
-                // With RS's ledger Mixins active (including a selected BD network), EMC is
-                // appended AFTER player/backpack items, not advertised by the BD network as well.
-                remaining -= physical.allocateUpTo(stack, remaining);
-                converted = remaining;
             }
-            if (converted > 0 && value > 0) {
-                costs.add(new Cost(stack, (int) converted,
-                        BigInteger.valueOf(value).multiply(BigInteger.valueOf(converted))));
+            // The ledger uses EMC after the selected network and physical inventory sources.
+            remaining -= physical.allocateUpTo(stack, remaining);
+            if (remaining == 0) continue;
+            long value = ArcaneCraftingInventory.transmutationValue(player, stack);
+            if (value > 0) {
+                costs.add(new Cost(stack, (int) remaining,
+                        BigInteger.valueOf(value).multiply(BigInteger.valueOf(remaining))));
             }
         }
         reply(player, request, PacketRsiEmcEstimateResult.READY, balance, List.copyOf(costs));
     }
-
-    private static Map<StorageItemKey, NetworkOffer> networkOffers(ServerPlayer player, StorageSession session,
-                                                                 Set<net.minecraft.world.item.Item> types) {
-        // Use the same templates, individual balance limits and normalized identities as the BD Mixin.
-        // No extraction (not even simulated extraction) is needed for this detached calculation.
-        ArcaneCraftingInventory virtual = new ArcaneCraftingInventory(player, false, List.of(), Map.of());
-        Map<StorageItemKey, NetworkOffer> offers = new LinkedHashMap<>();
-        for (int slot = 0; slot < virtual.getSlots(); slot++) {
-            ItemStack template = virtual.templateForQuote(slot);
-            if (!types.contains(template.getItem())) continue;
-            long value = ArcaneCraftingInventory.transmutationValue(player, template);
-            if (value <= 0) continue;
-            ItemStack available = virtual.getStackInSlot(slot);
-            try {
-                StorageItemKey key = session.itemKey(template);
-                NetworkOffer previous = offers.get(key);
-                long count = available.isEmpty() ? 0 : available.getCount();
-                // Snapshot counts normalized aliases once (max); extraction chooses the first
-                // affordable template in knowledge order. Keep that template's unit price.
-                long price = previous != null && (previous.available() > 0 || count == 0)
-                        ? previous.unitValue() : value;
-                offers.put(key, new NetworkOffer(previous == null ? count
-                        : Math.max(previous.available(), count), price));
-            } catch (IllegalArgumentException ignored) {
-                // The BD session Mixin omits unrepresentable ProjectE templates too.
-            }
-        }
-        return offers;
-    }
-
-    private record NetworkOffer(long available, long unitValue) {}
 
     private static final class QuoteUnavailable extends RuntimeException {
         private final int state;

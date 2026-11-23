@@ -2,6 +2,7 @@ package com.wjx.forge.projectexa.net.packets.to_server;
 
 import com.wjx.forge.projectexa.config.Config;
 import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval;
+import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval.PullResult;
 import com.wjx.forge.projectexa.integrations.rsi.RsiStorageCompat;
 import com.wjx.forge.projectexa.net.PacketHandler;
 import com.wjx.forge.projectexa.net.packets.IPacket;
@@ -29,6 +30,7 @@ public record PacketWorldEmcPick(BlockPos position, boolean stack) implements IP
     @Override public void handle(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
         if (player == null || player.isCreative() || player.isSpectator() || player.containerMenu != player.inventoryMenu) return;
+        if (!Config.enableWorldEmcPick.get() || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) return;
         HitResult trace = player.pick(player.getAttributeValue(ForgeMod.BLOCK_REACH.get()), 1.0F, false);
         if (!(trace instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK || !position.equals(hit.getBlockPos())) return;
         ItemStack picked = player.level().getBlockState(position).getCloneItemStack(hit, player.level(), position, player);
@@ -39,9 +41,19 @@ public record PacketWorldEmcPick(BlockPos position, boolean stack) implements IP
                 && ItemStack.isSameItemSameTags(held, picked)
                 && ItemStack.isSameItemSameTags(held, Util.cleanStack(picked));
         if (!topUp && inventory.findSlotMatchingItem(picked) >= 0) return;
-        boolean pullFromRsi = held.isEmpty() && ModList.get().isLoaded("rs_integration")
+        boolean pullFromRsi = (held.isEmpty() || topUp) && ModList.get().isLoaded("rs_integration")
                 && ModList.get().isLoaded(RsiStorageCompat.RS) && RsiStorageCompat.hasRefinedStorageApi();
-        if (pullFromRsi && RsiItemRetrieval.tryWorldPick(player, picked)) return;
+        if (pullFromRsi) {
+            int selected = inventory.selected;
+            int amount = requestedCount(picked, held, topUp);
+            PullResult result = RsiItemRetrieval.pullWorldPick(player, picked, amount,
+                    delivered -> deliverNetworkPick(player, selected, delivered, topUp));
+            if (result == PullResult.DELIVERED) return;
+            if (!result.canTransmute()) {
+                player.displayClientMessage(Component.translatable("rsi.world_pick.failed", picked.getHoverName()), true);
+                return;
+            }
+        }
         if (!transmute(player, picked, topUp) && pullFromRsi) {
             PacketHandler.sendTo(new PacketWorldPickRsiFailure(picked.copyWithCount(1)), player);
         }
@@ -57,11 +69,12 @@ public record PacketWorldEmcPick(BlockPos position, boolean stack) implements IP
             fail(player, "provider_unavailable");
             return false;
         }
+        if (topUp && (!ItemStack.isSameItemSameTags(held, output) || !held.areCapsCompatible(output))) return false;
         if (!provider.hasKnowledge(output)) return false;
         long value = IEMCProxy.INSTANCE.getValue(output);
         if (value <= 0) { fail(player, "no_emc", output.getHoverName()); return false; }
         BigInteger unit = BigInteger.valueOf(value);
-        int requested = topUp ? held.getMaxStackSize() - held.getCount() : stack ? output.getMaxStackSize() : 1;
+        int requested = requestedCount(output, held, topUp);
         int count = provider.getEmc().divide(unit).min(BigInteger.valueOf(requested)).intValue();
         if (count <= 0) { fail(player, "insufficient_emc", Long.toString(value)); return false; }
         int target = topUp ? inventory.selected : inventory.getSuitableHotbarSlot();
@@ -78,16 +91,44 @@ public record PacketWorldEmcPick(BlockPos position, boolean stack) implements IP
             inventory.setItem(target, output.copyWithCount(count));
             inventory.selected = target;
         }
-        inventory.setChanged();
         BigInteger cost = unit.multiply(BigInteger.valueOf(count));
         provider.setEmc(provider.getEmc().subtract(cost));
         provider.syncEmc(player);
+        syncDelivery(player, target, empty);
+        player.sendSystemMessage(Component.translatable("text.projectexa.jei_transmuted", count, output.getHoverName(), cost.toString()));
+        return true;
+    }
+
+    private int requestedCount(ItemStack template, ItemStack held, boolean topUp) {
+        if (topUp) return held.getMaxStackSize() - held.getCount();
+        return stack ? template.getMaxStackSize() : 1;
+    }
+
+    private static int deliverNetworkPick(ServerPlayer player, int slot, ItemStack stack, boolean topUp) {
+        Inventory inventory = player.getInventory();
+        if (inventory.selected != slot || player.containerMenu != player.inventoryMenu) return 0;
+        ItemStack held = inventory.getItem(slot);
+        int count = stack.getCount();
+        if (topUp) {
+            if (!ItemStack.isSameItemSameTags(held, stack) || !held.areCapsCompatible(stack)) return 0;
+            count = Math.min(count, held.getMaxStackSize() - held.getCount());
+            if (count <= 0) return 0;
+            held.grow(count);
+        } else {
+            if (!held.isEmpty()) return 0;
+            inventory.setItem(slot, stack);
+        }
+        syncDelivery(player, slot, -1);
+        return count;
+    }
+
+    private static void syncDelivery(ServerPlayer player, int target, int empty) {
+        Inventory inventory = player.getInventory();
+        inventory.setChanged();
         if (empty >= 0) player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, empty, inventory.getItem(empty)));
         player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, target, inventory.getItem(target)));
         player.connection.send(new ClientboundSetCarriedItemPacket(target));
         player.inventoryMenu.broadcastChanges();
-        player.sendSystemMessage(Component.translatable("text.projectexa.jei_transmuted", count, output.getHoverName(), cost.toString()));
-        return true;
     }
 
     private static void fail(ServerPlayer player, String reason, Object... args) {

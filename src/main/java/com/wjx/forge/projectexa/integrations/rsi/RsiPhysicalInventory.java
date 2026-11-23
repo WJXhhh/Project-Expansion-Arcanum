@@ -17,7 +17,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 
-/** Detached quote-only stock. Never loads RSI's RS-linked ExtractionLedger or extracts real items. */
+/** Detached copies of the player's physical stock for the EMC quote. */
 final class RsiPhysicalInventory {
     private static BackpackAccess backpackAccess;
     private final List<ItemStack> stacks = new ArrayList<>();
