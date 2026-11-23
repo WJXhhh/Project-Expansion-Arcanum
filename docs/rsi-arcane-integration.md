@@ -2,9 +2,8 @@
 
 开发环境使用 Minecraft 1.20.1、Forge 47.3.22 和 ProjectE PE1.0.1。
 RSI 是可选依赖，安装时版本须为 1.6.1 或以上。
-Gradle 默认从 `libs/rs_integration-1.6.1-test.jar` 加载开发依赖，通过 ForgeGradle 映射后用于
-`compileOnly` 和 `runtimeOnly`。此 JAR 由各构建环境自行提供。正式发布后可用
-`-PrsIntegrationVersion=<Modrinth 版本 ID>` 切换到已发布的构建。
+Gradle 从 Modrinth 获取 RSI 1.6.1 正式版（版本 ID：`FHDN9Mvs`），通过 ForgeGradle 映射后用于
+`compileOnly` 和 `runtimeOnly`。
 
 ## 玩家行为
 

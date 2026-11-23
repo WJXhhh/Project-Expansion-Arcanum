@@ -136,10 +136,6 @@ repositories {
         url = "https://api.modrinth.com/maven"
         content { includeModule "maven.modrinth", "rs-integration" }
     }
-    flatDir {
-        dirs 'libs'
-        content { includeGroup 'local.rsi' }
-    }
     maven {
         name "curios"
         url "https://maven.theillusivec4.top/"
@@ -191,9 +187,7 @@ dependencies {
     runtimeOnly fg.deobf("dev.architectury:architectury-forge:${getProperty("architecturyVersion")}") { transitive = false }
     compileOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
     runtimeOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
-    def publishedRsiVersion = providers.gradleProperty('rsIntegrationVersion').orNull
-    def rsiDependency = publishedRsiVersion ? "maven.modrinth:rs-integration:${publishedRsiVersion}"
-            : 'local.rsi:rs_integration:1.6.1-test'
+    def rsiDependency = 'maven.modrinth:rs-integration:FHDN9Mvs' // 1.6.1 release
     compileOnly fg.deobf(rsiDependency)
     runtimeOnly fg.deobf(rsiDependency)
 
