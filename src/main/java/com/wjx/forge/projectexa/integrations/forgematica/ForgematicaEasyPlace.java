@@ -23,18 +23,21 @@ public final class ForgematicaEasyPlace {
 
     private ForgematicaEasyPlace() {}
 
-    public static void request(ItemStack stack, BlockPos pos, Minecraft mc) {
+    public static boolean request(ItemStack stack, BlockPos pos, Minecraft mc) {
         if (!AUTO_TRANSMUTE.getBooleanValue() || !Configs.Generic.EASY_PLACE_MODE.getBooleanValue()
                 || mc.player == null || mc.player.isCreative() || stack.isEmpty()
                 || !PacketOpenArcaneTransmutationTablet.hasTablet(mc.player)
                 || EntityUtils.getUsedHandForItem(mc.player, stack) != null
-                || mc.player.getInventory().findSlotMatchingItem(stack) != -1
-                || (pendingPosition != null && System.currentTimeMillis() - lastRequest < 5000)
-                || System.currentTimeMillis() - lastRequest < 1000) return;
+                || mc.player.getInventory().findSlotMatchingItem(stack) != -1) return false;
+        long now = System.currentTimeMillis();
+        if (pendingPosition != null && now - lastRequest < 5000) return pos.equals(pendingPosition);
+        if (now - lastRequest < 1000) return false;
+
         pendingPosition = pos.immutable();
-        lastRequest = System.currentTimeMillis();
+        lastRequest = now;
         PacketHandler.sendToServer(new PacketForgematicaTransmute(
                 List.of(new PacketForgematicaTransmute.Demand(stack.copyWithCount(1), 1, 1)), true));
+        return true;
     }
 
     public static void onResult(boolean success) {
