@@ -203,13 +203,36 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
     }
 
     private void addStationSlot(Slot original, int stationId, int stationSlot) {
-        addSlot(new Slot(original.container, original.getSlotIndex(), stationSlotX(stationId, stationSlot), stationSlotY(stationId, stationSlot)) {
-            @Override public boolean isActive() { return isStation(stationId); }
-            @Override public boolean mayPlace(ItemStack stack) { return original.mayPlace(stack); }
-            @Override public boolean mayPickup(Player player) { return original.mayPickup(player); }
-            @Override public void onTake(Player player, ItemStack stack) { original.onTake(player, stack); }
-            @Override public void onQuickCraft(ItemStack stack, ItemStack originalStack) { original.onQuickCraft(stack, originalStack); }
-        });
+        addSlot(new StationSlot(original, stationId, stationSlot));
+    }
+
+    private final class StationSlot extends Slot {
+        private final Slot original;
+        private final int stationId;
+
+        private StationSlot(Slot original, int stationId, int stationSlot) {
+            super(original.container, original.getSlotIndex(), stationSlotX(stationId, stationSlot), stationSlotY(stationId, stationSlot));
+            this.original = original;
+            this.stationId = stationId;
+        }
+
+        @Override public boolean isActive() { return isStation(stationId); }
+        @Override public boolean mayPlace(ItemStack stack) { return original.mayPlace(stack); }
+        @Override public boolean mayPickup(Player player) { return original.mayPickup(player); }
+        @Override public void onQuickCraft(ItemStack stack, ItemStack originalStack) { original.onQuickCraft(stack, originalStack); }
+
+        @Override
+        public void onTake(Player player, ItemStack stack) {
+            onTake(player, stack, stack);
+        }
+
+        private void onTake(Player player, ItemStack stack, ItemStack craftedStack) {
+            original.onTake(player, stack);
+            if ((index == SMITHING + 3 || index == STONECUTTING + 1)
+                    && transmutationInventory.isServer() && IEMCProxy.INSTANCE.hasValue(craftedStack)) {
+                transmutationInventory.handleKnowledge(craftedStack);
+            }
+        }
     }
 
     public void selectStation(int value) {
@@ -363,8 +386,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
         Slot currentSlot = tryGetSlot(slotIndex);
         if (currentSlot == null || !currentSlot.isActive() || !currentSlot.hasItem()) return ItemStack.EMPTY;
 
-        if (slotIndex >= SMITHING && slotIndex < slots.size()) {
-            if (!currentSlot.isActive()) return ItemStack.EMPTY;
+        if (currentSlot instanceof StationSlot stationSlot) {
             ItemStack before = currentSlot.getItem().copy();
             ItemStack moving = before.copy();
             if (!currentSlot.mayPickup(player) || !moveItemStackTo(moving, PLAYER, PLAYER + PLAYER_COUNT, true)) return ItemStack.EMPTY;
@@ -372,7 +394,8 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
             if (moving.isEmpty()) currentSlot.set(ItemStack.EMPTY);
             else currentSlot.setChanged();
             if (moving.getCount() == before.getCount()) return ItemStack.EMPTY;
-            currentSlot.onTake(player, moving);
+            // Use the original output for knowledge because the transfer can empty the stack.
+            stationSlot.onTake(player, moving, before);
             return before;
         }
         if (slotIndex >= CRAFTING && slotIndex < CRAFTING + CRAFTING_COUNT) {
