@@ -1,5 +1,7 @@
 # RSI 第三方集成 API 建议
 
+本文记录 2026-11-23 提案时的实现与缺口。Fork 接入后的用法见 [RS Integration 与奥术转化桌](rsi-arcane-integration.md)。
+
 适用环境为 Minecraft 1.20.1 / Forge。2026-11-23 复审以 RSI 1.6.1 正式版（Modrinth 版本 ID `FHDN9Mvs`）和上游 `master` 的 `00e5332` 为基准。以下接口名称和注册方式可沿用 RSI 现有风格。 [RSI 上游提交](https://github.com/Elten-huanghuang/rs_integration/commit/00e533253e6a200b63eeefe3ea1660e3ab901480) · [Modrinth 版本记录](https://api.modrinth.com/v2/version/FHDN9Mvs)
 
 ## RSI 1.6.1 已提供的接口

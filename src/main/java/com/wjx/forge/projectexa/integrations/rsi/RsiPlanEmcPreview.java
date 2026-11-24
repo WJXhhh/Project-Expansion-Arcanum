@@ -5,19 +5,13 @@ import com.huanghuang.rsintegration.api.RSIPlanExtensions;
 import com.huanghuang.rsintegration.api.RSIPlanExtensions.Context;
 import com.huanghuang.rsintegration.api.RSIPlanExtensions.Decoration;
 import com.huanghuang.rsintegration.api.RSIPlanExtensions.MaterialNote;
-import com.huanghuang.rsintegration.api.RSIPlanExtensions.Source;
-import com.huanghuang.rsintegration.crafting.MaterialSourceSelection;
-import com.huanghuang.rsintegration.storage.StorageBackendId;
-import com.huanghuang.rsintegration.storage.StorageReference;
-import com.huanghuang.rsintegration.storage.StorageReferenceCodec;
 import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.net.PacketHandler;
 import com.wjx.forge.projectexa.net.packets.to_client.PacketRsiEmcEstimateResult;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketRsiEmcEstimate;
-import com.wjx.forge.projectexa.net.packets.to_server.PacketRsiEmcEstimate.Demand;
+import com.wjx.forge.projectexa.net.packets.to_server.PacketRsiEmcEstimate.Allocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -43,29 +37,21 @@ public final class RsiPlanEmcPreview {
     }
 
     private static void onPlan(Context context, Consumer<Decoration> publish) {
-        var sources = context.enabledSources();
-        MaterialSourceSelection selection = new MaterialSourceSelection(sources.contains(Source.INVENTORY),
-                sources.contains(Source.STORAGE_NETWORK), sources.contains(Source.BACKPACKS));
-        CompoundTag storage = selection.storageNetwork() ? context.network()
-                .map(network -> StorageReferenceCodec.encode(new StorageReference(
-                        new StorageBackendId(network.backendId()), network.networkId())))
-                .orElse(null) : null;
-        List<Demand> demands = collectDemands(context);
-        active = new Preview(Minecraft.getInstance().screen, storage, selection.mask(), demands, publish);
+        active = new Preview(Minecraft.getInstance().screen, collectAllocations(context), publish);
         requestQuote();
     }
 
-    private static List<Demand> collectDemands(Context context) {
+    private static List<Allocation> collectAllocations(Context context) {
         if (!context.complete()) return null;
-        List<Demand> demands = new ArrayList<>();
-        for (var material : context.initialMaterials()) {
-            if (material.needed() <= 0 || material.key().kind() != IntegrationResourceKey.ResourceKind.ITEM) continue;
-            var stack = RsiItemIdentity.toStack(material.key());
-            if (stack.isEmpty() || material.needed() > Integer.MAX_VALUE
-                    || demands.size() >= PacketRsiEmcEstimate.MAX_MATERIALS) return null;
-            demands.add(new Demand(stack, (int) material.needed()));
+        List<Allocation> allocations = new ArrayList<>();
+        for (var source : context.sourceAllocations()) {
+            if (!source.sourceId().equals(RsiEmcMaterialSource.ID)) continue;
+            var stack = RsiItemIdentity.toStack(source.key());
+            if (stack.isEmpty() || source.count() <= 0
+                    || allocations.size() >= PacketRsiEmcEstimate.MAX_MATERIALS) return null;
+            allocations.add(new Allocation(stack, source.count()));
         }
-        return List.copyOf(demands);
+        return List.copyOf(allocations);
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -82,9 +68,8 @@ public final class RsiPlanEmcPreview {
         refreshTicks = 0;
         long id = ++requestId;
         if (Minecraft.getInstance().getConnection() == null) return;
-        List<Demand> demands = active.demands();
-        PacketHandler.sendToServer(new PacketRsiEmcEstimate(id, active.storage(), active.sources(),
-                demands != null, demands == null ? List.of() : demands));
+        PacketHandler.sendToServer(new PacketRsiEmcEstimate(id, active.complete(),
+                active.complete() ? active.allocations() : List.of()));
     }
 
     public static void acceptQuote(PacketRsiEmcEstimateResult quote) {
@@ -94,13 +79,7 @@ public final class RsiPlanEmcPreview {
             return;
         }
         if (quote.state() != PacketRsiEmcEstimateResult.READY) {
-            String reason = switch (quote.state()) {
-                case PacketRsiEmcEstimateResult.INPUTS_UNAVAILABLE -> ".plan";
-                case PacketRsiEmcEstimateResult.NETWORK_UNAVAILABLE -> ".network";
-                case PacketRsiEmcEstimateResult.PERMISSION_DENIED -> ".permission";
-                case PacketRsiEmcEstimateResult.INVENTORY_UNAVAILABLE -> ".inventory";
-                default -> "";
-            };
+            String reason = quote.state() == PacketRsiEmcEstimateResult.INPUTS_UNAVAILABLE ? ".plan" : "";
             String summary = Component.translatable("gui.projectexa.rsi.emc_unavailable" + reason).getString();
             active.publish().accept(new Decoration(List.of(summary), Map.of()));
             return;
@@ -124,6 +103,9 @@ public final class RsiPlanEmcPreview {
         return String.format(Locale.ROOT, "%,d", value);
     }
 
-    private record Preview(Screen screen, CompoundTag storage, int sources, List<Demand> demands,
-                           Consumer<Decoration> publish) {}
+    private record Preview(Screen screen, List<Allocation> allocations, Consumer<Decoration> publish) {
+        private boolean complete() {
+            return allocations != null;
+        }
+    }
 }

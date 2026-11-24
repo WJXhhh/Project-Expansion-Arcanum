@@ -22,24 +22,27 @@ public final class WorldEmcPickClient {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPick(InputEvent.InteractionKeyMappingTriggered event) {
-        tryHandle(event);
+        Minecraft mc = Minecraft.getInstance();
+        if (event.isCanceled() || !event.isPickBlock() || !canPick(mc)
+                || !(mc.hitResult instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK) return;
+        ItemStack stack = mc.level.getBlockState(hit.getBlockPos()).getCloneItemStack(hit, mc.level, hit.getBlockPos(), mc.player);
+        if (requestPick(hit, stack, Screen.hasShiftDown())) event.setCanceled(true);
     }
 
-    public static boolean tryHandle(InputEvent.InteractionKeyMappingTriggered event) {
+    private static boolean canPick(Minecraft mc) {
+        return JeiEmcClientState.isWorldPickEnabled() && mc.screen == null && mc.player != null && mc.level != null
+                && !mc.player.isCreative() && !mc.player.isSpectator()
+                && PacketOpenArcaneTransmutationTablet.hasTablet(mc.player);
+    }
+
+    public static boolean requestPick(BlockHitResult hit, ItemStack stack, boolean shift) {
         Minecraft mc = Minecraft.getInstance();
-        if (!JeiEmcClientState.isWorldPickEnabled() || event.isCanceled() || !event.isPickBlock() || mc.screen != null || mc.player == null || mc.level == null
-                || mc.player.isCreative() || mc.player.isSpectator()
-                || !PacketOpenArcaneTransmutationTablet.hasTablet(mc.player)
-                || !(mc.hitResult instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK) return false;
-        ItemStack stack = mc.level.getBlockState(hit.getBlockPos()).getCloneItemStack(hit, mc.level, hit.getBlockPos(), mc.player);
-        if (stack.isEmpty()) return false;
-        boolean shift = Screen.hasShiftDown();
+        if (stack.isEmpty() || !canPick(mc)) return false;
         ItemStack held = mc.player.getMainHandItem();
         boolean topUp = shift && !held.isEmpty() && held.getCount() < held.getMaxStackSize()
                 && ItemStack.isSameItemSameTags(held, stack)
                 && ItemStack.isSameItemSameTags(held, Util.cleanStack(stack));
         if (!topUp && mc.player.getInventory().findSlotMatchingItem(stack) >= 0) return false;
-        event.setCanceled(true);
         PacketHandler.sendToServer(new PacketWorldEmcPick(hit.getBlockPos(), shift));
         return true;
     }

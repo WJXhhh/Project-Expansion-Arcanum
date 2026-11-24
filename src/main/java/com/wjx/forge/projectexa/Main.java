@@ -1,7 +1,9 @@
 package com.wjx.forge.projectexa;
 
 import com.wjx.forge.projectexa.config.Config;
+import com.wjx.forge.projectexa.integrations.rsi.RsiCompatibility;
 import com.wjx.forge.projectexa.integrations.rsi.RsiCraftingKnowledge;
+import com.wjx.forge.projectexa.integrations.rsi.RsiEmcMaterialSource;
 import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval;
 import com.wjx.forge.projectexa.item.ItemPersonalEmcWarehouse;
 import com.wjx.forge.projectexa.net.PacketHandler;
@@ -23,6 +25,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraftforge.items.IItemHandler;
@@ -53,15 +56,22 @@ public class Main {
         MinecraftForge.EVENT_BUS.addListener(this::serverTick);
         MinecraftForge.EVENT_BUS.addListener(this::onPlayerLogin);
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec, "project-expansion.toml");
-        if (ModList.get().isLoaded("rs_integration")) {
-            RsiCraftingKnowledge.register();
-            RsiItemRetrieval.register();
-        }
+        bus.addListener(this::onCommonSetup);
 
         Fuel.registerAll();
         Matter.registerAll();
         Star.registerAll();
         AdvancedAlchemicalChest.register();
+    }
+
+    private void onCommonSetup(FMLCommonSetupEvent event) {
+        if (RsiCompatibility.isAvailable()) {
+            event.enqueueWork(() -> {
+                RsiEmcMaterialSource.register();
+                RsiCraftingKnowledge.register();
+                RsiItemRetrieval.register();
+            });
+        }
     }
 
     private void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {

@@ -29,13 +29,6 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
                     + "Ljava/util/function/Supplier;Ljava/lang/Runnable;)"
                     + "Lmezz/jei/gui/recipes/RecipeTransferButton;";
 
-    private static final Set<String> RSI_INVENTORY_MIXINS = Set.of(
-            "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerAccessor",
-            "com.wjx.forge.projectexa.mixin.RsiExtractionLedgerMixin",
-            "com.wjx.forge.projectexa.mixin.RsiTypedMaterialSourcesMixin");
-    private static final String RSI_EXTENSION_API =
-            "com.huanghuang.rsintegration.api.RSIItemRetrievalFallback";
-
     @Override
     public void onLoad(String mixinPackage) {
     }
@@ -56,9 +49,6 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.endsWith(".JeiEmcLegacyInputMixin")) {
             return !hasClass("mezz.jei.gui.input.handlers.CheatInputHandler");
-        }
-        if (RSI_INVENTORY_MIXINS.contains(mixinClassName)) {
-            return hasClass(RSI_EXTENSION_API);
         }
         if (!RECIPE_TRANSFER_BUTTON.equals(targetClassName)) {
             return true;

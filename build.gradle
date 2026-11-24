@@ -27,6 +27,8 @@ java {
 
 def releaseArchiveVersion = getProperty("mod_version").replaceFirst(/-arcanum\.\d+$/, "")
 def releaseArchiveFileName = "projectex-arcanum-${getProperty("minecraft_version")}-${releaseArchiveVersion}.jar"
+def rsiForkDir = file(providers.gradleProperty('rsiForkDir').getOrElse('../rs_integration_forked'))
+def rsiForkVersion = providers.gradleProperty('rsiForkVersion').getOrElse('1.6.1-apiTest2')
 
 // Keep the unbundled intermediate jar separate from the distributable
 // jar, which bundles the MixinExtras runtime required by the compatibility mixins.
@@ -131,10 +133,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-        content { includeModule "maven.modrinth", "rs-integration" }
+    flatDir {
+        name = "Local RSI fork"
+        dirs new File(rsiForkDir, 'build/libs')
+        content { includeModule 'rsi-fork', 'rs_integration' }
     }
     maven {
         name "curios"
@@ -185,9 +187,8 @@ dependencies {
     compileOnly fg.deobf("dev.ftb.mods:ftb-teams-forge:${getProperty("ftbTeamsVersion")}") { transitive = false }
     runtimeOnly fg.deobf("dev.ftb.mods:ftb-teams-forge:${getProperty("ftbTeamsVersion")}") { transitive = false }
     runtimeOnly fg.deobf("dev.architectury:architectury-forge:${getProperty("architecturyVersion")}") { transitive = false }
-    compileOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
     runtimeOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
-    def rsiDependency = 'maven.modrinth:rs-integration:FHDN9Mvs' // 1.6.1 release
+    def rsiDependency = "rsi-fork:rs_integration:${rsiForkVersion}"
     compileOnly fg.deobf(rsiDependency)
     runtimeOnly fg.deobf(rsiDependency)
 

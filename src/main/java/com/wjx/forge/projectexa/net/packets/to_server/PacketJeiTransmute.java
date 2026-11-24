@@ -1,6 +1,7 @@
 package com.wjx.forge.projectexa.net.packets.to_server;
 
 import com.wjx.forge.projectexa.config.Config;
+import com.wjx.forge.projectexa.integrations.rsi.RsiCompatibility;
 import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval;
 import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval.PullResult;
 import com.wjx.forge.projectexa.net.JeiCreativeDelivery;
@@ -13,7 +14,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.network.NetworkEvent;
@@ -37,12 +37,12 @@ public record PacketJeiTransmute(ItemStack requested, int menuId, int destinatio
             fail(player, "pending");
             return;
         }
-        if (pullFromRsi && ModList.get().isLoaded("rs_integration")) {
-            int amount = single ? 1 : requested.getMaxStackSize();
-            ItemStack candidate = requested.copyWithCount(amount);
-            PullResult result = RsiItemRetrieval.pullJei(player, requested,
-                    deliverableCount(player, candidate, useCreativeCursor),
-                    stack -> deliver(player, stack, useCreativeCursor));
+        if (pullFromRsi && RsiCompatibility.isAvailable()) {
+            PullResult result = useCreativeCursor
+                    ? RsiItemRetrieval.pullCreativeCursor(player, requested,
+                            Math.min(single ? 1 : requested.getMaxStackSize(), slotSpace(expectedCursor, requested)),
+                            stack -> deliver(player, stack, true))
+                    : RsiItemRetrieval.pullJei(player, requested, single, menuId, destination);
             if (result == PullResult.DELIVERED) {
                 player.containerMenu.broadcastChanges();
                 return;
@@ -100,14 +100,13 @@ public record PacketJeiTransmute(ItemStack requested, int menuId, int destinatio
         return true;
     }
 
-    private int deliverableCount(ServerPlayer player, ItemStack stack, boolean useCreativeCursor) {
-        if (destination == -2) return insertIntoInventory(player, stack, true);
-        return Math.min(stack.getCount(), slotSpace(destinationStack(player, useCreativeCursor), stack));
-    }
-
     private int deliver(ServerPlayer player, ItemStack stack, boolean useCreativeCursor) {
         if (player.containerMenu.containerId != menuId) return 0;
-        if (destination == -2) return insertIntoInventory(player, stack, false);
+        if (destination == -2) {
+            ItemStack remainder = ItemHandlerHelper.insertItemStacked(
+                    new PlayerMainInvWrapper(player.getInventory()), stack.copy(), false);
+            return stack.getCount() - remainder.getCount();
+        }
         if (useCreativeCursor && (!player.isCreative() || player.containerMenu != player.inventoryMenu
                 || JeiCreativeDelivery.hasPending(player))) return 0;
 
@@ -139,12 +138,6 @@ public record PacketJeiTransmute(ItemStack requested, int menuId, int destinatio
 
     private static boolean canStack(ItemStack existing, ItemStack stack) {
         return existing.isEmpty() || ItemStack.isSameItemSameTags(existing, stack) && existing.areCapsCompatible(stack);
-    }
-
-    private static int insertIntoInventory(ServerPlayer player, ItemStack stack, boolean simulate) {
-        ItemStack remainder = ItemHandlerHelper.insertItemStacked(
-                new PlayerMainInvWrapper(player.getInventory()), stack.copy(), simulate);
-        return stack.getCount() - remainder.getCount();
     }
 
     private static void fail(ServerPlayer player, String reason, Object... args) {

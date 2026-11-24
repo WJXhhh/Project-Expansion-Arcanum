@@ -1,9 +1,9 @@
 package com.wjx.forge.projectexa.net.packets.to_server;
 
 import com.wjx.forge.projectexa.config.Config;
+import com.wjx.forge.projectexa.integrations.rsi.RsiCompatibility;
 import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval;
 import com.wjx.forge.projectexa.integrations.rsi.RsiItemRetrieval.PullResult;
-import com.wjx.forge.projectexa.integrations.rsi.RsiStorageCompat;
 import com.wjx.forge.projectexa.net.PacketHandler;
 import com.wjx.forge.projectexa.net.packets.IPacket;
 import com.wjx.forge.projectexa.net.packets.to_client.PacketWorldPickRsiFailure;
@@ -22,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkEvent;
 import java.math.BigInteger;
 
@@ -41,13 +40,11 @@ public record PacketWorldEmcPick(BlockPos position, boolean stack) implements IP
                 && ItemStack.isSameItemSameTags(held, picked)
                 && ItemStack.isSameItemSameTags(held, Util.cleanStack(picked));
         if (!topUp && inventory.findSlotMatchingItem(picked) >= 0) return;
-        boolean pullFromRsi = (held.isEmpty() || topUp) && ModList.get().isLoaded("rs_integration")
-                && ModList.get().isLoaded(RsiStorageCompat.RS) && RsiStorageCompat.hasRefinedStorageApi();
+        boolean pullFromRsi = (held.isEmpty() || topUp) && RsiCompatibility.isAvailable();
         if (pullFromRsi) {
             int selected = inventory.selected;
             int amount = requestedCount(picked, held, topUp);
-            PullResult result = RsiItemRetrieval.pullWorldPick(player, picked, amount,
-                    delivered -> deliverNetworkPick(player, selected, delivered, topUp));
+            PullResult result = RsiItemRetrieval.pullWorldPick(player, picked, amount, selected, stack, topUp);
             if (result == PullResult.DELIVERED) return;
             if (!result.canTransmute()) {
                 player.displayClientMessage(Component.translatable("rsi.world_pick.failed", picked.getHoverName()), true);
@@ -102,24 +99,6 @@ public record PacketWorldEmcPick(BlockPos position, boolean stack) implements IP
     private int requestedCount(ItemStack template, ItemStack held, boolean topUp) {
         if (topUp) return held.getMaxStackSize() - held.getCount();
         return stack ? template.getMaxStackSize() : 1;
-    }
-
-    private static int deliverNetworkPick(ServerPlayer player, int slot, ItemStack stack, boolean topUp) {
-        Inventory inventory = player.getInventory();
-        if (inventory.selected != slot || player.containerMenu != player.inventoryMenu) return 0;
-        ItemStack held = inventory.getItem(slot);
-        int count = stack.getCount();
-        if (topUp) {
-            if (!ItemStack.isSameItemSameTags(held, stack) || !held.areCapsCompatible(stack)) return 0;
-            count = Math.min(count, held.getMaxStackSize() - held.getCount());
-            if (count <= 0) return 0;
-            held.grow(count);
-        } else {
-            if (!held.isEmpty()) return 0;
-            inventory.setItem(slot, stack);
-        }
-        syncDelivery(player, slot, -1);
-        return count;
     }
 
     private static void syncDelivery(ServerPlayer player, int target, int empty) {

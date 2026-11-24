@@ -666,8 +666,5 @@
   "gui.projectexa.rsi.emc_total": "本次合成预计消耗：%s EMC",
   "gui.projectexa.rsi.emc_total_insufficient": "本次合成预计消耗：%s EMC（余额不足）",
   "gui.projectexa.rsi.emc_unavailable": "本次合成预计消耗：暂无法估算 EMC",
-  "gui.projectexa.rsi.emc_unavailable.plan": "本次合成预计消耗：合成计划材料信息不完整",
-  "gui.projectexa.rsi.emc_unavailable.network": "本次合成预计消耗：无法读取所选网络",
-  "gui.projectexa.rsi.emc_unavailable.permission": "本次合成预计消耗：所选网络未授予读取/取料权限",
-  "gui.projectexa.rsi.emc_unavailable.inventory": "本次合成预计消耗：无法读取玩家/精妙背包库存"
+  "gui.projectexa.rsi.emc_unavailable.plan": "本次合成预计消耗：合成计划材料信息不完整"
 }
