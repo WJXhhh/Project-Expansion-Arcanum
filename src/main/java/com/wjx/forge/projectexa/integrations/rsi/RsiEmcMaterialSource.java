@@ -1,6 +1,6 @@
 package com.wjx.forge.projectexa.integrations.rsi;
 
-import com.huanghuang.rsintegration.api.IntegrationResourceKey;
+import com.google.common.collect.MapMaker;
 import com.huanghuang.rsintegration.api.RSICraftingMaterialSources;
 import com.huanghuang.rsintegration.api.RSICraftingMaterialSources.*;
 import com.huanghuang.rsintegration.api.RSIPlanExtensions;
@@ -23,6 +23,8 @@ import java.util.Optional;
 
 public final class RsiEmcMaterialSource implements Source {
     static final ResourceLocation ID = Main.rl("arcane_emc");
+    // A ledger owns one Context instance. Equal contexts from different ledgers must not share a quote.
+    private final Map<Context, BatchQuote> batches = new MapMaker().weakKeys().makeMap();
 
     private RsiEmcMaterialSource() {}
 
@@ -33,18 +35,22 @@ public final class RsiEmcMaterialSource implements Source {
     @Override
     public Snapshot snapshot(Context context) {
         IKnowledgeProvider provider = provider(context.player());
-        if (provider == null || provider.getEmc().signum() <= 0) return Snapshot.EMPTY;
+        if (provider == null) return Snapshot.EMPTY;
         BigInteger balance = provider.getEmc();
-        Map<IntegrationResourceKey, Offer> offers = new LinkedHashMap<>();
+        if (balance.signum() <= 0) return Snapshot.EMPTY;
+        Map<ItemInfo, Offer> offers = new LinkedHashMap<>();
         for (ItemInfo info : provider.hasFullKnowledge()
                 ? EMCMappingHandler.getMappedItems() : provider.getKnowledge()) {
+            if (!context.itemTypes().isEmpty() && !context.itemTypes().contains(info.getItem())) continue;
             ItemStack stack = info.createStack();
-            if (!context.itemTypes().isEmpty() && !context.itemTypes().contains(stack.getItem())) continue;
-            ItemStack template = Util.cleanStack(stack);
+            // A fresh untagged, non-damageable template already has its persistent identity.
+            ItemStack template = stack.getTag() == null && !stack.isDamageableItem() ? stack : Util.cleanStack(stack);
+            ItemInfo identity = ItemInfo.fromStack(template);
+            if (offers.containsKey(identity)) continue;
             long value = unitValue(provider, template);
-            if (value > 0 && balance.compareTo(BigInteger.valueOf(value)) >= 0) {
-                offers.putIfAbsent(IntegrationResourceKey.item(template),
-                        new Offer(template, Long.MAX_VALUE, ID, BigInteger.valueOf(value)));
+            if (value > 0) {
+                BigInteger price = BigInteger.valueOf(value);
+                if (balance.compareTo(price) >= 0) offers.put(identity, new Offer(template, Long.MAX_VALUE, ID, price));
             }
         }
         return offers.isEmpty() ? Snapshot.EMPTY : new Snapshot(Map.of(ID, balance), List.copyOf(offers.values()));
@@ -59,14 +65,22 @@ public final class RsiEmcMaterialSource implements Source {
         long value = unitValue(provider, target);
         if (value == 0) return Optional.empty();
         BigInteger cost = cost(value, requested.count());
-        BigInteger total = cost;
-        for (Allocation allocation : earlier) {
-            long earlierValue = unitValue(provider, allocation.target());
-            if (earlierValue == 0) return Optional.empty();
-            total = total.add(cost(earlierValue, allocation.count()));
+        BatchQuote batch = batches.computeIfAbsent(context, ignored -> new BatchQuote());
+        BigInteger previous = batch.total;
+        if (earlier.isEmpty() || batch.size != earlier.size()) {
+            // Rebuild from RSI's authoritative list after a rollback or a change of ledger context.
+            previous = BigInteger.ZERO;
+            for (Allocation allocation : earlier) {
+                long earlierValue = unitValue(provider, allocation.target());
+                if (earlierValue == 0) return Optional.empty();
+                previous = previous.add(cost(earlierValue, allocation.count()));
+            }
         }
+        BigInteger total = previous.add(cost);
         if (provider.getEmc().compareTo(total) < 0) return Optional.empty();
-        return Optional.of(new EmcReservation(player, target, (int) requested.count(), value, cost, total));
+        batch.size = earlier.size() + 1;
+        batch.total = total;
+        return Optional.of(new EmcReservation(player, target, (int) requested.count(), value, cost, total, batch));
     }
 
     static IKnowledgeProvider provider(ServerPlayer player) {
@@ -88,6 +102,11 @@ public final class RsiEmcMaterialSource implements Source {
         return BigInteger.valueOf(value).multiply(BigInteger.valueOf(count));
     }
 
+    private static final class BatchQuote {
+        int size;
+        BigInteger total = BigInteger.ZERO;
+    }
+
     private static final class EmcReservation implements Reservation {
         private final ServerPlayer player;
         private final ItemStack target;
@@ -95,16 +114,18 @@ public final class RsiEmcMaterialSource implements Source {
         private final long unitValue;
         private final BigInteger cost;
         private final BigInteger batchCostSoFar;
+        private final BatchQuote batch;
         private boolean closed;
 
         private EmcReservation(ServerPlayer player, ItemStack target, int count, long unitValue,
-                               BigInteger cost, BigInteger batchCostSoFar) {
+                               BigInteger cost, BigInteger batchCostSoFar, BatchQuote batch) {
             this.player = player;
             this.target = target;
             this.count = count;
             this.unitValue = unitValue;
             this.cost = cost;
             this.batchCostSoFar = batchCostSoFar;
+            this.batch = batch;
         }
 
         private IKnowledgeProvider validProvider(BigInteger requiredBalance) {
@@ -122,7 +143,7 @@ public final class RsiEmcMaterialSource implements Source {
         @Override
         public Extraction commit() {
             IKnowledgeProvider provider = validProvider(cost);
-            closed = true;
+            release();
             if (provider == null) return new Extraction(List.of(), false);
             Extraction extraction = new Extraction(List.of(target.copyWithCount(count)), false);
             try {
@@ -141,7 +162,10 @@ public final class RsiEmcMaterialSource implements Source {
 
         @Override
         public void release() {
+            if (closed) return;
             closed = true;
+            batch.size = -1;
+            batch.total = BigInteger.ZERO;
         }
     }
 }
