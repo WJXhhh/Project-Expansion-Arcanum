@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.wjx.neoforge.projectexa.mixin.tacz",
+  "plugin": "com.wjx.neoforge.projectexa.mixin.tacz.TaczMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "TaczClientAmmoCountMixin",
+    "TaczGunSmithTableScreenMixin"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}

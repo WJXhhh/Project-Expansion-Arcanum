@@ -22,6 +22,7 @@
     "CollectorRecipeCategoryMixin",
     "EnchantmentProcessorMixin",
     "PacketHandlerMixin",
+    "PersistentComponentEmcMixin",
     "PhilosophersStoneMixin",
     "RemoveEMCCMDMixin",
     "ResetEMCCMDMixin",

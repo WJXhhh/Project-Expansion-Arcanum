@@ -34,6 +34,7 @@ public final class PacketHandler {
         registrar.playToClient(PacketJeiCreativeCursor.TYPE, PacketJeiCreativeCursor.STREAM_CODEC, IPacket::handle);
         registrar.playToClient(PacketJeiEmcConfig.TYPE, PacketJeiEmcConfig.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketRecipeMaterialTransmutation.TYPE, PacketRecipeMaterialTransmutation.STREAM_CODEC, IPacket::handle);
+        registrar.optional().playToServer(PacketTaczTransmutation.TYPE, PacketTaczTransmutation.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketStoneTableAction.TYPE, PacketStoneTableAction.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketOpenArcaneTransmutationTabletWithRecipe.TYPE, PacketOpenArcaneTransmutationTabletWithRecipe.STREAM_CODEC, IPacket::handle);
         registrar.playToServer(PacketArcaneTransmutationTabletRecipeTransfer.TYPE, PacketArcaneTransmutationTabletRecipeTransfer.STREAM_CODEC, IPacket::handle);

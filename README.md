@@ -15,6 +15,8 @@ The runtime namespace remains `projectexa`. Porting features does **not** certif
 
 Optional integrations must remain optional. This migration covers the stone table, Final Star, JEI transfer, personal EMC warehouse, projectiles and living-entity repair. Optional Ars Nouveau 5.13.3, Create 6.0.10 and Goety 3.2.1 material-supply integrations are now implemented. See [the API audit](docs/INTEGRATIONS_1_21_1.md) for version requirements and release-package caveats; game runtime acceptance is still pending.
 
+The official TaCZ NeoForge release supports gun smith table material transmutation, per-model EMC, and warehouse ammo for players and Touhou Little Maid. [TaCZ EMC integration](docs/TACZ_EMC.md)
+
 The Arcane Transmutation Tablet includes smithing, stonecutting, and anvil panels unlocked by learning the corresponding workstation. Carrying a tablet also enables EMC purchases of learned items through JEI and survival pick block (Shift picks a stack or tops up the held stack). Server options `enableJeiEmcRetrieval` and `enableWorldEmcPick` control these inputs. JEI retrieval targets 19.57.0.451 and 19.70.0.469, with a minimum of 19.57.0.451. Both sides must use the updated mod protocol.
 
 ## Beyond Dimensions and Beyond Craftlines

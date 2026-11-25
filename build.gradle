@@ -64,8 +64,12 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 def recipeTransferGameTests = providers.gradleProperty('recipeTransferGameTests').isPresent()
+def taczGameTests = providers.gradleProperty('taczGameTests').isPresent()
 if (recipeTransferGameTests) {
     sourceSets.main.java.srcDir 'src/recipeTransferGameTest/java'
+}
+if (taczGameTests) {
+    sourceSets.main.java.srcDir 'src/taczGameTest/java'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -94,6 +98,7 @@ neoForge {
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            if (taczGameTests) gameDirectory = layout.buildDirectory.dir('tacz-client')
         }
 
         server {
@@ -110,6 +115,10 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             if (recipeTransferGameTests) {
                 gameDirectory = layout.buildDirectory.dir('recipe-transfer-gametest')
+                systemProperty 'neoforge.enabledGameTestNamespaces', 'minecraft'
+            }
+            if (taczGameTests) {
+                gameDirectory = layout.buildDirectory.dir('tacz-gametest')
                 systemProperty 'neoforge.enabledGameTestNamespaces', 'minecraft'
             }
         }
@@ -172,6 +181,12 @@ dependencies {
     compileOnly("curse.maven:ars-nouveau-401955:${ars_nouveau_version}") { transitive = false }
     compileOnly("curse.maven:create-328085:${create_version}") { transitive = false }
     compileOnly("curse.maven:goety-586095:${goety_version}") { transitive = false }
+    compileOnly("maven.modrinth:timeless-and-classics-zero:${tacz_version}") { transitive = false }
+    if (taczGameTests) {
+        runtimeOnly("maven.modrinth:timeless-and-classics-zero:${tacz_version}") { transitive = false }
+        compileOnly("maven.modrinth:touhou-little-maid:${touhou_little_maid_version}") { transitive = false }
+        runtimeOnly("maven.modrinth:touhou-little-maid:${touhou_little_maid_version}") { transitive = false }
+    }
 
     // Optional annotation API only; do not install IPN or its Kotlin runtime for every user.
     compileOnly("maven.modrinth:inventory-profiles-next:vjuNnHLv") { transitive = false }

@@ -1,6 +1,7 @@
 package com.wjx.neoforge.projectexa.item;
 
 import com.wjx.neoforge.projectexa.gui.container.ContainerPersonalEmcWarehouse;
+import com.wjx.neoforge.projectexa.integrations.tacz.TaczIntegration;
 import com.wjx.neoforge.projectexa.registries.DataComponentTypes;
 import com.wjx.neoforge.projectexa.util.IHasCapability;
 import com.wjx.neoforge.projectexa.util.Util;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
@@ -68,6 +70,9 @@ public class ItemPersonalEmcWarehouse extends ItemPE implements IHasCapability {
         super.appendHoverText(stack, context, tooltip, flag);
         tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip.bind").withStyle(ChatFormatting.DARK_GRAY));
+        if (ModList.get().isLoaded("tacz") && ModList.get().isLoaded("touhou_little_maid")) {
+            tooltip.add(Component.translatable("item.projectexa.personal_emc_warehouse.tooltip.maid").withStyle(ChatFormatting.DARK_GRAY));
+        }
         tooltip.add(isBound(stack)
                 ? Component.translatable("item.projectexa.personal_emc_warehouse.account", getOwnerName(stack)).withStyle(ChatFormatting.GRAY)
                 : Component.translatable("item.projectexa.personal_emc_warehouse.unbound").withStyle(ChatFormatting.YELLOW));
@@ -143,7 +148,8 @@ public class ItemPersonalEmcWarehouse extends ItemPE implements IHasCapability {
 
     public static ItemStack sanitizeFilter(ItemStack input) {
         if (input.isEmpty() || input.getItem() instanceof ItemPersonalEmcWarehouse) return ItemStack.EMPTY;
-        ItemStack filter = Util.cleanStack(input);
+        ItemStack filter = ModList.get().isLoaded("tacz") && TaczIntegration.isAmmo(input)
+                ? input.copyWithCount(1) : Util.cleanStack(input);
         return IEMCProxy.INSTANCE.getValue(filter) > 0 ? filter : ItemStack.EMPTY;
     }
 

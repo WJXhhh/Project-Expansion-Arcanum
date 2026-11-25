@@ -19,7 +19,7 @@ Minecraft 1.21.1、NeoForge 21.1.219、Java 21、ProjectE PE1.1.0。运行命名
 
 JEI 取物支持 19.57.0.451 与 19.70.0.469，最低版本调整为 19.57.0.451。服务端可通过 `enableJeiEmcRetrieval` 和 `enableWorldEmcPick` 分别关闭两种取物入口，设置同步至客户端。新增槽位和网络协议要求客户端、服务端使用同一更新版本。
 
-已继续接入 Ars Nouveau、Create、Goety 的配方补料及 Goety EMC 映射，详见 [接口核对记录](docs/INTEGRATIONS_1_21_1.md)。Botania、TACZ、RSI 的专门配方或枪械联动仍未接入。已有 EMI 奥术终端填充保持原状，新增的跨界面入口属于 JEI 功能。
+已继续接入 Ars Nouveau、Create、Goety 的配方补料及 Goety EMC 映射，详见 [接口核对记录](docs/INTEGRATIONS_1_21_1.md)。TaCZ 支持枪械工作台转化材料、按型号计算 EMC，以及个人 EMC 仓库为玩家和车万女仆供弹，详见 [TaCZ EMC 联动](docs/TACZ_EMC.md)。Botania、RSI 的专门配方尚未接入。
 
 ## 超越维度与合成链
 
