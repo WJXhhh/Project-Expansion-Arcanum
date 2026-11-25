@@ -9,14 +9,19 @@ import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.emc.EMCMappingHandler;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** RSI-only virtual backpack. Never installed on the player's general item capability. */
 public final class ArcaneCraftingInventory implements IItemHandler {
@@ -34,12 +39,11 @@ public final class ArcaneCraftingInventory implements IItemHandler {
                 .filter(handler -> !(handler instanceof ArcaneCraftingInventory)).toList();
         this.pending = pending;
         Map<CraftingResolver.StackKey, ItemStack> unique = new LinkedHashMap<>();
-        IKnowledgeProvider provider = provider();
+        IKnowledgeProvider provider = provider(player);
         if (provider != null) {
-            for (ItemInfo info : provider.hasFullKnowledge()
-                    ? EMCMappingHandler.getMappedItems() : provider.getKnowledge()) {
+            for (ItemInfo info : knownItems(provider)) {
                 ItemStack stack = Util.cleanStack(info.createStack());
-                if (safeTemplate(stack, provider)) unique.putIfAbsent(key(stack), stack);
+                if (templateValue(stack, provider) > 0) unique.putIfAbsent(key(stack), stack);
             }
         }
         this.templates = List.copyOf(unique.values());
@@ -47,6 +51,39 @@ public final class ArcaneCraftingInventory implements IItemHandler {
 
     public static CraftingResolver.StackKey key(ItemStack stack) {
         return CraftingResolver.StackKey.of(stack, true);
+    }
+
+    private static Iterable<ItemInfo> knownItems(IKnowledgeProvider provider) {
+        return provider.hasFullKnowledge() ? EMCMappingHandler.getMappedItems() : provider.getKnowledge();
+    }
+
+    /** Add a read-only EMC quote to the exact physical counts RSI just collected. */
+    public static Map<CraftingResolver.StackKey, Long> withArcaneCounts(ServerPlayer player,
+            @Nullable Set<Item> itemTypes, Map<CraftingResolver.StackKey, Long> physicalCounts) {
+        if (itemTypes != null && itemTypes.isEmpty()) return physicalCounts;
+        IKnowledgeProvider provider = provider(player);
+        if (provider == null) return physicalCounts;
+        BigInteger balance = provider.getEmc();
+        if (balance.signum() <= 0) return physicalCounts;
+
+        Map<CraftingResolver.StackKey, Long> counts = physicalCounts;
+        Set<CraftingResolver.StackKey> seen = new HashSet<>();
+        for (ItemInfo info : knownItems(provider)) {
+            if (itemTypes != null && !itemTypes.contains(info.getItem())) continue;
+            ItemStack template = Util.cleanStack(info.createStack());
+            long price = templateValue(template, provider);
+            if (price <= 0) continue;
+            CraftingResolver.StackKey key = key(template);
+            if (!seen.add(key)) continue;
+            long physical = physicalCounts.getOrDefault(key, 0L);
+            if (physical >= Integer.MAX_VALUE) continue;
+            long virtual = balance.divide(BigInteger.valueOf(price))
+                    .min(BigInteger.valueOf(Integer.MAX_VALUE - physical)).longValueExact();
+            if (virtual == 0) continue;
+            if (counts == physicalCounts) counts = new HashMap<>(physicalCounts);
+            counts.put(key, physical + virtual);
+        }
+        return counts;
     }
 
     /** Replaces an unbudgeted virtual view with one aware of this ledger's pending reservations. */
@@ -61,29 +98,26 @@ public final class ArcaneCraftingInventory implements IItemHandler {
         return result;
     }
 
-    private IKnowledgeProvider provider() {
+    private static IKnowledgeProvider provider(ServerPlayer player) {
         if (player.getServer() == null || !player.getServer().isSameThread()
                 || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) return null;
         return player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).orElse(null);
     }
 
-    private static boolean safeTemplate(ItemStack stack, IKnowledgeProvider provider) {
-        if (stack.isEmpty()) return false;
+    private static long templateValue(ItemStack stack, IKnowledgeProvider provider) {
+        if (stack.isEmpty()) return 0;
         ItemStack clean = Util.cleanStack(stack);
         // ProjectE treats empty NBT and absent NBT as the same identity. Keep capability
         // compatibility and every nonempty tag check; only this representation differs.
-        return ItemInfo.fromStack(stack).equals(ItemInfo.fromStack(clean))
-                && stack.areCapsCompatible(clean)
-                && provider.hasKnowledge(stack) && IEMCProxy.INSTANCE.getValue(stack) > 0
-                && !protectedStack(stack);
+        if (!ItemInfo.fromStack(stack).equals(ItemInfo.fromStack(clean)) || !stack.areCapsCompatible(clean)
+                || !provider.hasKnowledge(stack) || protectedStack(stack)) return 0;
+        return Math.max(0L, IEMCProxy.INSTANCE.getValue(stack));
     }
 
     /** Read-only quote using exactly the same knowledge and NBT policy as extraction. */
     public static long transmutationValue(ServerPlayer player, ItemStack stack) {
-        if (player.getServer() == null || !player.getServer().isSameThread()
-                || !PacketOpenArcaneTransmutationTablet.hasTablet(player)) return 0;
-        IKnowledgeProvider provider = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).orElse(null);
-        return provider != null && safeTemplate(stack, provider) ? IEMCProxy.INSTANCE.getValue(stack) : 0;
+        IKnowledgeProvider provider = provider(player);
+        return provider == null ? 0 : templateValue(stack, provider);
     }
 
     // RSI's policy class is package-private. Mirror its small vanilla-item predicate;
@@ -120,8 +154,8 @@ public final class ArcaneCraftingInventory implements IItemHandler {
             ItemStack other = entry.getKey().toStack();
             long missing = Math.max(0L, entry.getValue() - physicalCount(other));
             if (missing > 0) {
-                long price = IEMCProxy.INSTANCE.getValue(other);
-                if (price <= 0 || !safeTemplate(other, provider)) return BigInteger.ZERO;
+                long price = templateValue(other, provider);
+                if (price <= 0) return BigInteger.ZERO;
                 budget = budget.subtract(BigInteger.valueOf(price).multiply(BigInteger.valueOf(missing)));
             }
         }
@@ -135,11 +169,12 @@ public final class ArcaneCraftingInventory implements IItemHandler {
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        IKnowledgeProvider provider = provider();
+        IKnowledgeProvider provider = provider(player);
         if (provider == null || slot < 0 || slot >= templates.size()) return ItemStack.EMPTY;
         ItemStack template = templates.get(slot);
-        if (!safeTemplate(template, provider)) return ItemStack.EMPTY;
-        BigInteger count = budgetFor(template, provider).divide(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(template)));
+        long price = templateValue(template, provider);
+        if (price <= 0) return ItemStack.EMPTY;
+        BigInteger count = budgetFor(template, provider).divide(BigInteger.valueOf(price));
         // RSI adds physical and virtual counts using ints; reserve headroom for physical stock.
         int available = count.min(BigInteger.valueOf(Integer.MAX_VALUE - physicalCount(template))).intValue();
         return available > 0 ? template.copyWithCount(available) : ItemStack.EMPTY;
@@ -152,7 +187,7 @@ public final class ArcaneCraftingInventory implements IItemHandler {
         if (available.isEmpty()) return ItemStack.EMPTY;
         int count = Math.min(amount, available.getCount());
         if (!simulate) {
-            IKnowledgeProvider provider = provider();
+            IKnowledgeProvider provider = provider(player);
             if (provider == null) return ItemStack.EMPTY;
             BigInteger cost = BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(available)).multiply(BigInteger.valueOf(count));
             if (provider.getEmc().compareTo(cost) < 0) return ItemStack.EMPTY;
