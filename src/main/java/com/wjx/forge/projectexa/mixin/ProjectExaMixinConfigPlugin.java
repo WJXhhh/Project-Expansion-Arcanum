@@ -15,6 +15,16 @@ import java.util.Set;
 
 /** Selects optional integrations without loading target classes during startup. */
 public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
+    static final String JEI_CHEAT_INPUT = "mezz.jei.gui.input.handlers.CheatInputHandler";
+    static final String JEI_FOCUS_INPUT = "mezz.jei.gui.input.handlers.FocusInputHandler";
+    static final String JEI_HANDLE_INPUT = "handleUserInput";
+    static final String JEI_GUI_INPUT_SIGNATURE =
+            "(Lnet/minecraft/client/gui/screens/Screen;Lmezz/jei/gui/input/UserInput;"
+                    + "Lmezz/jei/common/input/IInternalKeyMappings;)Ljava/util/Optional;";
+    static final String JEI_COMMON_INPUT_SIGNATURE =
+            "(Lnet/minecraft/client/gui/screens/Screen;Lmezz/jei/common/input/UserInput;"
+                    + "Lmezz/jei/common/input/IInternalKeyMappings;)Ljava/util/Optional;";
+
     private static final String RECIPE_TRANSFER_BUTTON = "mezz.jei.gui.recipes.RecipeTransferButton";
     private static final String MODERN_MIXIN =
             "com.wjx.forge.projectexa.mixin.JeiRecipeTransferButtonMixin";
@@ -52,10 +62,15 @@ public final class ProjectExaMixinConfigPlugin implements IMixinConfigPlugin {
                     && hasClass("fi.dy.masa.malilib.gui.button.ButtonGeneric");
         }
         if (mixinClassName.endsWith(".JeiEmcCheatInputMixin")) {
-            return hasClass("mezz.jei.gui.input.handlers.CheatInputHandler");
-        }
-        if (mixinClassName.endsWith(".JeiEmcLegacyInputMixin")) {
-            return !hasClass("mezz.jei.gui.input.handlers.CheatInputHandler");
+            if (!hasClass("mezz.jei.api.gui.inputs.IJeiUserInput")) {
+                return false;
+            }
+            if (JEI_CHEAT_INPUT.equals(targetClassName)) {
+                return hasMethod(targetClassName, JEI_HANDLE_INPUT, JEI_COMMON_INPUT_SIGNATURE)
+                        || hasMethod(targetClassName, JEI_HANDLE_INPUT, JEI_GUI_INPUT_SIGNATURE);
+            }
+            return !hasClass(JEI_CHEAT_INPUT)
+                    && hasMethod(targetClassName, JEI_HANDLE_INPUT, JEI_GUI_INPUT_SIGNATURE);
         }
         if (RSI_INVENTORY_MIXINS.contains(mixinClassName)) {
             return hasClass(RSI_EXTENSION_API);

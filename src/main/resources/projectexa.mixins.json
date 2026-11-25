@@ -24,7 +24,6 @@
 		"JeiRecipeTransferManagerMixin",
 		"JeiCommandUtilAccessor",
 		"JeiEmcCheatInputMixin",
-		"JeiEmcLegacyInputMixin",
 		"JeiRecipesGuiMixin",
 		"JeiRecipeTransferButtonMixin",
 		"ArcaneTransferButtonHighlightMixin",

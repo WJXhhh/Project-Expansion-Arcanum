@@ -14,13 +14,9 @@ import mezz.jei.gui.util.CommandUtil;
 import com.wjx.forge.projectexa.net.PacketHandler;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketJeiTransmute;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
+import mezz.jei.api.gui.inputs.IJeiUserInput;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.common.input.IInternalKeyMappings;
-import mezz.jei.gui.input.CombinedRecipeFocusSource;
-import mezz.jei.gui.input.IUserInputHandler;
-import mezz.jei.gui.input.UserInput;
-import mezz.jei.gui.input.InputType;
-import mezz.jei.gui.input.handlers.SameElementInputHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.Minecraft;
@@ -36,12 +32,14 @@ import java.util.Optional;
 public final class JeiEmcInput {
     private JeiEmcInput() { }
 
-    public static Optional<IUserInputHandler> handle(IUserInputHandler handler, Screen screen, UserInput input,
-            IInternalKeyMappings keys, CombinedRecipeFocusSource source, IIngredientManager ingredients,
+    public static Optional<?> handle(Object handler, Screen screen, IJeiUserInput input,
+            IInternalKeyMappings keys, Object source, IIngredientManager ingredients,
             IClientToggleState toggleState, CommandUtil commandUtil) {
         if (!JeiEmcClientState.isEnabled() || !(screen instanceof AbstractContainerScreen<?>)) return Optional.empty();
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || !PacketOpenArcaneTransmutationTablet.hasTablet(minecraft.player)) return Optional.empty();
+        var methods = JeiEmcInputCompatibility.getInputMethods(input.getClass()).orElse(null);
+        if (methods == null) return Optional.empty();
         IClientConfig config = ((JeiCommandUtilAccessor) (Object) commandUtil).projectexa$getClientConfig();
         boolean stackKey;
         boolean oneKey;
@@ -68,7 +66,7 @@ public final class JeiEmcInput {
         final boolean one = single;
         boolean recipeClick = input.getKey().getType() == InputConstants.Type.MOUSE
                 && (input.getKey().getValue() == 0 || input.getKey().getValue() == 1);
-        return source.getIngredientUnderMouse(input, keys)
+        return methods.getIngredients(source, input, keys)
                 .filter(clicked -> !clicked.getCheatItemStack(ingredients).isEmpty())
                 .findFirst().filter(clicked -> {
                     ItemStack stack = clicked.getCheatItemStack(ingredients);
@@ -81,7 +79,7 @@ public final class JeiEmcInput {
                     if (provider.getEmc().compareTo(BigInteger.valueOf(value)) < 0) {
                         // JEI selects its recipe handler during SIMULATE and later executes that handler.
                         // Report on the initial mouse press without consuming the input.
-                        if (input.getInputType() != InputType.EXECUTE) {
+                        if (!methods.isExecute(input)) {
                             minecraft.player.sendSystemMessage(Component.translatable(
                                     "text.projectexa.jei_transmute.insufficient_emc", Long.toString(value))
                                     .withStyle(ChatFormatting.RED));
@@ -91,11 +89,12 @@ public final class JeiEmcInput {
                     return true;
                 })
                 .map(clicked -> {
+                    Object sameElementHandler = methods.createSameElementHandler(handler, clicked);
                     if (!input.isSimulate()) {
                         ItemStack stack = clicked.getCheatItemStack(ingredients);
                         sendTransmutation(screen, stack, target, one, false);
                     }
-                    return new SameElementInputHandler(handler, clicked::isMouseOver);
+                    return sameElementHandler;
                 });
     }
 
@@ -119,7 +118,9 @@ public final class JeiEmcInput {
             toggleState.setCheatItemsEnabled(false);
         }
         if (!stackKey && !oneKey) return false;
-        GiveMode giveMode = Internal.getJeiClientConfigs().getClientConfig().getGiveMode();
+        IClientConfig config = JeiEmcInputCompatibility.getClientConfig();
+        if (config == null) return false;
+        GiveMode giveMode = config.getGiveMode();
         sendTransmutation(screen, stack, giveMode == GiveMode.MOUSE_PICKUP ? -1 : -2, oneKey, true);
         return true;
     }
