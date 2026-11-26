@@ -85,6 +85,6 @@ side = "BOTH"
 [[dependencies.projectexa]]
 modId = "rs_integration"
 mandatory = false
-versionRange = "[1.6.1,)"
+versionRange = "[1.6.1.1,)"
 ordering = "AFTER"
 side = "BOTH"
