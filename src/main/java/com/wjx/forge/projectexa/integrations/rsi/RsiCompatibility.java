@@ -10,6 +10,16 @@ public final class RsiCompatibility {
         return Availability.SUPPORTED;
     }
 
+    public static void registerAutoEatFoodSourceIfAvailable() {
+        try {
+            Class.forName("com.huanghuang.rsintegration.api.RSIAutoEatFoodSources", false,
+                    RsiCompatibility.class.getClassLoader());
+        } catch (ClassNotFoundException | LinkageError unavailable) {
+            return;
+        }
+        RsiEmcFoodSource.register();
+    }
+
     private static final class Availability {
         private static final boolean SUPPORTED = detect();
 

@@ -68,6 +68,7 @@ public class Main {
         if (RsiCompatibility.isAvailable()) {
             event.enqueueWork(() -> {
                 RsiEmcMaterialSource.register();
+                RsiCompatibility.registerAutoEatFoodSourceIfAvailable();
                 RsiCraftingKnowledge.register();
                 RsiItemRetrieval.register();
             });

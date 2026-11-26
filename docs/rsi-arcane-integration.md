@@ -1,12 +1,13 @@
 # RS Integration 与奥术转化桌
 
-开发环境使用 Minecraft 1.20.1、Forge 47.3.22 和 ProjectE PE1.0.1。RSI 为可选运行时依赖，联动需要原生扩展 API 1.3。
+开发环境使用 Minecraft 1.20.1、Forge 47.3.22 和 ProjectE PE1.0.1。RSI 为可选运行时依赖。递归合成与取物联动使用原生扩展 API 1.3，一键进食的外部食物来源使用 API 1.4。
 
-Gradle 默认从相邻的 `../rs_integration_forked/build/libs/rs_integration-1.6.1-apiTest2.jar` 读取 Fork 的发布包，并通过 ForgeGradle 映射。对应 Fork 分支为 `codex/rsi-native-extension-api`，该 JAR 的模组元数据版本为 `1.6.1`。可用 `-PrsiForkDir` 指定其他 Fork 工作目录，用 `-PrsiForkVersion` 指定发布包文件名中的版本。联动时客户端和服务端使用匹配的 ProjectExA 与 RSI Fork 构建。
+Gradle 从 Modrinth Maven 获取 RSI 1.6.1.1 正式版，并通过 ForgeGradle 映射；版本 ID 在 `gradle.properties` 中配置。联动时客户端和服务端使用匹配的 ProjectExA 与 RSI 版本，RSI 1.6.1.1 的网络协议要求两端同步升级。
 
 ## 玩家行为
 
 - 奥术转化桌放在玩家物品栏（含副手）或 Curios 饰品栏即可，无需打开转化桌。
+- 点击 RSI 终端的一键进食按钮时，多样饮食、堆叠暴食和膳食均衡都能选到已学会且个人 EMC 足以转化一份的食物。RSI 优先提取同一变体的网络实物，确认缺货才按份消耗 EMC。各模式的选食条件、网络权限和配置的每份进食费用仍由 RSI 执行。
 - RSI 递归合成可用玩家已学会、具有正 EMC 值、符合持久 NBT 策略的物品补料。
 - 使用玩家自己的 ProjectE EMC；不借用其他玩家、个人 EMC 仓库或转化桌输入槽内的 EMC。
 - Refined Storage 和超越维度共用 RSI 取料账本。RSI 优先分配已启用的原生库存，再用 EMC 补足材料。EMC 补料跟随 RSI 的背包来源开关。
@@ -22,6 +23,7 @@ Gradle 默认从相邻的 `../rs_integration_forked/build/libs/rs_integration-1.
 
 ## 实现与边界
 
+- API 1.4 的 `RSIAutoEatFoodSources` 注册 `projectexa:arcane_emc`。候选枚举只读取知识和余额，实际取用时复核携带状态、食物身份、知识和单价。扣款结果不明时向 RSI 返回 `Indeterminate`，结束该请求；确认扣款后，即使客户端 EMC 同步失败，也交付已付款的一份。使用 API 1.3 的环境跳过食物来源注册。
 - `RSICraftingMaterialSources` 注册 EMC 材料源。所有可转化物品共享同一个额度池，RSI 负责确认分配、提交预留并结算实物。
 - `RSIPlanExtensions` 提供按物品和来源汇总的计划分配，负责展示报价并过滤过期响应。
 - `RecursiveCraftSucceededEvent` 提供成功结算后实际产出的物品，包含已被后续步骤消耗的中间产物。自动学习通过 ProjectE 的 `PlayerAttemptLearnEvent`，并同步新增知识。

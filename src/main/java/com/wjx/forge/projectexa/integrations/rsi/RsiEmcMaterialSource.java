@@ -13,6 +13,7 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.emc.EMCMappingHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.math.BigInteger;
@@ -20,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 public final class RsiEmcMaterialSource implements Source {
     static final ResourceLocation ID = Main.rl("arcane_emc");
@@ -37,11 +40,19 @@ public final class RsiEmcMaterialSource implements Source {
         IKnowledgeProvider provider = provider(context.player());
         if (provider == null) return Snapshot.EMPTY;
         BigInteger balance = provider.getEmc();
-        if (balance.signum() <= 0) return Snapshot.EMPTY;
-        Map<ItemInfo, Offer> offers = new LinkedHashMap<>();
+        List<Offer> offers = affordableOffers(provider, balance,
+                item -> context.itemTypes().isEmpty() || context.itemTypes().contains(item),
+                (template, price) -> new Offer(template, Long.MAX_VALUE, ID, price));
+        return offers.isEmpty() ? Snapshot.EMPTY : new Snapshot(Map.of(ID, balance), offers);
+    }
+
+    static <T> List<T> affordableOffers(IKnowledgeProvider provider, BigInteger balance, Predicate<Item> wanted,
+                                        BiFunction<ItemStack, BigInteger, T> makeOffer) {
+        if (balance.signum() <= 0) return List.of();
+        Map<ItemInfo, T> offers = new LinkedHashMap<>();
         for (ItemInfo info : provider.hasFullKnowledge()
                 ? EMCMappingHandler.getMappedItems() : provider.getKnowledge()) {
-            if (!context.itemTypes().isEmpty() && !context.itemTypes().contains(info.getItem())) continue;
+            if (!wanted.test(info.getItem())) continue;
             ItemStack stack = info.createStack();
             // A fresh untagged, non-damageable template already has its persistent identity.
             ItemStack template = stack.getTag() == null && !stack.isDamageableItem() ? stack : Util.cleanStack(stack);
@@ -50,10 +61,10 @@ public final class RsiEmcMaterialSource implements Source {
             long value = unitValue(provider, template);
             if (value > 0) {
                 BigInteger price = BigInteger.valueOf(value);
-                if (balance.compareTo(price) >= 0) offers.put(identity, new Offer(template, Long.MAX_VALUE, ID, price));
+                if (balance.compareTo(price) >= 0) offers.put(identity, makeOffer.apply(template, price));
             }
         }
-        return offers.isEmpty() ? Snapshot.EMPTY : new Snapshot(Map.of(ID, balance), List.copyOf(offers.values()));
+        return List.copyOf(offers.values());
     }
 
     @Override
@@ -102,6 +113,22 @@ public final class RsiEmcMaterialSource implements Source {
         return BigInteger.valueOf(value).multiply(BigInteger.valueOf(count));
     }
 
+    /** Called after checking the live balance on the server thread. False means the debit is uncertain. */
+    static boolean debitEmc(ServerPlayer player, IKnowledgeProvider provider, BigInteger cost) {
+        try {
+            provider.setEmc(provider.getEmc().subtract(cost));
+        } catch (RuntimeException failure) {
+            Main.Logger.warn("Could not confirm an RSI EMC debit for {}", player.getUUID(), failure);
+            return false;
+        }
+        try {
+            provider.syncEmc(player);
+        } catch (RuntimeException failure) {
+            Main.Logger.warn("Could not sync EMC after an RSI debit for {}", player.getUUID(), failure);
+        }
+        return true;
+    }
+
     private static final class BatchQuote {
         int size;
         BigInteger total = BigInteger.ZERO;
@@ -146,18 +173,7 @@ public final class RsiEmcMaterialSource implements Source {
             release();
             if (provider == null) return new Extraction(List.of(), false);
             Extraction extraction = new Extraction(List.of(target.copyWithCount(count)), false);
-            try {
-                provider.setEmc(provider.getEmc().subtract(cost));
-            } catch (RuntimeException failure) {
-                Main.Logger.warn("Could not confirm the EMC debit for an RSI reservation", failure);
-                return new Extraction(List.of(), true);
-            }
-            try {
-                provider.syncEmc(player);
-            } catch (RuntimeException failure) {
-                Main.Logger.warn("Could not sync EMC after an RSI material debit", failure);
-            }
-            return extraction;
+            return debitEmc(player, provider, cost) ? extraction : new Extraction(List.of(), true);
         }
 
         @Override
