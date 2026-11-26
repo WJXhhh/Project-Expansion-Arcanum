@@ -1,12 +1,12 @@
 package com.wjx.forge.projectexa.net.packets.to_client;
 
+import com.wjx.forge.projectexa.integrations.rsi.RsiCompatibility;
 import com.wjx.forge.projectexa.integrations.rsi.RsiPlanEmcPreview;
 import com.wjx.forge.projectexa.net.packets.IPacket;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketRsiEmcEstimate;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.math.BigInteger;
@@ -19,15 +19,12 @@ public record PacketRsiEmcEstimateResult(long requestId, int state, BigInteger b
     public static final int READY = 1;
     public static final int UNAVAILABLE = 2;
     public static final int INPUTS_UNAVAILABLE = 3;
-    public static final int NETWORK_UNAVAILABLE = 4;
-    public static final int PERMISSION_DENIED = 5;
-    public static final int INVENTORY_UNAVAILABLE = 6;
 
-    public record Cost(ItemStack stack, int count, BigInteger emc) {}
+    public record Cost(ItemStack stack, long count, BigInteger emc) {}
 
     @Override
     public void handle(NetworkEvent.Context context) {
-        if (ModList.get().isLoaded("rs_integration")) RsiPlanEmcPreview.acceptQuote(this);
+        if (RsiCompatibility.isAvailable()) RsiPlanEmcPreview.acceptQuote(this);
     }
 
     @Override
@@ -38,7 +35,7 @@ public record PacketRsiEmcEstimateResult(long requestId, int state, BigInteger b
         buffer.writeVarInt(costs.size());
         for (Cost cost : costs) {
             buffer.writeItemStack(cost.stack(), false);
-            buffer.writeVarInt(cost.count());
+            buffer.writeVarLong(cost.count());
             buffer.writeUtf(cost.emc().toString());
         }
     }
@@ -48,14 +45,14 @@ public record PacketRsiEmcEstimateResult(long requestId, int state, BigInteger b
         int state = buffer.readVarInt();
         BigInteger balance = new BigInteger(buffer.readUtf(1024));
         int size = buffer.readVarInt();
-        if (state < HIDDEN || state > INVENTORY_UNAVAILABLE || balance.signum() < 0
+        if (state < HIDDEN || state > INPUTS_UNAVAILABLE || balance.signum() < 0
                 || size < 0 || size > PacketRsiEmcEstimate.MAX_MATERIALS) {
             throw new DecoderException("Invalid EMC quote");
         }
         List<Cost> costs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             ItemStack stack = buffer.readItem();
-            int count = buffer.readVarInt();
+            long count = buffer.readVarLong();
             BigInteger emc = new BigInteger(buffer.readUtf(128));
             if (stack.isEmpty() || count <= 0 || emc.signum() <= 0) throw new DecoderException("Invalid EMC cost");
             costs.add(new Cost(stack, count, emc));

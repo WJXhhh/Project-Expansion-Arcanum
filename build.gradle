@@ -134,7 +134,7 @@ repositories {
     maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
-        content { includeModule "maven.modrinth", "rs-integration" }
+        content { includeGroup "maven.modrinth" }
     }
     maven {
         name "curios"
@@ -185,9 +185,8 @@ dependencies {
     compileOnly fg.deobf("dev.ftb.mods:ftb-teams-forge:${getProperty("ftbTeamsVersion")}") { transitive = false }
     runtimeOnly fg.deobf("dev.ftb.mods:ftb-teams-forge:${getProperty("ftbTeamsVersion")}") { transitive = false }
     runtimeOnly fg.deobf("dev.architectury:architectury-forge:${getProperty("architecturyVersion")}") { transitive = false }
-    compileOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
     runtimeOnly fg.deobf("curse.maven:refined-storage-243076:${getProperty("refinedStorageVersion")}")
-    def rsiDependency = 'maven.modrinth:rs-integration:FHDN9Mvs' // 1.6.1 release
+    def rsiDependency = "maven.modrinth:vtvveeqA:${getProperty("rsiVersion")}"
     compileOnly fg.deobf(rsiDependency)
     runtimeOnly fg.deobf(rsiDependency)
 

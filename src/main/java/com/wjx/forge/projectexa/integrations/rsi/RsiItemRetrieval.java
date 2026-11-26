@@ -1,6 +1,11 @@
 package com.wjx.forge.projectexa.integrations.rsi;
 
 import com.huanghuang.rsintegration.api.IntegrationResourceKey;
+import com.huanghuang.rsintegration.api.RSIItemRetrieval;
+import com.huanghuang.rsintegration.api.RSIItemRetrieval.Cursor;
+import com.huanghuang.rsintegration.api.RSIItemRetrieval.Fallback;
+import com.huanghuang.rsintegration.api.RSIItemRetrieval.Intent;
+import com.huanghuang.rsintegration.api.RSIItemRetrieval.SelectedHotbar;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Delivered;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Destination;
@@ -8,12 +13,7 @@ import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Request;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Result;
 import com.huanghuang.rsintegration.api.RSIItemRetrievalFallback.Scene;
 import com.huanghuang.rsintegration.crafting.endpoint.CraftStorageEndpoint;
-import com.huanghuang.rsintegration.storage.StorageOperationResult;
-import com.huanghuang.rsintegration.storage.StoragePermission;
-import com.huanghuang.rsintegration.storage.StorageReference;
 import com.huanghuang.rsintegration.storage.StorageRestockSupport;
-import com.huanghuang.rsintegration.storage.rs.RefinedStorageBackend;
-import com.refinedmods.refinedstorage.RS;
 import com.wjx.forge.projectexa.Main;
 import com.wjx.forge.projectexa.config.Config;
 import com.wjx.forge.projectexa.net.packets.to_server.PacketOpenArcaneTransmutationTablet;
@@ -45,35 +45,45 @@ public final class RsiItemRetrieval {
         }
     }
 
-    public static PullResult pullJei(ServerPlayer player, ItemStack stack, int amount,
-                                     ToIntFunction<ItemStack> deliver) {
-        return pull(player, stack, amount, deliver, false);
+    public static PullResult pullJei(ServerPlayer player, ItemStack stack, boolean single, int menuId, int slot) {
+        RSIItemRetrieval.Destination target = switch (slot) {
+            case -2 -> new RSIItemRetrieval.Inventory();
+            case -1 -> new Cursor(menuId);
+            default -> new SelectedHotbar(slot);
+        };
+        return retrieve(new RSIItemRetrieval.Request(player, stack, single ? 1 : stack.getMaxStackSize(),
+                RSIItemRetrieval.Scene.JEI, single ? Intent.SINGLE : Intent.STACK, target, Fallback.DISABLED));
     }
 
-    public static PullResult pullWorldPick(ServerPlayer player, ItemStack stack, int amount,
-                                           ToIntFunction<ItemStack> deliver) {
-        return pull(player, stack, amount, deliver, true);
+    public static PullResult pullWorldPick(ServerPlayer player, ItemStack stack, int amount, int slot,
+                                           boolean wholeStack, boolean topUp) {
+        Intent intent = topUp ? Intent.TOP_UP : wholeStack ? Intent.STACK : Intent.SINGLE;
+        return retrieve(new RSIItemRetrieval.Request(player, stack, amount, RSIItemRetrieval.Scene.WORLD_PICK,
+                intent, new SelectedHotbar(slot), Fallback.DISABLED));
     }
 
-    private static PullResult pull(ServerPlayer player, ItemStack stack, int amount,
-                                   ToIntFunction<ItemStack> deliver, boolean worldPick) {
+    private static PullResult retrieve(RSIItemRetrieval.Request request) {
+        var result = RSIItemRetrieval.retrieve(request);
+        if (result.deliveredCount() > 0) return PullResult.DELIVERED;
+        if (!result.confirmedZeroDelivery()) return PullResult.FAILED;
+        return switch (result.status()) {
+            case NO_NETWORK -> PullResult.NO_NETWORK;
+            case NO_PERMISSION -> PullResult.NO_PERMISSION;
+            case NO_SPACE -> PullResult.NO_SPACE;
+            case OUT_OF_STOCK -> PullResult.NOT_FOUND;
+            default -> PullResult.FAILED;
+        };
+    }
+
+    /** The creative inventory cursor is client-owned and uses ProjectExA's delivery acknowledgement. */
+    public static PullResult pullCreativeCursor(ServerPlayer player, ItemStack stack, int amount,
+                                                ToIntFunction<ItemStack> deliver) {
         if (amount <= 0) return PullResult.NO_SPACE;
         ItemStack template = stack.copyWithCount(1);
         try {
             CraftStorageEndpoint endpoint = StorageRestockSupport.resolve(player).orElse(null);
             if (endpoint == null) return PullResult.NO_NETWORK;
-            if (!StorageRestockSupport.canExtract(endpoint, player)
-                    || worldPick && !endpoint.session().hasPermission(player, StoragePermission.VIEW)) {
-                return PullResult.NO_PERMISSION;
-            }
-            if (worldPick) {
-                StorageOperationResult simulated = endpoint.extractExact(player, template, amount, true);
-                long available = simulated.transferredAmount().orElse(0L);
-                if (available <= 0) {
-                    return StorageRestockSupport.confirmedMissing(simulated) ? PullResult.NOT_FOUND : PullResult.FAILED;
-                }
-                amount = (int) Math.min(amount, available);
-            }
+            if (!StorageRestockSupport.canExtract(endpoint, player)) return PullResult.NO_PERMISSION;
 
             var extraction = StorageRestockSupport.extractOutcome(endpoint, player, template, amount);
             ItemStack extracted = extraction.stack();
@@ -84,14 +94,10 @@ public final class RsiItemRetrieval {
             if (delivered < extracted.getCount()) {
                 returnToNetwork(endpoint, player, extracted.copyWithCount(extracted.getCount() - delivered));
             }
-            if (delivered <= 0) return PullResult.FAILED;
-            if (worldPick && RsiStorageCompat.RS.equals(endpoint.session().reference().backendId().value())) {
-                RefinedStorageEnergy.drain(player, endpoint.session().reference());
-            }
-            return PullResult.DELIVERED;
+            return delivered > 0 ? PullResult.DELIVERED : PullResult.FAILED;
         } catch (RuntimeException | LinkageError exception) {
             // Failed calls may already have changed storage or delivered items.
-            Main.Logger.warn("RSI coordinated retrieval failed for {}", player.getGameProfile().getName(), exception);
+            Main.Logger.warn("RSI creative cursor retrieval failed for {}", player.getGameProfile().getName(), exception);
             return PullResult.FAILED;
         }
     }
@@ -113,6 +119,7 @@ public final class RsiItemRetrieval {
         if (worldPick) {
             if (!Config.enableWorldEmcPick.get() || request.destination() != Destination.SELECTED_HOTBAR_SLOT
                     || player.isCreative() || player.isSpectator() || player.containerMenu != player.inventoryMenu
+                    || inventory.selected != request.destinationIndex()
                     || !inventory.getSelected().isEmpty()) return Result.PASS;
         } else if (request.scene() != Scene.JEI || !Config.enableJeiEmcRetrieval.get()
                 || request.destination() != Destination.PLAYER_INVENTORY || player.isSpectator()) {
@@ -150,19 +157,5 @@ public final class RsiItemRetrieval {
         player.sendSystemMessage(Component.translatable("text.projectexa.jei_transmuted",
                 delivered, output.getHoverName(), cost.toString()));
         return new Delivered(delivered);
-    }
-
-    // Keep Refined Storage types out of the shared JEI and BD retrieval path.
-    private static final class RefinedStorageEnergy {
-        private static void drain(ServerPlayer player, StorageReference reference) {
-            try {
-                var network = RefinedStorageBackend.resolveNativeNetwork(reference, player);
-                if (network == null) return;
-                var manager = network.getNetworkItemManager();
-                if (manager != null) manager.drainEnergy(player, RS.SERVER_CONFIG.getWirelessGrid().getExtractUsage());
-            } catch (RuntimeException | LinkageError exception) {
-                Main.Logger.warn("RSI world pick could not drain Refined Storage wireless energy", exception);
-            }
-        }
     }
 }

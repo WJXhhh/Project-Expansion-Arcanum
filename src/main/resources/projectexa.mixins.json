@@ -30,9 +30,7 @@
 		"JeiRecipeTransferButtonControllerMixin",
 		"JeiRecipeTransferButtonLegacyMixin",
 		"TaczGunHudEmcWarehouseMixin",
-		"TaczGunSmithTableScreenMixin",
-		"RsiJeiMiddleClickMixin",
-		"RsiWorldPickClientMixin"
+		"TaczGunSmithTableScreenMixin"
 	],
 	"mixins": [
 		"AlchemicalBagMixin",
@@ -47,9 +45,6 @@
 		"PlayerEmcWarehouseMixin",
 		"BowEmcWarehouseMixin",
 		"CrossbowEmcWarehouseMixin",
-		"RsiExtractionLedgerAccessor",
-		"RsiExtractionLedgerMixin",
-		"RsiTypedMaterialSourcesMixin",
 		"TouhouLittleMaidEmcWarehouseMixin",
 		"TomeMixin",
 		"ToolHelperMixin",
